@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataBench - Analyse</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed": "#e2dfff",
+                        "inverse-primary": "#4d44e3",
+                        "on-tertiary-fixed": "#351000",
+                        "surface-container-lowest": "#0d0e10",
+                        "on-secondary-container": "#b0aef9",
+                        "on-background": "#e3e2e5",
+                        "surface-dim": "#121315",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "inverse-surface": "#e3e2e5",
+                        "secondary": "#c3c0ff",
+                        "on-primary-fixed": "#0f0069",
+                        "secondary-fixed": "#e2dfff",
+                        "inverse-on-surface": "#303033",
+                        "outline": "#918fa1",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb695",
+                        "surface": "#121315",
+                        "on-secondary-fixed-variant": "#413f82",
+                        "surface-container-high": "#292a2c",
+                        "primary": "#c3c0ff",
+                        "on-primary-container": "#dad7ff",
+                        "on-tertiary-fixed-variant": "#7b2f00",
+                        "surface-container-low": "#1b1c1e",
+                        "surface-bright": "#38393b",
+                        "outline-variant": "#464555",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#2a276a",
+                        "on-tertiary-container": "#ffd2be",
+                        "surface-container": "#1f2022",
+                        "surface-variant": "#343537",
+                        "on-tertiary": "#571f00",
+                        "on-primary-fixed-variant": "#3323cc",
+                        "tertiary-fixed": "#ffdbcc",
+                        "on-surface-variant": "#c7c4d8",
+                        "on-surface": "#e3e2e5",
+                        "secondary-container": "#413f82",
+                        "tertiary-container": "#a44100",
+                        "error": "#ffb4ab",
+                        "primary-container": "#4f46e5",
+                        "on-primary": "#1d00a5",
+                        "tertiary": "#ffb695",
+                        "on-error": "#690005",
+                        "background": "#121315",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "surface-container-highest": "#343537",
+                        "surface-tint": "#c3c0ff",
+                        "on-secondary-fixed": "#140f54"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "cell-padding-y": "8px",
+                        "sidebar-width": "220px",
+                        "container-padding": "24px",
+                        "gutter": "16px",
+                        "cell-padding-x": "12px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "table-data": ["Inter"],
+                        "label-xs": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "table-data": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+                        "label-xs": ["11px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-sm": ["18px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #343537; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #464555; }
+    </style>
+</head>
+<body class="bg-background dark:bg-surface-container-lowest text-on-surface font-body-md h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[220px] bg-background dark:bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col py-6 z-20">
+<div class="px-gutter mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">DataBench</h1>
+<p class="text-[12px] text-on-surface-variant">Main Workspace</p>
+</div>
+</div>
+<ul class="flex flex-col gap-1 w-full px-2">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-surface-variant hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-primary dark:text-primary font-bold border-l-4 border-primary bg-primary/5 cursor-pointer active:opacity-80 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="font-body-md text-body-md">Analyse</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-surface-variant hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="schema">schema</span>
+<span class="font-body-md text-body-md">Model</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-md text-on-surface-variant hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-body-md text-body-md">Results</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-4 pb-4">
+<div class="p-3 rounded-lg border border-outline-variant/20 bg-surface-container-low text-xs text-on-surface-variant flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-semibold text-on-surface">Dataset Active</span>
+<span class="w-2 h-2 rounded-full bg-primary-container"></span>
+</div>
+<span class="truncate">ecommerce_transactions_2023.csv</span>
+<span class="text-[10px] opacity-70">1.2M rows • 45 cols</span>
+</div>
+</div>
+</nav>
+<!-- TopAppBar & Main Content Wrapper -->
+<div class="flex-1 ml-[220px] flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-16 px-gutter bg-surface border-b border-outline-variant/10 z-10 shrink-0">
+<div class="flex items-center gap-4 text-on-surface-variant font-body-md text-body-md">
+<span class="material-symbols-outlined text-lg">folder</span>
+<span>Workspace</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-on-surface font-semibold">ecommerce_transactions_2023.csv</span>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center justify-center w-8 h-8 rounded-full text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90 hover:bg-surface-variant/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<button class="flex items-center justify-center w-8 h-8 rounded-full text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90 hover:bg-surface-variant/20">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+</button>
+<div class="w-[1px] h-6 bg-outline-variant/30 mx-1"></div>
+<button class="px-4 py-1.5 rounded-md border border-outline-variant/30 text-on-surface hover:bg-surface-variant/10 transition-colors font-body-md text-body-md">
+                    Export Results
+                </button>
+<button class="px-4 py-1.5 rounded-md bg-primary-container text-white border border-transparent hover:bg-inverse-primary transition-colors font-body-md text-body-md shadow-sm">
+                    Analyze
+                </button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 overflow-y-auto custom-scrollbar p-container-padding bg-background flex flex-col gap-container-padding">
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-1">Column Analysis</h2>
+<p class="text-on-surface-variant text-body-md">Automated profiling and distributions for 45 columns.</p>
+</div>
+<div class="flex gap-2">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-9 pr-3 py-1.5 bg-surface-container-low border border-outline-variant/30 rounded-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 w-64" placeholder="Filter columns..." type="text"/>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-4 gap-container-padding">
+<!-- Worth Fixing Card (Spans 1 col on XL) -->
+<div class="xl:col-span-1 border border-outline-variant/20 rounded-lg bg-surface flex flex-col overflow-hidden h-fit">
+<div class="px-4 py-3 border-b border-outline-variant/10 bg-surface-container-low flex justify-between items-center">
+<h3 class="font-semibold text-body-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-[18px]">warning</span>
+                            Worth fixing
+                        </h3>
+<span class="text-label-xs text-on-surface-variant bg-surface-variant/30 px-2 py-0.5 rounded-full">4 items</span>
+</div>
+<div class="flex flex-col p-2 gap-1">
+<!-- Warning Item 1 -->
+<div class="p-3 rounded-md hover:bg-surface-variant/10 transition-colors border border-transparent hover:border-outline-variant/10 group cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+<span class="font-table-data font-semibold text-on-surface">customer_id</span>
+</div>
+<span class="text-[10px] font-semibold tracking-wider uppercase text-error bg-error/10 px-1.5 py-0.5 rounded">High</span>
+</div>
+<p class="text-[12px] text-on-surface-variant leading-snug">9.4% missing values detected. Identifier columns typically require 100% fill rate.</p>
+</div>
+<!-- Warning Item 2 -->
+<div class="p-3 rounded-md hover:bg-surface-variant/10 transition-colors border border-transparent hover:border-outline-variant/10 group cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-amber-500"></span>
+<span class="font-table-data font-semibold text-on-surface">transaction_amount</span>
+</div>
+<span class="text-[10px] font-semibold tracking-wider uppercase text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">Med</span>
+</div>
+<p class="text-[12px] text-on-surface-variant leading-snug">Contains 42 extreme outliers (&gt; 5 standard deviations from mean).</p>
+</div>
+<!-- Warning Item 3 -->
+<div class="p-3 rounded-md hover:bg-surface-variant/10 transition-colors border border-transparent hover:border-outline-variant/10 group cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-gray-400"></span>
+<span class="font-table-data font-semibold text-on-surface">payment_method</span>
+</div>
+<span class="text-[10px] font-semibold tracking-wider uppercase text-gray-400 bg-gray-400/10 px-1.5 py-0.5 rounded">Low</span>
+</div>
+<p class="text-[12px] text-on-surface-variant leading-snug">High cardinality for categorical (84 unique). Consider grouping rare categories.</p>
+</div>
+<!-- Warning Item 4 -->
+<div class="p-3 rounded-md hover:bg-surface-variant/10 transition-colors border border-transparent hover:border-outline-variant/10 group cursor-pointer">
+<div class="flex items-center justify-between mb-1">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-gray-400"></span>
+<span class="font-table-data font-semibold text-on-surface">shipping_zip</span>
+</div>
+<span class="text-[10px] font-semibold tracking-wider uppercase text-gray-400 bg-gray-400/10 px-1.5 py-0.5 rounded">Low</span>
+</div>
+<p class="text-[12px] text-on-surface-variant leading-snug">Mixed data types inferred (String and Integer). Cast to String recommended.</p>
+</div>
+</div>
+</div>
+<!-- Grid & Moves Together Wrapper -->
+<div class="xl:col-span-3 flex flex-col gap-container-padding">
+<!-- Column Cards Grid (3 per row) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Numeric Card -->
+<div class="border border-outline-variant/20 rounded-lg bg-surface flex flex-col hover:border-outline-variant/40 transition-colors">
+<div class="px-4 py-3 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="font-table-data font-semibold text-on-surface truncate pr-2">transaction_amount</h4>
+<span class="text-label-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full uppercase shrink-0">Numeric</span>
+</div>
+<div class="p-4 flex-1 flex flex-col gap-4">
+<!-- Sparkline Histogram Placeholder -->
+<div class="h-16 w-full flex items-end gap-[1px] opacity-80">
+<div class="bg-blue-500/60 w-full h-[5%]"></div>
+<div class="bg-blue-500/60 w-full h-[10%]"></div>
+<div class="bg-blue-500/60 w-full h-[15%]"></div>
+<div class="bg-blue-500/60 w-full h-[25%]"></div>
+<div class="bg-blue-500/60 w-full h-[40%]"></div>
+<div class="bg-blue-500/60 w-full h-[60%]"></div>
+<div class="bg-blue-500/60 w-full h-[85%]"></div>
+<div class="bg-blue-500/80 w-full h-[100%]"></div>
+<div class="bg-blue-500/60 w-full h-[90%]"></div>
+<div class="bg-blue-500/60 w-full h-[70%]"></div>
+<div class="bg-blue-500/60 w-full h-[50%]"></div>
+<div class="bg-blue-500/60 w-full h-[35%]"></div>
+<div class="bg-blue-500/60 w-full h-[20%]"></div>
+<div class="bg-blue-500/60 w-full h-[15%]"></div>
+<div class="bg-blue-500/60 w-full h-[10%]"></div>
+<div class="bg-blue-500/60 w-full h-[8%]"></div>
+<div class="bg-blue-500/60 w-full h-[5%]"></div>
+<div class="bg-blue-500/60 w-full h-[3%]"></div>
+<div class="bg-blue-500/60 w-full h-[2%]"></div>
+<div class="bg-blue-500/60 w-full h-[1%]"></div>
+</div>
+<div class="grid grid-cols-2 gap-y-2 gap-x-4 text-[12px]">
+<div class="flex justify-between border-b border-outline-variant/10 pb-1"><span class="text-on-surface-variant">Min</span><span class="text-on-surface font-mono">0.99</span></div>
+<div class="flex justify-between border-b border-outline-variant/10 pb-1"><span class="text-on-surface-variant">Median</span><span class="text-on-surface font-mono">45.00</span></div>
+<div class="flex justify-between border-b border-outline-variant/10 pb-1"><span class="text-on-surface-variant">Max</span><span class="text-on-surface font-mono">4,299.00</span></div>
+<div class="flex justify-between border-b border-outline-variant/10 pb-1"><span class="text-on-surface-variant">Mean</span><span class="text-on-surface font-mono">68.42</span></div>
+<div class="flex justify-between border-b border-outline-variant/10 pb-1"><span class="text-on-surface-variant">Std Dev</span><span class="text-on-surface font-mono">112.5</span></div>
+<div class="flex justify-between border-b border-outline-variant/10 pb-1"><span class="text-on-surface-variant">Outliers</span><span class="text-amber-500 font-mono">42</span></div>
+</div>
+</div>
+</div>
+<!-- Categorical Card -->
+<div class="border border-outline-variant/20 rounded-lg bg-surface flex flex-col hover:border-outline-variant/40 transition-colors">
+<div class="px-4 py-3 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="font-table-data font-semibold text-on-surface truncate pr-2">product_category</h4>
+<span class="text-label-xs text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded-full uppercase shrink-0">Categorical</span>
+</div>
+<div class="p-4 flex-1 flex flex-col gap-4">
+<div class="text-[12px] text-on-surface-variant flex justify-between">
+<span>8 Unique Values</span>
+<span>0% Nulls</span>
+</div>
+<div class="flex-1 flex flex-col gap-2 justify-center">
+<div class="w-full h-3 rounded-full flex overflow-hidden">
+<div class="h-full bg-purple-500" style="width: 45%;"></div>
+<div class="h-full bg-purple-600" style="width: 25%;"></div>
+<div class="h-full bg-purple-700" style="width: 15%;"></div>
+<div class="h-full bg-purple-800" style="width: 10%;"></div>
+<div class="h-full bg-surface-variant" style="width: 5%;"></div>
+</div>
+<div class="flex flex-col gap-1 mt-2 text-[11px]">
+<div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-500"></span><span class="text-on-surface truncate w-24">Electronics</span></div><span class="text-on-surface-variant">45% (540k)</span></div>
+<div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-600"></span><span class="text-on-surface truncate w-24">Apparel</span></div><span class="text-on-surface-variant">25% (300k)</span></div>
+<div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-700"></span><span class="text-on-surface truncate w-24">Home</span></div><span class="text-on-surface-variant">15% (180k)</span></div>
+<div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-800"></span><span class="text-on-surface truncate w-24">Beauty</span></div><span class="text-on-surface-variant">10% (120k)</span></div>
+<div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-surface-variant"></span><span class="text-on-surface truncate w-24">Other (4)</span></div><span class="text-on-surface-variant">5% (60k)</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Datetime Card -->
+<div class="border border-outline-variant/20 rounded-lg bg-surface flex flex-col hover:border-outline-variant/40 transition-colors">
+<div class="px-4 py-3 border-b border-outline-variant/10 flex justify-between items-center">
+<h4 class="font-table-data font-semibold text-on-surface truncate pr-2">transaction_date</h4>
+<span class="text-label-xs text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full uppercase shrink-0">Datetime</span>
+</div>
+<div class="p-4 flex-1 flex flex-col gap-4">
+<div class="text-[12px] text-on-surface-variant text-center bg-surface-container-low py-1 rounded border border-outline-variant/10">
+<span class="font-mono text-on-surface">2023-01-01</span> → <span class="font-mono text-on-surface">2023-12-31</span>
+</div>
+<div class="flex-1 flex items-end gap-1 h-24 mt-2">
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 30%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 45%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 55%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 40%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 60%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 75%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 85%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 70%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 90%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 80%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/80 w-full rounded-t-sm" style="height: 100%;"></div></div>
+<div class="w-full flex flex-col justify-end items-center group"><div class="bg-amber-500/40 group-hover:bg-amber-500/80 transition-colors w-full rounded-t-sm" style="height: 95%;"></div></div>
+</div>
+<div class="flex justify-between text-[10px] text-on-surface-variant uppercase">
+<span>J</span><span>F</span><span>M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span>S</span><span>O</span><span>N</span><span>D</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Moves Together (Correlation) Section -->
+<div class="border border-outline-variant/20 rounded-lg bg-surface flex flex-col">
+<div class="px-4 py-3 border-b border-outline-variant/10 flex justify-between items-center bg-surface-container-low">
+<h3 class="font-semibold text-body-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">hub</span>
+                                Moves together
+                            </h3>
+<span class="text-label-xs text-on-surface-variant">Top Correlations</span>
+</div>
+<div class="p-4 flex flex-col gap-3">
+<!-- Header Row -->
+<div class="grid grid-cols-[1fr_auto_1fr_60px_100px] gap-4 items-center text-[12px] font-semibold text-on-surface-variant border-b border-outline-variant/10 pb-2 px-2">
+<div>Column A</div>
+<div></div>
+<div>Column B</div>
+<div class="text-right">Score</div>
+<div>Strength</div>
+</div>
+<!-- Row 1 -->
+<div class="grid grid-cols-[1fr_auto_1fr_60px_100px] gap-4 items-center text-[13px] hover:bg-surface-variant/10 p-2 rounded transition-colors group">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-blue-400"></span>
+<span class="font-mono text-on-surface truncate">discount_amount</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">sync_alt</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-blue-400"></span>
+<span class="font-mono text-on-surface truncate">transaction_amount</span>
+</div>
+<div class="text-right font-mono font-medium text-blue-400">0.87</div>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 rounded-full" style="width: 87%;"></div>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-[1fr_auto_1fr_60px_100px] gap-4 items-center text-[13px] hover:bg-surface-variant/10 p-2 rounded transition-colors group">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-amber-400"></span>
+<span class="font-mono text-on-surface truncate">delivery_days</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">sync_alt</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-blue-400"></span>
+<span class="font-mono text-on-surface truncate">shipping_cost</span>
+</div>
+<div class="text-right font-mono font-medium text-emerald-400">0.65</div>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-[1fr_auto_1fr_60px_100px] gap-4 items-center text-[13px] hover:bg-surface-variant/10 p-2 rounded transition-colors group">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-purple-400"></span>
+<span class="font-mono text-on-surface truncate">customer_tier</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">sync_alt</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-blue-400"></span>
+<span class="font-mono text-on-surface truncate">lifetime_value</span>
+</div>
+<div class="text-right font-mono font-medium text-amber-400">0.52</div>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full" style="width: 52%;"></div>
+</div>
+</div>
+<!-- Row 4 (Negative) -->
+<div class="grid grid-cols-[1fr_auto_1fr_60px_100px] gap-4 items-center text-[13px] hover:bg-surface-variant/10 p-2 rounded transition-colors group">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-purple-400"></span>
+<span class="font-mono text-on-surface truncate">return_status</span>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">sync_alt</span>
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 rounded-sm bg-blue-400"></span>
+<span class="font-mono text-on-surface truncate">customer_rating</span>
+</div>
+<div class="text-right font-mono font-medium text-error">-0.48</div>
+<div class="h-1.5 w-full bg-surface-variant rounded-full overflow-hidden flex justify-end">
+<div class="h-full bg-error rounded-full" style="width: 48%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataBench - Clustering Results</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#e2dfff",
+                      "inverse-primary": "#4d44e3",
+                      "on-tertiary-fixed": "#351000",
+                      "surface-container-lowest": "#0d0e10",
+                      "on-secondary-container": "#b0aef9",
+                      "on-background": "#e3e2e5",
+                      "surface-dim": "#121315",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "inverse-surface": "#e3e2e5",
+                      "secondary": "#c3c0ff",
+                      "on-primary-fixed": "#0f0069",
+                      "secondary-fixed": "#e2dfff",
+                      "inverse-on-surface": "#303033",
+                      "outline": "#918fa1",
+                      "error-container": "#93000a",
+                      "tertiary-fixed-dim": "#ffb695",
+                      "surface": "#121315",
+                      "on-secondary-fixed-variant": "#413f82",
+                      "surface-container-high": "#292a2c",
+                      "primary": "#c3c0ff",
+                      "on-primary-container": "#dad7ff",
+                      "on-tertiary-fixed-variant": "#7b2f00",
+                      "surface-container-low": "#1b1c1e",
+                      "surface-bright": "#38393b",
+                      "outline-variant": "#464555",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary": "#2a276a",
+                      "on-tertiary-container": "#ffd2be",
+                      "surface-container": "#1f2022",
+                      "surface-variant": "#343537",
+                      "on-tertiary": "#571f00",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "tertiary-fixed": "#ffdbcc",
+                      "on-surface-variant": "#c7c4d8",
+                      "on-surface": "#e3e2e5",
+                      "secondary-container": "#413f82",
+                      "tertiary-container": "#a44100",
+                      "error": "#ffb4ab",
+                      "primary-container": "#4f46e5",
+                      "on-primary": "#1d00a5",
+                      "tertiary": "#ffb695",
+                      "on-error": "#690005",
+                      "background": "#121315",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "surface-container-highest": "#343537",
+                      "surface-tint": "#c3c0ff",
+                      "on-secondary-fixed": "#140f54"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "cell-padding-y": "8px",
+                      "sidebar-width": "220px",
+                      "container-padding": "24px",
+                      "gutter": "16px",
+                      "cell-padding-x": "12px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "table-data": [
+                              "Inter"
+                      ],
+                      "label-xs": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "table-data": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-xs": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .cluster-1 { background-color: rgba(79, 70, 229, 0.8); } /* Indigo */
+        .cluster-2 { background-color: rgba(99, 102, 241, 0.6); } /* Lighter Indigo */
+        .cluster-3 { background-color: rgba(129, 140, 248, 0.4); } /* Even Lighter */
+        .cluster-4 { background-color: rgba(165, 180, 252, 0.2); } /* Palest */
+        .table-row-hover:hover { background-color: rgba(255, 255, 255, 0.05); }
+      </style>
+</head>
+<body class="bg-background text-on-surface h-screen overflow-hidden flex">
+<!-- SideNavBar -->
+<nav class="bg-background dark:bg-surface-container-lowest fixed left-0 top-0 h-full w-[220px] border-r border-outline-variant/10 flex flex-col h-full py-6 z-20">
+<div class="px-6 mb-8 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">dataset</span>
+<div>
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">DataBench</div>
+<div class="font-label-xs text-label-xs text-on-surface-variant">Main Workspace</div>
+</div>
+</div>
+<ul class="flex flex-col gap-1 px-3">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Overview
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+                    Analyse
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]">schema</span>
+                    Model
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg font-body-md text-body-md text-primary dark:text-primary font-bold border-l-4 border-primary bg-primary/5 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+                    Results
+                </a>
+</li>
+</ul>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 ml-[220px] flex flex-col h-full overflow-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface flex justify-between items-center h-16 px-gutter border-b border-outline-variant/10 z-10 shrink-0">
+<div class="flex items-center gap-4">
+<!-- Left side can be empty or have breadcrumbs -->
+<div class="font-body-md text-body-md text-on-surface-variant flex items-center gap-2">
+                    Model Runs <span class="material-symbols-outlined text-[16px]">chevron_right</span> Run #492
+               </div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary-container text-on-primary-container font-body-md text-body-md px-4 py-2 rounded-DEFAULT hover:opacity-90 transition-opacity">Analyze</button>
+<button class="border border-outline text-on-surface font-body-md text-body-md px-4 py-2 rounded-DEFAULT hover:bg-surface-variant/50 transition-colors">Export Results</button>
+<div class="w-[1px] h-6 bg-outline-variant/20 mx-1"></div>
+<button class="text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90"><span class="material-symbols-outlined">settings</span></button>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding bg-background">
+<!-- Completion Strip -->
+<div class="bg-surface border border-outline-variant/20 rounded-lg p-4 mb-6 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-400" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Grouped 100,000 rows into 4 clusters</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant">
+                    Time taken: 12.4s | Features: 8
+                </div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6 mb-6">
+<!-- Main Panel: Cluster Sizes -->
+<div class="col-span-12 lg:col-span-8 bg-surface border border-outline-variant/20 rounded-lg p-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Cluster Distribution</h2>
+<span class="material-symbols-outlined text-on-surface-variant">more_horiz</span>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant mb-2">Relative Size</div>
+<!-- Horizontal Stacked Bar -->
+<div class="w-full h-12 flex rounded-DEFAULT overflow-hidden mb-6 border border-outline-variant/20">
+<div class="cluster-1 h-full w-[45%]" title="Cluster A: 45%"></div>
+<div class="cluster-2 h-full w-[30%]" title="Cluster B: 30%"></div>
+<div class="cluster-3 h-full w-[15%]" title="Cluster C: 15%"></div>
+<div class="cluster-4 h-full w-[10%]" title="Cluster D: 10%"></div>
+</div>
+<!-- Legend -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full cluster-1"></div>
+<span class="font-body-md text-body-md text-on-surface">Cluster A (45k)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full cluster-2"></div>
+<span class="font-body-md text-body-md text-on-surface">Cluster B (30k)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full cluster-3"></div>
+<span class="font-body-md text-body-md text-on-surface">Cluster C (15k)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full cluster-4 border border-outline-variant/20"></div>
+<span class="font-body-md text-body-md text-on-surface">Cluster D (10k)</span>
+</div>
+</div>
+</div>
+<!-- Leaderboard Side Panel -->
+<div class="col-span-12 lg:col-span-4 bg-surface border border-outline-variant/20 rounded-lg p-6 flex flex-col gap-6">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Algorithm Performance</h2>
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold">K-means</span>
+<span class="font-label-xs text-label-xs text-primary">Silhouette Score</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="font-headline-sm text-[24px] text-on-surface">0.742</div>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[74%] rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="h-[1px] w-full bg-outline-variant/20"></div>
+<div>
+<div class="flex justify-between items-end mb-1">
+<span class="font-body-md text-body-md text-on-surface font-semibold">Isolation Forest</span>
+<span class="font-label-xs text-label-xs text-error">Outlier %</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="font-headline-sm text-[24px] text-on-surface">4.8%</div>
+<div class="flex-1 h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-error h-full w-[5%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Unusual Rows Card -->
+<div class="bg-surface border border-outline-variant/20 rounded-lg p-6">
+<div class="flex items-start justify-between mb-4">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">warning</span>
+                            Anomalies Detected
+                        </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">
+<span class="text-on-surface font-semibold">5,000</span> rows (<span class="text-error">5%</span>) do not fit any pattern cleanly.
+                        </p>
+</div>
+<button class="text-primary font-label-xs text-label-xs uppercase hover:underline">View All Anomalies</button>
+</div>
+<!-- Dense Table -->
+<div class="border border-outline-variant/20 rounded-DEFAULT overflow-hidden">
+<table class="w-full text-left font-table-data text-table-data">
+<thead class="bg-surface-variant/30 text-on-surface-variant font-semibold border-b border-outline-variant/20">
+<tr>
+<th class="py-cell-padding-y px-cell-padding-x w-16">ID</th>
+<th class="py-cell-padding-y px-cell-padding-x text-right">Transaction Val</th>
+<th class="py-cell-padding-y px-cell-padding-x">Category</th>
+<th class="py-cell-padding-y px-cell-padding-x text-right">Frequency (Days)</th>
+<th class="py-cell-padding-y px-cell-padding-x text-right">Deviation Score</th>
+</tr>
+</thead>
+<tbody class="text-on-surface divide-y divide-outline-variant/10">
+<tr class="table-row-hover cursor-pointer">
+<td class="py-cell-padding-y px-cell-padding-x font-mono text-on-surface-variant">TX-992</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right font-mono">$45,210.00</td>
+<td class="py-cell-padding-y px-cell-padding-x">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-xs text-label-xs">ENTERPRISE</span>
+</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right">1.2</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right text-error">9.84</td>
+</tr>
+<tr class="table-row-hover cursor-pointer">
+<td class="py-cell-padding-y px-cell-padding-x font-mono text-on-surface-variant">TX-104</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right font-mono">$0.05</td>
+<td class="py-cell-padding-y px-cell-padding-x">
+<span class="px-2 py-0.5 rounded-full bg-tertiary/10 text-tertiary font-label-xs text-label-xs">MICRO</span>
+</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right">145.0</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right text-error">8.72</td>
+</tr>
+<tr class="table-row-hover cursor-pointer">
+<td class="py-cell-padding-y px-cell-padding-x font-mono text-on-surface-variant">TX-883</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right font-mono">$12,050.50</td>
+<td class="py-cell-padding-y px-cell-padding-x">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-xs text-label-xs">ENTERPRISE</span>
+</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right">0.1</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right text-error">8.15</td>
+</tr>
+<tr class="table-row-hover cursor-pointer">
+<td class="py-cell-padding-y px-cell-padding-x font-mono text-on-surface-variant">TX-421</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right font-mono">-$5,000.00</td>
+<td class="py-cell-padding-y px-cell-padding-x">
+<span class="px-2 py-0.5 rounded-full bg-error/10 text-error font-label-xs text-label-xs">REFUND</span>
+</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right">30.5</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right text-error">7.99</td>
+</tr>
+<tr class="table-row-hover cursor-pointer">
+<td class="py-cell-padding-y px-cell-padding-x font-mono text-on-surface-variant">TX-019</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right font-mono">$999,999.99</td>
+<td class="py-cell-padding-y px-cell-padding-x">
+<span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary font-label-xs text-label-xs">B2B</span>
+</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right">365.0</td>
+<td class="py-cell-padding-y px-cell-padding-x text-right text-error">7.80</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+</body></html>

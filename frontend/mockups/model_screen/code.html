@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataBench - Model</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#e2dfff",
+                      "inverse-primary": "#4d44e3",
+                      "on-tertiary-fixed": "#351000",
+                      "surface-container-lowest": "#0d0e10",
+                      "on-secondary-container": "#b0aef9",
+                      "on-background": "#e3e2e5",
+                      "surface-dim": "#121315",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "inverse-surface": "#e3e2e5",
+                      "secondary": "#c3c0ff",
+                      "on-primary-fixed": "#0f0069",
+                      "secondary-fixed": "#e2dfff",
+                      "inverse-on-surface": "#303033",
+                      "outline": "#918fa1",
+                      "error-container": "#93000a",
+                      "tertiary-fixed-dim": "#ffb695",
+                      "surface": "#121315",
+                      "on-secondary-fixed-variant": "#413f82",
+                      "surface-container-high": "#292a2c",
+                      "primary": "#c3c0ff",
+                      "on-primary-container": "#dad7ff",
+                      "on-tertiary-fixed-variant": "#7b2f00",
+                      "surface-container-low": "#1b1c1e",
+                      "surface-bright": "#38393b",
+                      "outline-variant": "#464555",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary": "#2a276a",
+                      "on-tertiary-container": "#ffd2be",
+                      "surface-container": "#1f2022",
+                      "surface-variant": "#343537",
+                      "on-tertiary": "#571f00",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "tertiary-fixed": "#ffdbcc",
+                      "on-surface-variant": "#c7c4d8",
+                      "on-surface": "#e3e2e5",
+                      "secondary-container": "#413f82",
+                      "tertiary-container": "#a44100",
+                      "error": "#ffb4ab",
+                      "primary-container": "#4f46e5",
+                      "on-primary": "#1d00a5",
+                      "tertiary": "#ffb695",
+                      "on-error": "#690005",
+                      "background": "#121315",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "surface-container-highest": "#343537",
+                      "surface-tint": "#c3c0ff",
+                      "on-secondary-fixed": "#140f54"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "cell-padding-y": "8px",
+                      "sidebar-width": "220px",
+                      "container-padding": "24px",
+                      "gutter": "16px",
+                      "cell-padding-x": "12px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "table-data": [
+                              "Inter"
+                      ],
+                      "label-xs": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "table-data": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-xs": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dense data feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #343537;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #464555;
+        }
+        
+        /* Subtle data pill utility based on requirements */
+        .data-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 9999px;
+            padding: 2px 8px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md text-body-md h-screen w-screen overflow-hidden flex antialiased">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[220px] bg-background dark:bg-surface-container-lowest border-r border-outline-variant/10 flex flex-col h-full py-6 z-20">
+<!-- Header -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" data-icon="database" data-weight="fill" style="font-variation-settings: 'FILL' 1;">database</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">DataBench</h1>
+<p class="font-label-xs text-label-xs text-on-surface-variant font-normal">Main Workspace</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col w-full">
+<!-- Overview (Inactive) -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+<!-- Analyse (Inactive) -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Analyse</span>
+</a>
+<!-- Model (Active) -->
+<a class="flex items-center gap-3 px-6 py-3 text-primary dark:text-primary font-bold border-l-4 border-primary bg-primary/5 cursor-pointer active:opacity-80 relative -ml-[1px]" href="#">
+<span class="material-symbols-outlined" data-icon="schema" data-weight="fill" style="font-variation-settings: 'FILL' 1;">schema</span>
+<span>Model</span>
+</a>
+<!-- Results (Inactive) -->
+<a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span>Results</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="ml-[220px] flex-1 flex flex-col h-full min-w-0 bg-background relative z-10">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface border-b border-outline-variant/10 flex justify-between items-center h-16 px-gutter shrink-0">
+<!-- Breadcrumbs / Context -->
+<div class="flex items-center gap-2 text-on-surface-variant font-body-md text-body-md">
+<span>Workspace</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-on-surface">Churn Prediction Project</span>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 text-on-surface-variant border border-outline-variant rounded-lg hover:text-primary transition-all scale-95 active:scale-90 font-label-xs text-label-xs font-semibold">
+                    Export Results
+                </button>
+<button class="px-4 py-2 bg-primary-container text-on-primary-container rounded-lg hover:opacity-90 transition-all scale-95 active:scale-90 font-label-xs text-label-xs font-semibold">
+                    Analyze
+                </button>
+<div class="w-[1px] h-6 bg-outline-variant/30 mx-1"></div>
+<button class="text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90 flex items-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all scale-95 active:scale-90 flex items-center">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Workspace Canvas -->
+<main class="flex-1 overflow-y-auto p-container-padding">
+<div class="max-w-5xl mx-auto flex flex-col gap-container-padding pb-24">
+<!-- Page Header -->
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Model Configuration</h2>
+<p class="text-on-surface-variant mt-1">Define target variable and select algorithms for training.</p>
+</div>
+<!-- 1. Predict Row (Intent & Target Selection) -->
+<div class="bg-surface-container-low border border-outline-variant/20 rounded-lg p-6 flex flex-wrap items-center gap-4">
+<span class="text-on-surface-variant font-medium">Predict</span>
+<!-- Searchable Dropdown Mock -->
+<div class="flex items-center gap-3 bg-surface border border-outline-variant rounded-lg px-3 py-2 cursor-pointer hover:border-primary transition-colors group relative">
+<span class="material-symbols-outlined text-primary text-[18px]">search</span>
+<span class="text-on-surface font-medium">is_churned</span>
+<span class="data-badge font-label-xs text-label-xs bg-secondary/10 text-secondary ml-1">BOOL</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">arrow_drop_down</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant mx-2">arrow_forward</span>
+<!-- Task Type Chip -->
+<div class="flex items-center gap-2 bg-primary-container/10 border border-primary-container/30 rounded-lg px-4 py-2">
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="call_split">call_split</span>
+<span class="text-primary font-medium">Binary classification</span>
+</div>
+<!-- Explanation -->
+<span class="text-on-surface-variant text-[13px] ml-auto">
+<span class="material-symbols-outlined text-[14px] align-text-bottom mr-1">info</span>
+                        Target has two outcomes
+                    </span>
+</div>
+<!-- 2. Data Context Grid (Bento Layout) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Target Balance Card -->
+<div class="md:col-span-5 bg-surface-container border border-outline-variant/20 rounded-lg p-6 flex flex-col">
+<div class="flex justify-between items-start mb-6">
+<h3 class="font-medium text-on-surface">Target Distribution</h3>
+<span class="material-symbols-outlined text-outline-variant">donut_large</span>
+</div>
+<div class="flex-1 flex flex-col justify-center">
+<!-- Balance Bar -->
+<div class="w-full h-2.5 rounded-full bg-surface-variant flex overflow-hidden mb-3">
+<div class="h-full bg-primary-container" style="width: 81%;"></div>
+<div class="h-full bg-tertiary" style="width: 19%;"></div>
+</div>
+<!-- Legend -->
+<div class="flex justify-between font-table-data text-table-data">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="text-on-surface">False (81%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-on-surface">True (19%)</span>
+</div>
+</div>
+</div>
+<div class="mt-6 p-3 bg-tertiary-container/10 border border-tertiary-container/20 rounded-md flex items-start gap-2">
+<span class="material-symbols-outlined text-tertiary text-[16px] mt-0.5" data-icon="warning">warning</span>
+<span class="text-tertiary font-table-data text-table-data">Classes are uneven. Tree-based models are recommended.</span>
+</div>
+</div>
+<!-- Features Card -->
+<div class="md:col-span-7 bg-surface-container border border-outline-variant/20 rounded-lg p-6 flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-medium text-on-surface">Features included (6)</h3>
+<button class="text-primary hover:text-primary-container font-label-xs text-label-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">edit</span> Edit
+                            </button>
+</div>
+<!-- Chips Flexbox -->
+<div class="flex flex-wrap gap-2 flex-1 items-start content-start">
+<div class="flex items-center gap-2 border border-outline-variant/40 bg-surface rounded-full px-3 py-1.5">
+<span class="text-on-surface font-table-data text-table-data">customer_tenure</span>
+<span class="data-badge font-label-xs text-[10px] bg-secondary/10 text-secondary">NUM</span>
+</div>
+<div class="flex items-center gap-2 border border-outline-variant/40 bg-surface rounded-full px-3 py-1.5">
+<span class="text-on-surface font-table-data text-table-data">monthly_charges</span>
+<span class="data-badge font-label-xs text-[10px] bg-secondary/10 text-secondary">NUM</span>
+</div>
+<div class="flex items-center gap-2 border border-outline-variant/40 bg-surface rounded-full px-3 py-1.5">
+<span class="text-on-surface font-table-data text-table-data">contract_type</span>
+<span class="data-badge font-label-xs text-[10px] bg-tertiary/10 text-tertiary">CAT</span>
+</div>
+<div class="flex items-center gap-2 border border-outline-variant/40 bg-surface rounded-full px-3 py-1.5">
+<span class="text-on-surface font-table-data text-table-data">total_usage_gb</span>
+<span class="data-badge font-label-xs text-[10px] bg-secondary/10 text-secondary">NUM</span>
+</div>
+<div class="flex items-center gap-2 border border-outline-variant/40 bg-surface rounded-full px-3 py-1.5">
+<span class="text-on-surface font-table-data text-table-data">payment_method</span>
+<span class="data-badge font-label-xs text-[10px] bg-tertiary/10 text-tertiary">CAT</span>
+</div>
+<div class="flex items-center gap-2 border border-outline-variant/40 bg-surface rounded-full px-3 py-1.5">
+<span class="text-on-surface font-table-data text-table-data">paperless_billing</span>
+<span class="data-badge font-label-xs text-[10px] bg-primary/10 text-primary">BOOL</span>
+</div>
+</div>
+<!-- Dropped identifiers note -->
+<div class="mt-4 pt-4 border-t border-outline-variant/10 flex items-center gap-2 text-on-surface-variant font-table-data text-table-data">
+<span class="material-symbols-outlined text-[16px]">visibility_off</span>
+<span>Not used (auto-dropped identifiers): <span class="font-mono text-[11px] bg-surface-variant/30 px-1 rounded">user_id</span>, <span class="font-mono text-[11px] bg-surface-variant/30 px-1 rounded">transaction_date</span></span>
+</div>
+</div>
+</div>
+<!-- 3. Algorithms Selection -->
+<div>
+<h3 class="font-medium text-on-surface mb-4">Algorithms</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Gradient Boosting (Recommended & Checked) -->
+<div class="relative bg-primary-container/5 border border-primary rounded-lg p-5 cursor-pointer hover:bg-primary-container/10 transition-colors flex flex-col group">
+<div class="absolute -top-2.5 right-3 bg-primary-container text-on-primary-container font-label-xs text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold shadow-sm">
+                                Recommended
+                            </div>
+<div class="flex items-start justify-between mb-8">
+<div class="w-8 h-8 rounded bg-surface border border-primary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[18px]">account_tree</span>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h4 class="font-medium text-on-surface leading-tight">Gradient boosting</h4>
+<p class="text-on-surface-variant text-[12px] mt-1 line-clamp-2">High accuracy, handles class imbalance natively.</p>
+</div>
+</div>
+<!-- Random Forest (Recommended & Checked) -->
+<div class="relative bg-primary-container/5 border border-primary rounded-lg p-5 cursor-pointer hover:bg-primary-container/10 transition-colors flex flex-col group">
+<div class="absolute -top-2.5 right-3 bg-primary-container text-on-primary-container font-label-xs text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider font-bold shadow-sm">
+                                Recommended
+                            </div>
+<div class="flex items-start justify-between mb-8">
+<div class="w-8 h-8 rounded bg-surface border border-primary-container/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[18px]">forest</span>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<h4 class="font-medium text-on-surface leading-tight">Random forest</h4>
+<p class="text-on-surface-variant text-[12px] mt-1 line-clamp-2">Robust ensemble method resistant to overfitting.</p>
+</div>
+</div>
+<!-- Logistic Regression (Unchecked) -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-lg p-5 cursor-pointer hover:border-outline-variant hover:bg-surface-variant/20 transition-colors flex flex-col group">
+<div class="flex items-start justify-between mb-8">
+<div class="w-8 h-8 rounded bg-surface border border-outline-variant/30 flex items-center justify-center group-hover:border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">show_chart</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-surface" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<div>
+<h4 class="font-medium text-on-surface leading-tight">Logistic regression</h4>
+<p class="text-on-surface-variant text-[12px] mt-1 line-clamp-2">Simple, fast baseline model for linear relationships.</p>
+</div>
+</div>
+<!-- Decision Tree (Unchecked) -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-lg p-5 cursor-pointer hover:border-outline-variant hover:bg-surface-variant/20 transition-colors flex flex-col group">
+<div class="flex items-start justify-between mb-8">
+<div class="w-8 h-8 rounded bg-surface border border-outline-variant/30 flex items-center justify-center group-hover:border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">park</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant group-hover:text-on-surface" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<div>
+<h4 class="font-medium text-on-surface leading-tight">Decision tree</h4>
+<p class="text-on-surface-variant text-[12px] mt-1 line-clamp-2">Highly interpretable but prone to variance.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Footer Action -->
+<div class="flex flex-col items-center justify-center pt-12">
+<button class="bg-primary-container text-on-primary-container font-headline-sm text-headline-sm font-semibold rounded-lg py-3.5 px-16 shadow-lg shadow-primary-container/20 hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="model_training">model_training</span>
+                        Train models
+                    </button>
+<span class="text-label-xs font-label-xs text-on-surface-variant mt-3 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">database</span>
+                        Will train on 100,000 rows
+                    </span>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DataBench - Upload Dataset</title>
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config from Style Guidance -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#e2dfff",
+                      "inverse-primary": "#4d44e3",
+                      "on-tertiary-fixed": "#351000",
+                      "surface-container-lowest": "#0d0e10",
+                      "on-secondary-container": "#b0aef9",
+                      "on-background": "#e3e2e5",
+                      "surface-dim": "#121315",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "inverse-surface": "#e3e2e5",
+                      "secondary": "#c3c0ff",
+                      "on-primary-fixed": "#0f0069",
+                      "secondary-fixed": "#e2dfff",
+                      "inverse-on-surface": "#303033",
+                      "outline": "#918fa1",
+                      "error-container": "#93000a",
+                      "tertiary-fixed-dim": "#ffb695",
+                      "surface": "#121315",
+                      "on-secondary-fixed-variant": "#413f82",
+                      "surface-container-high": "#292a2c",
+                      "primary": "#c3c0ff",
+                      "on-primary-container": "#dad7ff",
+                      "on-tertiary-fixed-variant": "#7b2f00",
+                      "surface-container-low": "#1b1c1e",
+                      "surface-bright": "#38393b",
+                      "outline-variant": "#464555",
+                      "on-error-container": "#ffdad6",
+                      "on-secondary": "#2a276a",
+                      "on-tertiary-container": "#ffd2be",
+                      "surface-container": "#1f2022",
+                      "surface-variant": "#343537",
+                      "on-tertiary": "#571f00",
+                      "on-primary-fixed-variant": "#3323cc",
+                      "tertiary-fixed": "#ffdbcc",
+                      "on-surface-variant": "#c7c4d8",
+                      "on-surface": "#e3e2e5",
+                      "secondary-container": "#413f82",
+                      "tertiary-container": "#a44100",
+                      "error": "#ffb4ab",
+                      "primary-container": "#4f46e5",
+                      "on-primary": "#1d00a5",
+                      "tertiary": "#ffb695",
+                      "on-error": "#690005",
+                      "background": "#121315",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "surface-container-highest": "#343537",
+                      "surface-tint": "#c3c0ff",
+                      "on-secondary-fixed": "#140f54"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "cell-padding-y": "8px",
+                      "sidebar-width": "220px",
+                      "container-padding": "24px",
+                      "gutter": "16px",
+                      "cell-padding-x": "12px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "table-data": [
+                              "Inter"
+                      ],
+                      "label-xs": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "table-data": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-xs": [
+                              "11px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-sm": [
+                              "18px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for dense data tables if needed later, and general body setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121315; /* Match theme background */
+            color: #e3e2e5; /* Match theme text */
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Dashed border animation */
+        .dashed-border {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23464555' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+            border-radius: 8px;
+            transition: background-image 0.2s ease;
+        }
+        
+        .dashed-border:hover {
+            background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%234f46e5' stroke-width='2' stroke-dasharray='8%2c 8' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface h-screen w-screen flex overflow-hidden">
+<!-- Shared Component: SideNavBar -->
+<nav class="bg-background dark:bg-surface-container-lowest font-body-md text-body-md fixed left-0 top-0 h-full w-[220px] border-r border-outline-variant/10 flex flex-col h-full py-6 z-10">
+<!-- Header / Brand -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm" data-weight="fill" style="font-variation-settings: 'FILL' 1;">database</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">DataBench</h1>
+<p class="text-[11px] text-on-surface-variant opacity-70">Main Workspace</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<!-- Suppressing active state as per instructions for linear/transactional intent (Upload) -->
+<ul class="flex-1 px-3 space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80 opacity-50 pointer-events-none" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="dashboard">dashboard</span>
+<span>Overview</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80 opacity-50 pointer-events-none" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="analytics">analytics</span>
+<span>Analyse</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80 opacity-50 pointer-events-none" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="schema">schema</span>
+<span>Model</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/5 dark:hover:bg-white/5 transition-colors cursor-pointer active:opacity-80 opacity-50 pointer-events-none" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span>Results</span>
+</a>
+</li>
+</ul>
+<!-- User / Settings Area -->
+<div class="px-4 mt-auto">
+<div class="h-px bg-outline-variant/10 mb-4"></div>
+<a class="flex items-center gap-3 px-2 py-2 rounded-lg text-on-surface-variant opacity-50 pointer-events-none" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+<span class="text-sm">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-[220px] flex-1 h-full overflow-y-auto bg-surface-dim p-container-padding flex flex-col items-center justify-center relative">
+<!-- Upload Container -->
+<div class="w-full max-w-[560px] flex flex-col gap-8">
+<!-- Header Text -->
+<div class="text-center">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-2">Upload Dataset</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Initialize your workspace by importing a compatible data file.</p>
+</div>
+<!-- Drop Zone -->
+<div class="dashed-border h-[280px] w-full flex flex-col items-center justify-center p-8 text-center cursor-pointer group hover:bg-white/[0.02] transition-colors relative overflow-hidden">
+<!-- Subtle glow effect on hover -->
+<div class="absolute inset-0 bg-primary-container opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300 pointer-events-none"></div>
+<div class="w-16 h-16 rounded-full bg-surface-container-high border border-outline-variant/20 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:border-primary/30 transition-transform duration-300 shadow-sm">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant group-hover:text-primary transition-colors" data-icon="cloud_upload">cloud_upload</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Drop a dataset to begin</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">csv, excel, parquet or json — up to 512 MB</p>
+<button class="bg-transparent text-primary hover:text-primary-fixed-dim font-body-md text-body-md px-4 py-2 rounded border border-transparent hover:border-outline-variant/30 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50">
+                    Browse files instead
+                </button>
+</div>
+<!-- Path Input -->
+<div class="flex items-center gap-4 text-on-surface-variant w-full">
+<div class="h-px bg-outline-variant/20 flex-1"></div>
+<span class="font-label-xs text-label-xs uppercase tracking-wider text-outline">or load from a path on this machine</span>
+<div class="h-px bg-outline-variant/20 flex-1"></div>
+</div>
+<div class="flex gap-2 w-full">
+<div class="relative flex-1 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm z-10" data-icon="terminal">terminal</span>
+<input class="w-full bg-surface-container text-on-surface font-table-data text-table-data pl-9 pr-3 py-2.5 rounded border border-outline-variant/30 focus:border-primary focus:ring-1 focus:ring-primary shadow-sm placeholder:text-outline/50 transition-all font-mono text-[12px] h-[36px] focus:outline-none" placeholder="/Users/analyst/data/sales_2023.parquet" type="text"/>
+<!-- Custom focus glow as per instructions -->
+<div class="absolute inset-0 rounded border border-transparent pointer-events-none group-focus-within:border-primary group-focus-within:shadow-[0_0_0_2px_rgba(79,70,229,0.2)] transition-shadow"></div>
+</div>
+<button class="bg-surface-container-high hover:bg-surface-bright text-on-surface border border-outline-variant/30 font-body-md text-[13px] px-5 rounded h-[36px] transition-colors focus:outline-none focus:border-primary shadow-sm flex items-center justify-center">
+                    Load
+                </button>
+</div>
+</div>
+</main>
+</body></html>
