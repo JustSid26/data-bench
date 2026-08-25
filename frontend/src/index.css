@@ -1,0 +1,132 @@
+/* source(none) turns off auto-detection so the reference html in mockups/ does
+   not drag its own utility classes into our bundle */
+@import "tailwindcss" source(none);
+@source ".";
+
+/* dark mode is driven by a class on <html>, not the OS setting */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* DESIGN.md tokens. Values live on :root / .dark so a theme switch is one
+   class change; the @theme block only maps them into tailwind's colour names. */
+:root {
+  --surface: #fafafa;
+  --card: #ffffff;
+  --card-raised: #f4f4f5;
+  --line: rgba(0, 0, 0, 0.1);
+  --line-strong: rgba(0, 0, 0, 0.18);
+  --ink: #18181b;
+  --ink-muted: #71717a;
+  --ink-faint: #a1a1aa;
+  --hover: rgba(0, 0, 0, 0.03);
+
+  --accent: #4f46e5;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(79, 70, 229, 0.1);
+
+  --good: #16a34a;
+  --warn: #d97706;
+  --bad: #dc2626;
+
+  --kind-numeric: #2563eb;
+  --kind-categorical: #9333ea;
+  --kind-boolean: #16a34a;
+  --kind-datetime: #d97706;
+  --kind-text: #71717a;
+  --kind-identifier: #64748b;
+  --kind-constant: #b45364;
+}
+
+.dark {
+  --surface: #0b0c0e;
+  --card: #141619;
+  --card-raised: #1b1c1e;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --ink: #e3e2e5;
+  --ink-muted: #8e8e96;
+  --ink-faint: #6b6b73;
+  --hover: rgba(255, 255, 255, 0.03);
+
+  --accent: #4f46e5;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(99, 91, 255, 0.16);
+
+  --good: #4ade80;
+  --warn: #fbbf24;
+  --bad: #f87171;
+
+  --kind-numeric: #60a5fa;
+  --kind-categorical: #c084fc;
+  --kind-boolean: #4ade80;
+  --kind-datetime: #fbbf24;
+  --kind-text: #a1a1aa;
+  --kind-identifier: #94a3b8;
+  --kind-constant: #fca5a5;
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-card-raised: var(--card-raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-hover: var(--hover);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+
+  --color-numeric: var(--kind-numeric);
+  --color-categorical: var(--kind-categorical);
+  --color-boolean: var(--kind-boolean);
+  --color-datetime: var(--kind-datetime);
+  --color-text: var(--kind-text);
+  --color-identifier: var(--kind-identifier);
+  --color-constant: var(--kind-constant);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --spacing-sidebar: 220px;
+  --radius-card: 0.5rem;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* every number in the app lines up column to column */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
