@@ -56,3 +56,170 @@ What does **not** exist in the api: per-row missingness beyond the 50-row previe
 4. **Polish** — button/card springs, count-ups, reading progress, memoised chart data, sampled matrices, windowed tables.
 
 Backend, api contracts and data models stay untouched.
+
+---
+
+# What was done
+
+Four commits on top of this audit, one per phase. Backend, api contracts and
+`lib/types.ts` are untouched; the 48 backend tests still pass. Dependencies
+added: `motion`, `@radix-ui/react-dialog`, `-tooltip`, `-popover` — nothing else.
+
+## Phase 1 — foundation
+
+- **Tokens** (`src/index.css`, `src/lib/tokens.ts`): contrast-fixed greys (both
+  now ≥ 4.5:1), `accent-fg` for accent-as-text, a named quality palette
+  (`quality-good/warning/critical`), a type scale, radii, elevation and scrim
+  tokens, a diverging pair for correlation, a `.skeleton` shimmer.
+- **Kind palette re-validated.** numeric/categorical were indistinguishable
+  under deuteranopia (ΔE 1.3) and boolean reused the "good" status green. The
+  new order — blue / pink / amber / teal — passes the CVD, lightness and
+  contrast checks in both themes. Kind *text* stays in ink; the hue lives on
+  the icon and border, and every kind has a glyph, so type is never colour-only.
+- **Motion** (`src/lib/motion/`): `spring` / `tween` presets, `fadeUp`,
+  `fadeIn`, `scaleIn`, `slideIn()`, `stagger()`, `press`, `lift`, `inView`;
+  `MotionProvider` (`LazyMotion strict` with `domMax` loaded async +
+  `MotionConfig reducedMotion="user"`, plus a CSS reduced-motion guard);
+  `PageTransition`; `CountUp` (writes text directly, no re-render per frame,
+  screen readers get the final value only).
+- **Layout route**: sidebar and top bar now persist across navigation; route
+  content animates underneath with `AnimatePresence`.
+
+## Phase 2 — infographics (`src/components/viz/`)
+
+All SVG + motion, all bound to real api data, all with hover tooltips and an
+in-view entrance.
+
+| component | binds to |
+| --- | --- |
+| `HealthRing` | `healthScore(profile)` — completeness 40%, type consistency 20%, uniqueness 20%, outliers 20%; breakdown on hover/focus |
+| `TypeDonut` | `schema[].kind`; segments click to filter the column table |
+| `MissingMatrixChart` / `MissingBars` | nulls in `preview.rows` (sampled to ≤ 48 columns) / `column_stats[].missing_pct` |
+| `HistogramSpark`, `TopNBars`, `TimelineDensity` | `histogram`, `top_values`, `by_month` |
+| `BoxPlot` | `q1/median/q3/min/max/mean`, histogram silhouette behind it |
+| `CorrelationHeatmap` | `profile.correlations` (crosshair hover, click → inspector) |
+| `DuplicatesCard`, `CardinalityCard` | `duplicate_rows`, `unique_pct` |
+| `TaskInference`, `ModelCard` | `plan` + data-driven reasons from the profile |
+| `ProgressRing`, `ScoreBars`, `MetricTile`, `ImportanceBars`, `ConfusionMatrix`, `FitTimeline` | `job`, `training.results` |
+
+Pure derivations live in `src/lib/insights.ts` so the charts stay dumb.
+
+## Phase 3 — screens
+
+- **Upload**: drop zone with drag feedback and file-type glyphs; real byte
+  progress (XHR on the same endpoint) with cancel; stepper Uploading → Reading
+  → Detecting types → Profiling → Done, where *Profiling* is a real prefetch of
+  the profile; detected-type chips; sample preview slides in; recent datasets
+  animate in/out, forget gives a toast.
+- **Overview**: health + hero stats with count-ups; type donut, missing
+  matrix, most-incomplete bars, duplicates, cardinality; column table with
+  sticky header, type glyphs, inline missing bars, sort (aria-sort), filter by
+  name or kind, `layout` row animation, quick-action popover (drop / impute /
+  cast / encode …), windowing past 120 columns.
+- **Column inspector**: right drawer (non-modal, so toasts and undo stay
+  reachable) opened from any row, card, chart or the palette; the name morphs
+  in via `layoutId`; stats, histogram + box plot, missing pattern, profiler
+  flags, suggested fixes with one-click staging, related columns.
+- **Clean** (new, `/clean`): staged recipe, projected health before → after
+  per component, suggestions ordered by profiler severity, undo on every add
+  and remove, export as JSON.
+- **Model**: target as radio chips with the inferred task explained; feature
+  chips animate as the target changes; dropped features disclosed; training
+  row budget slider bound to the api's `max_rows` with a live train/test/unused
+  bar; ranked model cards with "why this model", read-only hyperparameters,
+  switch-style selection; sticky train bar.
+- **Results**: elapsed timer + estimated progress ring + queued models while
+  running; completion toast; staggered reveal of leaderboard, fit times, metric
+  count-ups, importance bars, cell-by-cell confusion matrix; clustering view
+  with validated cluster colours; JSON export and a Markdown report download.
+- **Global**: ⌘K / Ctrl+K palette (screens, columns, datasets, models,
+  actions), `?` shortcuts dialog, `g`+letter navigation, `[` sidebar, `t`
+  theme, collapsible sidebar (persisted), mobile drawer nav, pipeline
+  breadcrumb Ingest → Profile → Clean → Model → Train, toasts with undo,
+  reading-progress bar, skeleton / empty / error-with-retry states on every
+  data screen.
+
+## Phase 4 — polish and performance
+
+- Buttons `whileHover` 1.02 / `whileTap` 0.98 on a spring; cards lift; inputs
+  grow a focus ring; one focus-visible outline everywhere else.
+- Routes and overlays are code-split; overlays mount on first open. Main chunk
+  is 506 kB (167 kB gzip) after the mobile nav moved onto Radix Dialog, down
+  from 607 kB before splitting (the pre-upgrade app was 320 kB).
+- Charts never draw more than ~2.4k marks (matrix: 50 rows × ≤ 48 columns);
+  derived data is memoised; profile cards are `memo`'d; the preview and column
+  tables window rows.
+
+## macOS look and colour themes (follow-up)
+
+- **Materials** (`index.css`): `glass` (content), `glass-chrome` (sidebar,
+  toolbar) and `glass-sheet` (dialogs, drawer, toasts, palette, tooltips) —
+  translucent fills with `backdrop-filter: blur() saturate()` and a lit top
+  edge, over a fixed three-blob wallpaper. `prefers-reduced-transparency`
+  swaps in solid panels.
+- **Chrome**: floating inset sidebar with a segmented Light/Dark control and
+  accent swatches; frosted sticky toolbar; Spotlight-style ⌘K palette; SF Pro
+  / SF Mono on Apple platforms (Inter / JetBrains Mono elsewhere).
+- **Accent themes**: Blue, Indigo, Purple, Pink, Teal, Graphite (sidebar,
+  palette; persisted). Each swaps the accent and the wallpaper tint, in both
+  modes. Every fill keeps white text ≥ 4.5:1. Red / green / orange are not
+  offered: they mean critical / good / warning.
+- **Colour, not monochrome**: iOS-Settings-style gradient icon tiles give
+  every screen and section its own hue (`IconTile`, tones independent of the
+  accent). Chart colours stay fixed across accents, so data never changes
+  meaning when the theme does.
+
+## Review fixes
+
+An independent review of the diff found eight defects, all fixed in
+`fix(ui): review fixes …`: "Show all" rows staying invisible, fit-time bars
+going NaN when a model failed, dialogs dropping focus to `<body>` on close,
+a mobile nav with no keyboard support (now a Radix dialog), windowed table
+rows jittering during exit animations, a shared `layoutId` between the two
+sidebars, palette option ids containing spaces, and drops on the busy drop
+zone navigating the browser to the file.
+
+## Mocked, staged or estimated — read before trusting a number
+
+| what | why | where |
+| --- | --- | --- |
+| **Cleaning recipe** is staged only | no cleaning endpoint; models still train on raw data | `state/cleaning.tsx`, `/clean` says so on screen |
+| **Projected health** after cleaning | computed from the profile, not re-profiled data | `projectProfile()` in `lib/insights.ts` |
+| **Health score** weights | a UI heuristic, not a backend metric | `healthScore()` |
+| **Training progress ring** | api has no progress; ring eases toward an estimate, labelled "est." — elapsed time is real | `ProgressRing`, `Running` in `routes/Results.tsx` |
+| **"Why this model" extra reasons** | rules over the profile, beneath the planner's own reason; no score is invented — the bar is the planner's rank | `modelReasons()` |
+| **Hyperparameters** | read-only copy of `backend/ads/train.py` defaults; the api takes no overrides | `HYPERPARAMETERS` |
+| **Missing matrix** | first 50 preview rows only — the only per-row data the api returns | `missingMatrix()` |
+| **Correlation matrix** | only pairs with \|r\| ≥ 0.5 (top 25); the rest shows as "weak", not zero | `correlationMatrix()` |
+
+Not built, because the data does not exist: live loss/accuracy curves (sklearn
+fits in one shot, no epochs), pause/cancel (no endpoint — the screen says a
+started job runs to completion), model export (no endpoint; JSON + Markdown
+report instead), editable train/test split (fixed 20% in the backend).
+
+## Verified
+
+- `tsc -b`, `vite build`, backend `pytest` (48 passed) after every phase.
+- Walked the whole flow in Chrome against the real api with a 3,060-row
+  synthetic dataset: upload → overview → analyse → inspector → stage fix →
+  undo toast → clean → model → train → results → palette → shortcuts, in both
+  themes, at 1440 and 390 px wide.
+- Kind palette validated with the dataviz palette checker; text tokens checked
+  for ≥ 4.5:1 in both themes.
+
+There is no ESLint config or frontend test runner in the repo, and adding one
+was out of scope (dependency rule), so "lint" here is `tsc` strict with
+`noUnusedLocals/Parameters`.
+
+## Next steps
+
+1. **Backend**: a cleaning endpoint (apply the exported recipe), progress
+   events for training (per-model start/finish), cancel, and a model export —
+   each unlocks a UI piece that is staged or estimated today.
+2. Return a full correlation matrix (or a lower floor) and a sampled null mask
+   so the heatmap and missing matrix are not limited to strong pairs / preview rows.
+3. Add Vitest + Testing Library for `lib/insights.ts` (pure, easy to cover)
+   and a Playwright smoke run of the flow above.
+4. Add ESLint (`react-hooks`) — several effects rely on careful dependency lists.
+5. Sidebar collapse animates `width`; switch to a transform-based panel if it
+   ever janks on large tables.
