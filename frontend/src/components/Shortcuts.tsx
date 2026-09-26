@@ -48,7 +48,7 @@ export function ShortcutsDialog() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.97 }}
                 transition={spring.snappy}
-                className="fixed top-1/2 left-1/2 z-50 w-[min(28rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 rounded-card border border-line bg-card p-5 shadow-lg outline-none"
+                className="fixed top-1/2 left-1/2 z-50 w-[min(28rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 glass-sheet rounded-[20px] border border-line p-5 outline-none"
               >
                 <div className="flex items-center justify-between">
                   <Dialog.Title className="text-[15px] font-semibold">Keyboard shortcuts</Dialog.Title>

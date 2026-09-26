@@ -212,7 +212,7 @@ export function Upload() {
               transition={tween.base}
               className="overflow-hidden"
             >
-              <div className="mt-4 rounded-card border border-line bg-card p-4 shadow-sm" aria-live="polite">
+              <div className="glass mt-4 rounded-card border border-line p-4" aria-live="polite">
                 <div className="flex items-center gap-3">
                   <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-accent-soft text-accent-fg">
                     <Icon name={fileIcon(source.name)} className="size-5" />
@@ -365,7 +365,7 @@ export function Upload() {
           {recent.error && <p className="text-[12px] text-ink-muted">Could not reach the api — is the backend running on :8000?</p>}
           {recent.data?.datasets.length === 0 && <p className="text-[13px] text-ink-muted">Nothing yet. Datasets you load stay here while the server runs.</p>}
           {recent.data && recent.data.datasets.length > 0 && (
-            <m.ul variants={stagger(0.04)} initial="hidden" animate="show" className="overflow-hidden rounded-card border border-line bg-card">
+            <m.ul variants={stagger(0.04)} initial="hidden" animate="show" className="glass overflow-hidden rounded-card border border-line">
               <AnimatePresence initial={false}>
                 {recent.data.datasets.map((item) => (
                   <m.li

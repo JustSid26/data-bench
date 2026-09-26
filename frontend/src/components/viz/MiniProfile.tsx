@@ -10,7 +10,7 @@ import type { ColumnStats } from "../../lib/types";
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: "warn" }) {
   return (
-    <span className="inline-flex items-baseline gap-1 rounded-md border border-line bg-card-raised px-1.5 py-0.5 text-[11px]">
+    <span className="inline-flex items-baseline gap-1 rounded-md border border-line bg-hover px-1.5 py-0.5 text-[11px]">
       <span className="text-ink-faint">{label}</span>
       <span className={`tnum font-medium ${tone === "warn" ? "text-warn" : ""}`}>{value}</span>
     </span>
@@ -30,7 +30,7 @@ export const MiniProfile = memo(function MiniProfile({ column, onOpen }: { colum
       <button
         type="button"
         onClick={() => onOpen(column.name)}
-        className="flex h-full w-full flex-col rounded-card border border-line bg-card p-4 text-left shadow-sm transition-shadow hover:border-line-strong hover:shadow-md"
+        className="flex h-full w-full flex-col glass rounded-card border border-line p-4 text-left transition-shadow hover:border-line-strong hover:shadow-md"
         aria-label={`Inspect column ${column.name}`}
       >
         <div className="flex w-full items-start justify-between gap-2">

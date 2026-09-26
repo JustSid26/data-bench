@@ -26,7 +26,7 @@ function TargetDistribution({ plan }: { plan: Plan }) {
     return (
       <dl className="tnum grid grid-cols-2 gap-2 text-[13px]">
         {(["min", "max", "mean", "std"] as const).map((key) => (
-          <m.div key={key} variants={fadeUp} className="rounded-lg border border-line bg-card-raised px-3 py-2">
+          <m.div key={key} variants={fadeUp} className="rounded-xl border border-line bg-hover px-3 py-2">
             <dt className="text-[11px] text-ink-muted capitalize">{key}</dt>
             <dd className="font-medium">{decimal(summary[key], 2)}</dd>
           </m.div>
@@ -167,7 +167,7 @@ export function Model() {
         {plan.data && (
           <>
             <m.div variants={stagger(0.06)} initial="hidden" animate="show" className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] 2xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)_minmax(0,24rem)]">
-              <Card title={plan.data.target ? "Target distribution" : "No target"}>
+              <Card title={plan.data.target ? "Target distribution" : "No target"} icon="target" tone="pink">
                 {plan.data.target ? (
                   <m.div variants={stagger(0.05)} initial="hidden" animate="show" className="space-y-4">
                     <TargetDistribution plan={plan.data} />
@@ -182,7 +182,7 @@ export function Model() {
                 )}
               </Card>
 
-              <Card title={`Features (${used.length})`} action={features && features.dropped.length > 0 && <span className="text-[11px] text-ink-faint">{features.dropped.length} left out</span>}>
+              <Card icon="layers" tone="indigo" title={`Features (${used.length})`} action={features && features.dropped.length > 0 && <span className="text-[11px] text-ink-faint">{features.dropped.length} left out</span>}>
                 <LayoutGroup>
                   <ul className="flex flex-wrap gap-1.5" aria-label="Feature columns">
                     <AnimatePresence initial={false}>
@@ -195,7 +195,7 @@ export function Model() {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1, transition: { ...spring.snappy, delay: Math.min(index * 0.015, 0.4) } }}
                             exit={{ opacity: 0, scale: 0.8, transition: tween.fast }}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card-raised px-2.5 py-1 font-mono text-[12px]"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-hover px-2.5 py-1 font-mono text-[12px]"
                           >
                             <Icon name={token.icon} className={`size-3 ${token.text}`} />
                             {name}
@@ -224,7 +224,7 @@ export function Model() {
                 )}
               </Card>
 
-              <Card title="Training data" className="lg:col-span-2 2xl:col-span-1">
+              <Card title="Training data" icon="sort" tone="teal" className="lg:col-span-2 2xl:col-span-1">
                 <RowBudget rows={dataset.meta.rows} value={budget} onChange={setBudget} supervised={supervised} />
               </Card>
             </m.div>
@@ -260,7 +260,7 @@ export function Model() {
               </m.div>
             </section>
 
-            <m.div variants={fadeUp} initial="hidden" animate="show" className="sticky bottom-4 z-10 mx-auto flex w-fit flex-col items-center gap-2 rounded-card border border-line bg-card/90 px-5 py-3 shadow-lg backdrop-blur">
+            <m.div variants={fadeUp} initial="hidden" animate="show" className="sticky bottom-4 z-10 mx-auto flex w-fit flex-col items-center gap-2 glass-sheet rounded-[20px] border border-line px-5 py-3">
               <Button
                 variant="primary"
                 className="px-8 py-2.5 text-[15px]"

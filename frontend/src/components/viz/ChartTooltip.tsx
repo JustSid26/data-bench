@@ -46,7 +46,7 @@ export function useChartTooltip() {
           exit={{ opacity: 0 }}
           transition={tween.fast}
           style={{ left: tip.x, top: tip.y }}
-          className="pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-md border border-line bg-card-raised px-2.5 py-1.5 text-[12px] whitespace-nowrap text-ink shadow-md"
+          className="pointer-events-none absolute z-30 -translate-x-1/2 -translate-y-[calc(100%+10px)] glass-sheet rounded-lg border border-line px-2.5 py-1.5 text-[12px] whitespace-nowrap text-ink shadow-md"
         >
           {tip.content}
         </m.div>

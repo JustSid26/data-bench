@@ -3,14 +3,15 @@ import type { RefObject } from "react";
 import { NavLink, useLocation, useNavigate, useOutlet } from "react-router-dom";
 import { AnimatePresence, m, useScroll, useSpring, useTransform } from "motion/react";
 import { Icon } from "./icons";
-import { Hint, IconButton, Kbd } from "./primitives";
+import { Hint, IconButton, IconTile, Kbd } from "./primitives";
+import type { TileTone } from "./primitives";
 import { NAV } from "./nav";
 import { Pipeline } from "./Pipeline";
 import { useGlobalShortcuts } from "./useGlobalShortcuts";
 import { count } from "../lib/format";
 import { PageTransition, spring, tween } from "../lib/motion";
 import { useSession } from "../state/session";
-import { useTheme } from "../state/theme";
+import { ACCENTS, useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
 
 // overlays load on first open, keeping charts and the dialog runtime out of the first paint
@@ -32,19 +33,20 @@ export const useScrollContainer = () => useContext(ScrollContext);
 
 function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () => void }) {
   const { dataset, close } = useSession();
-  const { dark, toggle } = useTheme();
+  const { dark, toggle, accent, setAccent } = useTheme();
   const { toggleCollapsed, collapsed, setPalette } = useUi();
   const navigate = useNavigate();
   const locked = !dataset;
 
-  const row = `flex items-center rounded-lg text-[14px] transition-colors ${compact ? "justify-center size-10 mx-auto" : "gap-3 px-3 py-2"}`;
+  const row = `flex items-center rounded-[10px] text-[14px] transition-colors ${compact ? "justify-center size-10 mx-auto" : "gap-2.5 px-2 py-1.5"}`;
 
   return (
     <div className="flex h-full flex-col">
       <div className={`flex items-center pt-5 pb-4 ${compact ? "justify-center px-2" : "justify-between px-5"}`}>
         <NavLink to="/" onClick={onNavigate} className="flex items-center gap-2.5" aria-label="DataBench home">
-          <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-accent text-accent-ink shadow-sm">
-            <Icon name="grid" className="size-4" />
+          {/* app icon: a squircle in the accent, lit from the top like a dock icon */}
+          <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-accent bg-gradient-to-b from-white/25 to-transparent text-accent-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_10px_-2px_var(--accent-soft)]">
+            <Icon name="layers" className="size-5" />
           </span>
           {!compact && (
             <span>
@@ -62,7 +64,7 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
             onNavigate?.();
             setPalette(true);
           }}
-          className="mx-3 mb-3 flex items-center gap-2 rounded-lg border border-line bg-card px-3 py-1.5 text-left text-[13px] text-ink-muted shadow-sm transition-colors hover:border-line-strong hover:text-ink"
+          className="mx-3 mb-3 flex items-center gap-2 rounded-[10px] bg-hover px-3 py-1.5 text-left text-[13px] text-ink-muted transition-colors hover:bg-line hover:text-ink"
         >
           <Icon name="search" className="size-4" />
           <span className="flex-1">Jump to…</span>
@@ -77,7 +79,7 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={tween.base}
-            className="mx-3 mb-4 rounded-lg border border-line bg-card px-3 py-2.5"
+            className="glass mx-3 mb-4 rounded-xl border border-line px-3 py-2.5"
           >
             <div className="flex items-start gap-2">
               <Icon name="file" className="mt-[2px] size-3.5 shrink-0 text-ink-faint" />
@@ -92,15 +94,69 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
         )}
       </AnimatePresence>
 
-      <nav aria-label="Workspace" className="flex-1 space-y-0.5 px-3">
-        <NavItem to="/" label="Upload" icon="upload" compact={compact} end onNavigate={onNavigate} className={row} />
+      <nav aria-label="Workspace" className="flex-1 space-y-0.5 overflow-y-auto px-3">
+        {!compact && <p className="px-2 pt-1 pb-1.5 text-[11px] font-semibold text-ink-faint">Workspace</p>}
+        <NavItem to="/" label="Upload" icon="upload" tone="blue" compact={compact} end onNavigate={onNavigate} className={row} />
         {NAV.map((item) => (
-          <NavItem key={item.to} to={item.to} label={item.label} icon={item.icon} compact={compact} locked={locked} onNavigate={onNavigate} className={row} />
+          <NavItem key={item.to} to={item.to} label={item.label} icon={item.icon} tone={item.tone} compact={compact} locked={locked} onNavigate={onNavigate} className={row} />
         ))}
       </nav>
 
-      <div className={`space-y-1 border-t border-line py-3 ${compact ? "px-2" : "px-3"}`}>
-        <FooterButton compact={compact} icon={dark ? "sun" : "moon"} label={dark ? "Light theme" : "Dark theme"} onClick={toggle} />
+      <div className={`space-y-2 border-t border-line py-3 ${compact ? "px-2" : "px-3"}`}>
+        {compact ? (
+          <FooterButton compact icon={dark ? "sun" : "moon"} label={dark ? "Light theme" : "Dark theme"} onClick={toggle} />
+        ) : (
+          <>
+            {/* iOS segmented control for appearance */}
+            <div role="radiogroup" aria-label="Appearance" className="relative grid grid-cols-2 rounded-[9px] bg-hover p-0.5 text-[12px] font-medium">
+              {[
+                { on: !dark, label: "Light", icon: "sun" },
+                { on: dark, label: "Dark", icon: "moon" },
+              ].map((option) => (
+                <button
+                  key={option.label}
+                  type="button"
+                  role="radio"
+                  aria-checked={option.on}
+                  onClick={() => !option.on && toggle()}
+                  className={`relative flex items-center justify-center gap-1.5 rounded-[7px] py-1 transition-colors ${option.on ? "text-ink" : "text-ink-muted hover:text-ink"}`}
+                >
+                  {option.on && (
+                    <m.span layoutId={`appearance-${onNavigate ? "drawer" : "side"}`} transition={spring.snappy} className="absolute inset-0 rounded-[7px] bg-card-raised shadow-[0_1px_3px_rgba(0,0,0,0.15)]" />
+                  )}
+                  <span className="relative">
+                    <Icon name={option.icon} className="size-3.5" />
+                  </span>
+                  <span className="relative">{option.label}</span>
+                </button>
+              ))}
+            </div>
+            {/* accent swatches, as in macOS System Settings */}
+            <div role="radiogroup" aria-label="Accent colour" className="flex items-center justify-between px-1">
+              {ACCENTS.map((option) => {
+                const on = option.id === accent;
+                return (
+                  <Hint key={option.id} label={option.label}>
+                    <m.button
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      aria-label={`${option.label} accent`}
+                      onClick={() => setAccent(option.id)}
+                      whileHover={{ scale: 1.15 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={spring.snappy}
+                      className="relative grid size-5 place-items-center rounded-full shadow-[inset_0_-1px_1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.3)]"
+                      style={{ background: option.swatch }}
+                    >
+                      {on && <m.span layoutId={`accent-dot-${onNavigate ? "drawer" : "side"}`} transition={spring.snappy} className="size-1.5 rounded-full bg-white" />}
+                    </m.button>
+                  </Hint>
+                );
+              })}
+            </div>
+          </>
+        )}
         {dataset && (
           <FooterButton
             compact={compact}
@@ -131,6 +187,7 @@ function NavItem({
   to,
   label,
   icon,
+  tone,
   compact,
   locked = false,
   end = false,
@@ -140,6 +197,7 @@ function NavItem({
   to: string;
   label: string;
   icon: string;
+  tone: TileTone;
   compact: boolean;
   locked?: boolean;
   end?: boolean;
@@ -157,10 +215,10 @@ function NavItem({
       className={({ isActive }) =>
         `relative ${className} ${
           locked
-            ? "pointer-events-none text-ink-faint/60"
+            ? "pointer-events-none text-ink-faint opacity-50 grayscale"
             : isActive
               ? "font-semibold text-ink"
-              : "text-ink-muted hover:bg-hover hover:text-ink"
+              : "text-ink hover:bg-hover"
         }`
       }
     >
@@ -170,11 +228,11 @@ function NavItem({
             <m.span
               layoutId="nav-active"
               transition={spring.soft}
-              className="absolute inset-0 rounded-lg border-l-2 border-accent bg-accent-soft"
+              className="absolute inset-0 rounded-[10px] bg-accent-soft"
             />
           )}
           <span className="relative">
-            <Icon name={icon} />
+            <IconTile icon={icon} tone={tone} size="sm" />
           </span>
           {!compact && <span className="relative">{label}</span>}
         </>
@@ -250,12 +308,15 @@ export function Layout() {
       <div className="flex h-full">
         <m.aside
           aria-label="Sidebar"
-          animate={{ width: collapsed ? 64 : 232 }}
+          animate={{ width: collapsed ? 76 : 248 }}
           initial={false}
           transition={spring.soft}
-          className="hidden shrink-0 overflow-hidden border-r border-line bg-surface md:block"
+          className="hidden shrink-0 overflow-hidden p-2 md:block"
         >
-          <Sidebar compact={collapsed} />
+          {/* a floating vibrancy panel, inset from the window edge like the macOS sidebar */}
+          <div className="glass-chrome h-full overflow-hidden rounded-[18px] border border-line shadow-md">
+            <Sidebar compact={collapsed} />
+          </div>
         </m.aside>
 
         <AnimatePresence>
@@ -276,7 +337,7 @@ export function Layout() {
                 animate={{ x: 0 }}
                 exit={{ x: "-100%" }}
                 transition={spring.soft}
-                className="fixed inset-y-0 left-0 z-50 w-[264px] border-r border-line bg-surface shadow-lg md:hidden"
+                className="glass-sheet fixed inset-y-2 left-2 z-50 w-[264px] overflow-hidden rounded-[18px] border border-line md:hidden"
               >
                 <Sidebar compact={false} onNavigate={() => setMobileNav(false)} />
               </m.aside>
@@ -286,7 +347,7 @@ export function Layout() {
 
         <main ref={scroller} className="relative flex min-w-0 flex-1 flex-col overflow-y-auto">
           <ReadingProgress target={scroller} />
-          <div className="sticky top-0 z-20 flex items-center gap-2 border-b border-line bg-surface/85 px-3 py-2 backdrop-blur md:px-6">
+          <div className="glass-chrome sticky top-0 z-20 flex items-center gap-2 border-b border-line px-3 py-2 md:px-6">
             <IconButton icon="menu" label="Open navigation" className="md:hidden" onClick={() => setMobileNav(true)} />
             <Pipeline />
             <div className="ml-auto flex items-center gap-1">

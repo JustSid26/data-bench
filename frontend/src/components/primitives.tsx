@@ -17,6 +17,8 @@ export function Card({
   bodyClass = "p-4",
   hover = false,
   id,
+  icon,
+  tone = "blue",
 }: {
   title?: ReactNode;
   action?: ReactNode;
@@ -26,17 +28,23 @@ export function Card({
   /** lift on hover -- for cards that are themselves interactive */
   hover?: boolean;
   id?: string;
+  /** coloured glyph tile before the title, iOS-settings style */
+  icon?: string;
+  tone?: TileTone;
 }) {
   return (
     <m.section
       id={id}
       variants={fadeUp}
       {...(hover ? lift : {})}
-      className={`rounded-card border border-line bg-card shadow-sm ${hover ? "hover:shadow-md" : ""} ${className}`}
+      className={`glass rounded-card border border-line ${hover ? "hover:shadow-md" : ""} ${className}`}
     >
       {title && (
         <header className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
-          <h2 className="min-w-0 text-[15px] font-semibold tracking-[-0.01em]">{title}</h2>
+          <h2 className="flex min-w-0 items-center gap-2.5 text-[15px] font-semibold tracking-[-0.01em]">
+            {icon && <IconTile icon={icon} tone={tone} size="sm" />}
+            <span className="min-w-0">{title}</span>
+          </h2>
           {action}
         </header>
       )}
@@ -82,8 +90,10 @@ type ButtonProps = HTMLMotionProps<"button"> & { variant?: "primary" | "ghost" |
 
 export function Button({ children, variant = "ghost", className = "", type = "button", ...rest }: ButtonProps) {
   const look = {
-    primary: "bg-accent text-accent-ink border-accent shadow-sm hover:brightness-110",
-    ghost: "border-line bg-card text-ink hover:bg-hover hover:border-line-strong",
+    // macOS push buttons: a lit top edge on the filled one, frosted for the rest
+    primary:
+      "bg-accent text-accent-ink border-black/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_1px_3px_rgba(0,0,0,0.18)] hover:brightness-110",
+    ghost: "border-line bg-card text-ink shadow-[inset_0_1px_0_var(--glass-edge),0_1px_2px_rgba(0,0,0,0.06)] backdrop-blur-md hover:bg-hover hover:border-line-strong",
     danger: "border-bad/40 bg-bad/10 text-bad hover:bg-bad/15",
     quiet: "border-transparent text-ink-muted hover:bg-hover hover:text-ink",
   }[variant];
@@ -135,7 +145,7 @@ export function Hint({
         <Tooltip.Content
           side={side}
           sideOffset={6}
-          className="z-50 flex items-center gap-2 rounded-md border border-line bg-card-raised px-2 py-1 text-[12px] text-ink shadow-md"
+          className="glass-sheet z-50 flex items-center gap-2 rounded-lg border border-line px-2 py-1 text-[12px] text-ink"
         >
           {label}
           {shortcut && <Kbd>{shortcut}</Kbd>}
@@ -256,9 +266,7 @@ export function Empty({
       animate="show"
       className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-center"
     >
-      <span className="grid size-14 place-items-center rounded-2xl border border-line bg-card text-ink-muted shadow-sm">
-        <Icon name={icon} className="size-6" />
-      </span>
+      <IconTile icon={icon} tone="blue" size="lg" />
       <p className="text-[15px] font-semibold">{title}</p>
       {hint && <p className="max-w-md text-[13px] text-ink-muted">{hint}</p>}
       {action}
@@ -293,7 +301,7 @@ export function Skeleton({ className = "" }: { className?: string }) {
 /** A card-shaped skeleton; `lines` sets how tall it looks. */
 export function SkeletonCard({ className = "", lines = 4, chart = false }: { className?: string; lines?: number; chart?: boolean }) {
   return (
-    <div className={`rounded-card border border-line bg-card p-4 ${className}`} aria-hidden="true">
+    <div className={`glass rounded-card border border-line p-4 ${className}`} aria-hidden="true">
       <Skeleton className="h-4 w-1/3" />
       {chart && <Skeleton className="mt-4 h-24 w-full" />}
       <div className="mt-4 space-y-2.5">
@@ -309,5 +317,33 @@ export function SkeletonCard({ className = "", lines = 4, chart = false }: { cla
 export function Eyebrow({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <p className={`text-[11px] font-semibold tracking-[0.06em] text-ink-faint uppercase ${className}`}>{children}</p>
+  );
+}
+
+/** Tile colours, independent of the accent: each screen / section keeps its
+ *  own hue (like the iOS Settings list), so the app is never monochrome.
+ *  Green, red and amber are left out -- those mean good / critical / warning. */
+const TILE = {
+  blue: "from-[#3d9bff] to-[#0064d2]",
+  indigo: "from-[#7c74ff] to-[#4338ca]",
+  purple: "from-[#b86bf0] to-[#7e30b8]",
+  pink: "from-[#ff5c9a] to-[#c71f66]",
+  teal: "from-[#22c3d6] to-[#0b7285]",
+  sky: "from-[#5ac8fa] to-[#0a6fb5]",
+  violet: "from-[#a78bfa] to-[#6d28d9]",
+  graphite: "from-[#8e8e93] to-[#48484d]",
+} as const;
+export type TileTone = keyof typeof TILE;
+
+export function IconTile({ icon, tone = "blue", size = "md" }: { icon: string; tone?: TileTone; size?: "sm" | "md" | "lg" }) {
+  const box = { sm: "size-6 rounded-[7px]", md: "size-8 rounded-[9px]", lg: "size-14 rounded-[16px]" }[size];
+  const glyph = { sm: "size-3.5", md: "size-4", lg: "size-7" }[size];
+  return (
+    <span
+      aria-hidden="true"
+      className={`grid shrink-0 place-items-center bg-gradient-to-b text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.2)] ${TILE[tone]} ${box}`}
+    >
+      <Icon name={icon} className={glyph} />
+    </span>
   );
 }

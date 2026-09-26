@@ -24,23 +24,23 @@ function SupervisedDetail({ result, training }: { result: ModelResult; training:
       <m.div variants={stagger(0.06)} className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {classifying ? (
           <>
-            <MetricTile label="Balanced accuracy" value={metrics.balanced_accuracy} hint="corrects for uneven classes" emphasis />
-            <MetricTile label="Accuracy" value={metrics.accuracy} hint={`${count(metrics.test_rows ?? 0)} holdout rows`} />
-            <MetricTile label="ROC AUC" value={metrics.roc_auc} hint="ranking quality, threshold-free" />
-            <MetricTile label="F1" value={metrics.f1} hint={metrics.threshold != null ? `threshold ${decimal(metrics.threshold, 3)}` : "default threshold"} />
+            <MetricTile label="Balanced accuracy" value={metrics.balanced_accuracy} hint="corrects for uneven classes" emphasis icon="target" tone="blue" />
+            <MetricTile icon="tick" tone="teal" label="Accuracy" value={metrics.accuracy} hint={`${count(metrics.test_rows ?? 0)} holdout rows`} />
+            <MetricTile icon="chart" tone="purple" label="ROC AUC" value={metrics.roc_auc} hint="ranking quality, threshold-free" />
+            <MetricTile icon="sparkle" tone="pink" label="F1" value={metrics.f1} hint={metrics.threshold != null ? `threshold ${decimal(metrics.threshold, 3)}` : "default threshold"} />
           </>
         ) : (
           <>
-            <MetricTile label="R²" value={metrics.r2} places={4} hint="share of variance explained" emphasis />
-            <MetricTile label="MAE" value={metrics.mae} places={2} hint="average absolute error" />
-            <MetricTile label="RMSE" value={metrics.rmse} places={2} hint="penalises large misses" />
-            <MetricTile label="MAPE" value={metrics.mape_pct ?? null} places={1} suffix="%" hint="average relative error" />
+            <MetricTile label="R²" value={metrics.r2} places={4} hint="share of variance explained" emphasis icon="target" tone="blue" />
+            <MetricTile icon="kind-numeric" tone="teal" label="MAE" value={metrics.mae} places={2} hint="average absolute error" />
+            <MetricTile icon="chart" tone="purple" label="RMSE" value={metrics.rmse} places={2} hint="penalises large misses" />
+            <MetricTile icon="sort" tone="pink" label="MAPE" value={metrics.mape_pct ?? null} places={1} suffix="%" hint="average relative error" />
           </>
         )}
       </m.div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <Card title="What drove it" action={<span className="text-[11px] text-ink-faint">{algorithmName(result.algorithm)}</span>}>
+        <Card title="What drove it" icon="sparkle" tone="purple" action={<span className="text-[11px] text-ink-faint">{algorithmName(result.algorithm)}</span>}>
           {result.importance.length > 0 ? (
             <ImportanceBars items={result.importance} />
           ) : (
@@ -48,7 +48,7 @@ function SupervisedDetail({ result, training }: { result: ModelResult; training:
           )}
         </Card>
         {classifying && metrics.confusion && metrics.labels ? (
-          <Card title="Where it was right and wrong">
+          <Card title="Where it was right and wrong" icon="grid" tone="pink">
             <ConfusionMatrix matrix={metrics.confusion} labels={metrics.labels} />
           </Card>
         ) : (
@@ -400,10 +400,10 @@ export function Results() {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-                <Card title="Leaderboard" action={<span className="text-[11px] text-ink-faint">click a model for its detail</span>}>
+                <Card title="Leaderboard" icon="chart" tone="indigo" action={<span className="text-[11px] text-ink-faint">click a model for its detail</span>}>
                   <ScoreBars results={training.results} selected={selected.value} onSelect={selected.set} scoreName={training.score_name} />
                 </Card>
-                <Card title="Fit time">
+                <Card title="Fit time" icon="clock" tone="teal">
                   <FitTimeline results={training.results} />
                 </Card>
               </div>

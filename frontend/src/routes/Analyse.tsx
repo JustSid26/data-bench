@@ -107,7 +107,7 @@ export function Analyse() {
       {data && health && (
         <div className="space-y-4">
           <m.div variants={stagger(0.06)} className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)]">
-            <Card title="Dataset health">
+            <Card title="Dataset health" icon="ok" tone="teal">
               <HealthRing health={health} size={120} showBreakdown />
               <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1 border-t border-line pt-3 text-[12px] text-ink-muted">
                 <span className="tnum">{percent(data.missing_cells_pct, 2)} of cells missing</span>
@@ -116,18 +116,15 @@ export function Analyse() {
               </div>
             </Card>
             <Card
-              title={
-                <span className="flex items-center gap-2">
-                  <Icon name="warn" className="size-4 text-warn" />
-                  Worth fixing
-                </span>
-              }
+              icon="warn"
+              tone="pink"
+              title="Worth fixing"
               action={<span className="text-[11px] text-ink-faint">{data.warnings.length} items</span>}
               bodyClass="max-h-80 overflow-y-auto p-4"
             >
               <WarningList warnings={data.warnings} onOpen={inspect} />
             </Card>
-            <Card title="Missing by column" className="lg:col-span-2 2xl:col-span-1">
+            <Card title="Missing by column" icon="droplet" tone="violet" className="lg:col-span-2 2xl:col-span-1">
               <MissingBars columns={data.column_stats} limit={8} onSelect={inspect} />
             </Card>
           </m.div>
@@ -197,12 +194,14 @@ export function Analyse() {
           </section>
 
           <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            <Card title="Correlations" action={<span className="text-[11px] text-ink-faint">numeric pairs, |r| ≥ 0.5</span>}>
+            <Card title="Correlations" icon="link" tone="indigo" action={<span className="text-[11px] text-ink-faint">numeric pairs, |r| ≥ 0.5</span>}>
               <CorrelationHeatmap pairs={data.correlations} onSelect={(a) => inspect(a)} />
             </Card>
 
             <Card
               title="Outliers & spread"
+              icon="target"
+              tone="sky"
               action={
                 numeric.length > 0 && (
                   <label className="flex items-center gap-2 text-[12px] text-ink-muted">
@@ -233,7 +232,7 @@ export function Analyse() {
                         ["Std", decimal(boxed.std, 2)],
                         ["IQR", decimal((boxed.q3 ?? 0) - (boxed.q1 ?? 0), 2)],
                       ].map(([label, value]) => (
-                        <div key={label} className="rounded-lg border border-line bg-card-raised px-2.5 py-1.5">
+                        <div key={label} className="rounded-xl border border-line bg-hover px-2.5 py-1.5">
                           <dt className="text-ink-faint">{label}</dt>
                           <dd className="font-medium">{value}</dd>
                         </div>

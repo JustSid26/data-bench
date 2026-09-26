@@ -61,7 +61,7 @@ export function ColumnInspector() {
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={spring.soft}
-                className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[34rem] flex-col border-l border-line bg-surface shadow-lg outline-none"
+                className="glass-sheet fixed inset-y-0 right-0 z-50 flex w-full max-w-[34rem] flex-col border-l border-line outline-none sm:inset-y-2 sm:right-2 sm:rounded-[20px] sm:border"
               >
                 <header className="flex items-start gap-3 border-b border-line px-5 py-4">
                   <div className="min-w-0 flex-1">
@@ -215,7 +215,7 @@ function InspectorBody({ column }: { column: ColumnStats }) {
           {fixes.map((fix) => {
             const staged = has(column.name, fix.action);
             return (
-              <m.li key={fix.action + (fix.option ?? "")} layout className="flex items-start gap-3 rounded-lg border border-line bg-card p-3">
+              <m.li key={fix.action + (fix.option ?? "")} layout className="flex items-start gap-3 rounded-xl border border-line bg-card p-3">
                 <Icon name={fix.action === "drop" ? "trash" : fix.action === "impute" ? "droplet" : "wand"} className="mt-[2px] size-4 shrink-0 text-ink-muted" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] font-medium">{fix.label}</p>

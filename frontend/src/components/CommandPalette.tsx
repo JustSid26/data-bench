@@ -13,7 +13,7 @@ import { algorithmName, count } from "../lib/format";
 import { KIND } from "../lib/tokens";
 import type { Loaded } from "../lib/types";
 import { useSession } from "../state/session";
-import { useTheme } from "../state/theme";
+import { ACCENTS, useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
 
 interface Item {
@@ -48,7 +48,7 @@ function score(query: string, text: string) {
 export function CommandPalette() {
   const { palette, setPalette, inspect, toggleCollapsed, setShortcuts } = useUi();
   const { dataset, open, close } = useSession();
-  const { dark, toggle } = useTheme();
+  const { dark, toggle, accent, setAccent } = useTheme();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -100,12 +100,20 @@ export function CommandPalette() {
           }))
         : []),
       { id: "act-theme", group: "Actions", label: dark ? "Switch to light theme" : "Switch to dark theme", icon: dark ? "sun" : "moon", hint: "t", run: toggle },
+      ...ACCENTS.filter((option) => option.id !== accent).map((option) => ({
+        id: `accent-${option.id}`,
+        group: "Actions",
+        label: `Accent colour: ${option.label}`,
+        icon: "sparkle",
+        keywords: "theme colour color accent",
+        run: () => setAccent(option.id),
+      })),
       { id: "act-sidebar", group: "Actions", label: "Toggle sidebar", icon: "sidebar", hint: "[", run: toggleCollapsed },
       { id: "act-keys", group: "Actions", label: "Keyboard shortcuts", icon: "keyboard", hint: "?", run: () => setShortcuts(true) },
       ...(dataset ? [{ id: "act-close", group: "Actions", label: "Close dataset", icon: "trash", run: () => { close(); navigate("/"); } }] : []),
     ];
     return all;
-  }, [dataset, recent.data, dark, navigate, inspect, toggle, toggleCollapsed, setShortcuts, close, reopen]);
+  }, [dataset, recent.data, dark, accent, navigate, inspect, toggle, setAccent, toggleCollapsed, setShortcuts, close, reopen]);
 
   const results = useMemo(() => {
     const scored = items
@@ -153,7 +161,7 @@ export function CommandPalette() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={spring.snappy}
-                className="fixed top-[12vh] left-1/2 z-50 w-[min(38rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-card border border-line bg-card shadow-lg"
+                className="fixed top-[12vh] left-1/2 z-50 w-[min(38rem,calc(100vw-2rem))] -translate-x-1/2 glass-sheet overflow-hidden rounded-[20px] border border-line"
               >
                 <Dialog.Title className="sr-only">Command palette</Dialog.Title>
                 <div className="flex items-center gap-2 border-b border-line px-4">
@@ -175,7 +183,7 @@ export function CommandPalette() {
                       }
                     }}
                     placeholder={dataset ? "Jump to a screen, column, dataset or model…" : "Jump to a screen or dataset…"}
-                    className="h-12 min-w-0 flex-1 bg-transparent text-[14px] outline-none placeholder:text-ink-faint"
+                    className="h-14 min-w-0 flex-1 bg-transparent text-[18px] font-light outline-none placeholder:text-ink-faint"
                     role="combobox"
                     aria-expanded="true"
                     aria-controls="palette-list"

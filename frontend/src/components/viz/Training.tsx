@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { m } from "motion/react";
 import { Icon } from "../icons";
+import { IconTile } from "../primitives";
+import type { TileTone } from "../primitives";
 import { useChartTooltip, TipBody } from "./ChartTooltip";
 import { CountUp, fadeUp, spring, tween } from "../../lib/motion";
 import { algorithmName, count, duration, percent } from "../../lib/format";
@@ -66,6 +68,8 @@ export function MetricTile({
   suffix = "",
   hint,
   emphasis = false,
+  icon,
+  tone = "blue",
 }: {
   label: string;
   value: number | null | undefined;
@@ -73,13 +77,18 @@ export function MetricTile({
   suffix?: string;
   hint?: string;
   emphasis?: boolean;
+  icon?: string;
+  tone?: TileTone;
 }) {
   return (
     <m.div
       variants={fadeUp}
-      className={`rounded-card border px-4 py-3.5 shadow-sm ${emphasis ? "border-accent/40 bg-accent-soft" : "border-line bg-card"}`}
+      className={`glass rounded-card border px-4 py-3.5 ${emphasis ? "border-accent/50 ring-1 ring-accent/30" : "border-line"}`}
     >
-      <p className="text-[11px] font-semibold tracking-[0.04em] text-ink-muted uppercase">{label}</p>
+      <div className="flex items-center gap-2">
+        {icon && <IconTile icon={icon} tone={tone} size="sm" />}
+        <p className="text-[11px] font-semibold tracking-[0.04em] text-ink-muted uppercase">{label}</p>
+      </div>
       <p className="tnum mt-1 text-[26px] leading-none font-semibold">
         {value === null || value === undefined || Number.isNaN(value) ? (
           "—"

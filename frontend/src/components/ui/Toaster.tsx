@@ -80,7 +80,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
-      className="pointer-events-auto flex items-start gap-3 rounded-card border border-line bg-card-raised px-3.5 py-3 shadow-lg"
+      className="pointer-events-auto flex items-start gap-3 glass-sheet rounded-[18px] border border-line px-3.5 py-3"
     >
       <Icon name={tone.icon} className={`mt-[1px] size-4 shrink-0 ${tone.className}`} />
       <div className="min-w-0 flex-1">

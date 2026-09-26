@@ -122,7 +122,7 @@ export function ModelCard({
       {...lift}
       layout
       transition={spring.soft}
-      className={`relative flex flex-col rounded-card border bg-card p-4 shadow-sm transition-colors ${
+      className={`glass relative flex flex-col rounded-card border p-4 transition-colors ${
         selected ? "border-accent" : "border-line hover:border-line-strong"
       }`}
     >
@@ -214,7 +214,7 @@ export function ModelCard({
             transition={tween.base}
             className="relative overflow-hidden"
           >
-            <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 rounded-lg border border-line bg-card-raised p-2.5 font-mono text-[11px]">
+            <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 rounded-xl border border-line bg-hover p-2.5 font-mono text-[11px]">
               {Object.entries(params).map(([key, value]) => (
                 <div key={key} className="contents">
                   <dt className="text-ink-faint">{key}</dt>

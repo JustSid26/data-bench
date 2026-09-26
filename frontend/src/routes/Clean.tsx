@@ -89,7 +89,7 @@ export function Clean() {
 
         {before && after && (
           <m.div variants={stagger(0.06)} className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-            <Card title="Projected health">
+            <Card title="Projected health" icon="sparkle" tone="teal">
               <div className="flex flex-wrap items-center gap-6">
                 <HealthRing health={after} size={128} />
                 <div className="space-y-1">
@@ -136,7 +136,7 @@ export function Clean() {
               </ul>
             </Card>
 
-            <Card title="Recipe" action={<span className="tnum text-[11px] text-ink-faint">{steps.length} step{steps.length === 1 ? "" : "s"}</span>}>
+            <Card title="Recipe" icon="report" tone="pink" action={<span className="tnum text-[11px] text-ink-faint">{steps.length} step{steps.length === 1 ? "" : "s"}</span>}>
               {steps.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-8 text-center">
                   <span className="grid size-11 place-items-center rounded-xl border border-line bg-card-raised text-ink-muted">
@@ -156,7 +156,7 @@ export function Clean() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 24, transition: tween.fast }}
                         transition={spring.soft}
-                        className="flex items-center gap-3 rounded-lg border border-line bg-card-raised px-3 py-2"
+                        className="flex items-center gap-3 rounded-xl border border-line bg-hover px-3 py-2"
                       >
                         <span className="tnum w-5 text-[11px] text-ink-faint">{index + 1}</span>
                         <Icon name={ACTION_ICON[step.action]} className={`size-4 shrink-0 ${step.action === "drop" ? "text-bad" : "text-ink-muted"}`} />
@@ -182,7 +182,7 @@ export function Clean() {
         )}
 
         {profile.data && (
-          <Card title="Suggested fixes" action={<span className="text-[11px] text-ink-faint">flagged columns first</span>}>
+          <Card title="Suggested fixes" icon="wand" tone="violet" action={<span className="text-[11px] text-ink-faint">flagged columns first</span>}>
             {suggestions.length === 0 ? (
               <p className="flex items-center gap-2 text-[13px] text-ink-muted">
                 <Icon name="ok" className="size-4 text-good" /> Nothing left to suggest.

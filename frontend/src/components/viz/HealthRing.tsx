@@ -59,7 +59,7 @@ export function HealthRing({ health, size = 132, showBreakdown = false }: { heal
           <Tooltip.Content
             side="right"
             sideOffset={8}
-            className="z-50 w-64 rounded-card border border-line bg-card-raised p-3 text-[12px] shadow-lg"
+            className="glass-sheet z-50 w-64 rounded-[16px] border border-line p-3 text-[12px]"
           >
             <p className="mb-2 font-semibold">How the score is built</p>
             <Breakdown health={health} />

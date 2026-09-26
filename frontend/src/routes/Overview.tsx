@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import * as Popover from "@radix-ui/react-popover";
 import { AnimatePresence, LayoutGroup, m } from "motion/react";
 import { Shell, ExportButton } from "../components/Shell";
-import { Button, Card, Empty, ErrorState, Hint, QualityBadge, Skeleton, SkeletonCard } from "../components/primitives";
+import { Button, Card, Empty, ErrorState, Hint, IconTile, QualityBadge, Skeleton, SkeletonCard } from "../components/primitives";
+import type { TileTone } from "../components/primitives";
 import { DataTable } from "../components/DataTable";
 import { Icon } from "../components/icons";
 import { useApplyFix } from "../components/cleaning";
@@ -22,11 +23,11 @@ import { useCleaning } from "../state/cleaning";
 import { useSession } from "../state/session";
 import { useUi } from "../state/ui";
 
-function HeroStat({ label, value, format, hint, icon }: { label: string; value: number; format?: (n: number) => string; hint?: string; icon: string }) {
+function HeroStat({ label, value, format, hint, icon, tone }: { label: string; value: number; format?: (n: number) => string; hint?: string; icon: string; tone: TileTone }) {
   return (
-    <m.div variants={fadeUp} className="flex min-w-0 items-start gap-3 rounded-card border border-line bg-card px-3 py-3 shadow-sm sm:px-4 sm:py-3.5">
-      <span className="hidden size-9 shrink-0 place-items-center rounded-lg bg-card-raised text-ink-muted sm:grid">
-        <Icon name={icon} className="size-4" />
+    <m.div variants={fadeUp} className="flex min-w-0 items-start gap-3 glass rounded-card border border-line px-3 py-3 sm:px-4 sm:py-3.5">
+      <span className="hidden sm:block">
+        <IconTile icon={icon} tone={tone} />
       </span>
       <div className="min-w-0">
         <p className="truncate text-[11px] font-semibold tracking-[0.04em] text-ink-muted uppercase">{label}</p>
@@ -69,7 +70,7 @@ export function Overview() {
       <div className="space-y-4">
         {/* hero: the four numbers that say what this dataset is */}
         <m.div variants={stagger(0.06)} className="grid grid-cols-3 gap-2 sm:gap-3 xl:grid-cols-[minmax(0,1.7fr)_repeat(3,minmax(0,1fr))]">
-          <m.div variants={fadeUp} className="flex items-center gap-4 rounded-card border border-line bg-card px-4 py-3 shadow-sm col-span-3 xl:col-span-1">
+          <m.div variants={fadeUp} className="flex items-center gap-4 glass rounded-card border border-line px-4 py-3 col-span-3 xl:col-span-1">
             {health ? (
               <HealthRing health={health} size={92} showBreakdown />
             ) : profile.error ? (
@@ -85,20 +86,20 @@ export function Overview() {
               </div>
             )}
           </m.div>
-          <HeroStat label="Rows" value={meta.rows} icon="layers" hint={meta.truncated ? "truncated on read" : `${meta.format} · read in ${duration(meta.read_ms)}`} />
-          <HeroStat label="Columns" value={meta.columns} icon="grid" hint={`${schema.filter((c) => c.modelable).length} usable as features`} />
-          <HeroStat label="In memory" value={meta.memory_mb} format={(n) => `${n.toFixed(1)} MB`} icon="file" />
+          <HeroStat label="Rows" value={meta.rows} icon="layers" tone="sky" hint={meta.truncated ? "truncated on read" : `${meta.format} · read in ${duration(meta.read_ms)}`} />
+          <HeroStat label="Columns" value={meta.columns} icon="grid" tone="indigo" hint={`${schema.filter((c) => c.modelable).length} usable as features`} />
+          <HeroStat label="In memory" value={meta.memory_mb} format={(n) => `${n.toFixed(1)} MB`} icon="file" tone="purple" />
         </m.div>
 
         {/* infographics */}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 2xl:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_minmax(0,1fr)]">
-          <Card title="Column types" action={kindFilter && <FilterChip kind={kindFilter} onClear={() => setKindFilter(null)} />}>
+          <Card title="Column types" icon="layers" tone="indigo" action={kindFilter && <FilterChip kind={kindFilter} onClear={() => setKindFilter(null)} />}>
             <TypeDonut composition={composition} onSelect={(kind) => setKindFilter((current) => (current === kind ? null : kind))} />
           </Card>
-          <Card title="Missing values" action={<span className="text-[11px] text-ink-faint">preview rows</span>}>
+          <Card title="Missing values" icon="droplet" tone="pink" action={<span className="text-[11px] text-ink-faint">preview rows</span>}>
             <MissingMatrixChart preview={preview} onSelect={inspect} />
           </Card>
-          <Card title="Most incomplete columns" className="lg:col-span-2 2xl:col-span-1">
+          <Card title="Most incomplete columns" icon="filter" tone="violet" className="lg:col-span-2 2xl:col-span-1">
             {profile.data ? (
               <MissingBars columns={profile.data.column_stats} limit={7} onSelect={inspect} />
             ) : profile.error ? (
@@ -132,7 +133,7 @@ export function Overview() {
 
         <ColumnTable schema={schema} stats={profile.data?.column_stats} kindFilter={kindFilter} setKindFilter={setKindFilter} />
 
-        <Card title={`Preview (first ${preview.rows.length})`} action={<span className="tnum text-[11px] text-ink-faint">of {compact(meta.rows)} rows</span>} bodyClass="p-3">
+        <Card icon="file" tone="graphite" title={`Preview (first ${preview.rows.length})`} action={<span className="tnum text-[11px] text-ink-faint">of {compact(meta.rows)} rows</span>} bodyClass="p-3">
           <DataTable preview={preview} maxHeight="24rem" />
         </Card>
       </div>
@@ -216,6 +217,8 @@ function ColumnTable({
 
   return (
     <Card
+      icon="grid"
+      tone="blue"
       title={`Columns (${rows.length}${rows.length !== schema.length ? ` of ${schema.length}` : ""})`}
       bodyClass="p-0"
       action={
@@ -361,7 +364,7 @@ function QuickActions({ column }: { column: ColumnStats }) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.97 }}
                 transition={spring.snappy}
-                className="z-50 w-64 origin-top-right rounded-card border border-line bg-card p-1.5 shadow-lg"
+                className="z-50 w-64 glass-sheet origin-top-right rounded-[14px] border border-line p-1.5"
               >
                 <p className="truncate px-2 pt-1 pb-1.5 font-mono text-[11px] text-ink-faint">{column.name}</p>
                 {options.map((fix) => {
