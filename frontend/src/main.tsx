@@ -1,8 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { App } from "./App";
+import { ToastProvider } from "./components/ui/Toaster";
+import { MotionProvider } from "./lib/motion";
 import { SessionProvider } from "./state/session";
+import { ThemeProvider } from "./state/theme";
+import { UiProvider } from "./state/ui";
 import "./index.css";
 
 const queries = new QueryClient({
@@ -20,9 +25,19 @@ const queries = new QueryClient({
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queries}>
-      <SessionProvider>
-        <App />
-      </SessionProvider>
+      <ThemeProvider>
+        <MotionProvider>
+          <Tooltip.Provider delayDuration={300}>
+            <ToastProvider>
+              <SessionProvider>
+                <UiProvider>
+                  <App />
+                </UiProvider>
+              </SessionProvider>
+            </ToastProvider>
+          </Tooltip.Provider>
+        </MotionProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 );

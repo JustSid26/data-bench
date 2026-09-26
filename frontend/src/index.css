@@ -14,26 +14,34 @@
   --card-raised: #f4f4f5;
   --line: rgba(0, 0, 0, 0.1);
   --line-strong: rgba(0, 0, 0, 0.18);
+  /* ink-faint was #a1a1aa (2.5:1 on surface); both greys now clear 4.5:1 */
   --ink: #18181b;
-  --ink-muted: #71717a;
-  --ink-faint: #a1a1aa;
-  --hover: rgba(0, 0, 0, 0.03);
+  --ink-muted: #52525b;
+  --ink-faint: #6b6b74;
+  --hover: rgba(0, 0, 0, 0.035);
 
   --accent: #4f46e5;
+  --accent-fg: #4338ca; /* accent used as text -- contrast-safe on card */
   --accent-ink: #ffffff;
   --accent-soft: rgba(79, 70, 229, 0.1);
 
-  --good: #16a34a;
-  --warn: #d97706;
+  /* data quality: good / warning / critical */
+  --good: #15803d;
+  --warn: #b45309;
   --bad: #dc2626;
 
   --kind-numeric: #2563eb;
   --kind-categorical: #9333ea;
-  --kind-boolean: #16a34a;
-  --kind-datetime: #d97706;
-  --kind-text: #71717a;
-  --kind-identifier: #64748b;
+  --kind-boolean: #15803d;
+  --kind-datetime: #b45309;
+  --kind-text: #52525b;
+  --kind-identifier: #475569;
   --kind-constant: #b45364;
+
+  --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --elev-md: 0 4px 14px -4px rgba(24, 24, 27, 0.12), 0 2px 4px -2px rgba(24, 24, 27, 0.06);
+  --elev-lg: 0 18px 44px -12px rgba(24, 24, 27, 0.22);
+  --scrim: rgba(9, 9, 11, 0.4);
 }
 
 .dark {
@@ -43,11 +51,12 @@
   --line: rgba(255, 255, 255, 0.1);
   --line-strong: rgba(255, 255, 255, 0.18);
   --ink: #e3e2e5;
-  --ink-muted: #8e8e96;
-  --ink-faint: #6b6b73;
-  --hover: rgba(255, 255, 255, 0.03);
+  --ink-muted: #a1a1aa;
+  --ink-faint: #8a8a93;
+  --hover: rgba(255, 255, 255, 0.04);
 
   --accent: #4f46e5;
+  --accent-fg: #a5a1ff;
   --accent-ink: #ffffff;
   --accent-soft: rgba(99, 91, 255, 0.16);
 
@@ -62,6 +71,11 @@
   --kind-text: #a1a1aa;
   --kind-identifier: #94a3b8;
   --kind-constant: #fca5a5;
+
+  --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --elev-md: 0 6px 18px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --elev-lg: 0 24px 60px -16px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --scrim: rgba(0, 0, 0, 0.6);
 }
 
 @theme inline {
@@ -75,11 +89,16 @@
   --color-ink-faint: var(--ink-faint);
   --color-hover: var(--hover);
   --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-good: var(--good);
   --color-warn: var(--warn);
   --color-bad: var(--bad);
+  /* the same three, named for what they mean when they grade data */
+  --color-quality-good: var(--good);
+  --color-quality-warning: var(--warn);
+  --color-quality-critical: var(--bad);
 
   --color-numeric: var(--kind-numeric);
   --color-categorical: var(--kind-categorical);
@@ -92,8 +111,69 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --spacing-sidebar: 220px;
-  --radius-card: 0.5rem;
+  /* type scale -- the screens only ever use these sizes */
+  --text-2xs: 10px;
+  --text-2xs--line-height: 14px;
+  --text-xs: 11px;
+  --text-xs--line-height: 16px;
+  --text-sm: 12px;
+  --text-sm--line-height: 16px;
+  --text-base: 13px;
+  --text-base--line-height: 18px;
+  --text-md: 14px;
+  --text-md--line-height: 20px;
+  --text-lg: 15px;
+  --text-lg--line-height: 22px;
+  --text-xl: 20px;
+  --text-xl--line-height: 26px;
+  --text-display: 30px;
+  --text-display--line-height: 34px;
+
+  --spacing-sidebar: 232px;
+  --spacing-sidebar-collapsed: 64px;
+  --radius-card: 0.625rem;
+  --radius-chip: 9999px;
+
+  --shadow-sm: var(--elev-sm);
+  --shadow-md: var(--elev-md);
+  --shadow-lg: var(--elev-lg);
+  --color-scrim: var(--scrim);
+
+  --animate-shimmer: shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* skeleton blocks: a moving highlight over the line colour */
+.skeleton {
+  background: linear-gradient(90deg, var(--line) 0%, var(--line-strong) 50%, var(--line) 100%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+  border-radius: 0.375rem;
+}
+
+/* motion is also opted out at the css level, for the few transitions tailwind owns */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-fg);
+  outline-offset: 2px;
 }
 
 html,
