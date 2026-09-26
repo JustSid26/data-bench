@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { m } from "motion/react";
 import { Icon } from "../icons";
 import { QualityBadge, TypeBadge } from "../primitives";
@@ -18,7 +19,9 @@ function Stat({ label, value, tone }: { label: string; value: string; tone?: "wa
 
 /** One column at a glance: the right chart for its kind plus its key numbers
  *  as badges. The whole card opens the column inspector. */
-export function MiniProfile({ column, onOpen }: { column: ColumnStats; onOpen: (name: string) => void }) {
+// memoised: filtering the grid re-renders the parent on every keystroke, but a
+// card only changes when its column does
+export const MiniProfile = memo(function MiniProfile({ column, onOpen }: { column: ColumnStats; onOpen: (name: string) => void }) {
   const quality = missingQuality(column.missing_pct);
   const numeric = column.kind === "numeric";
 
@@ -81,4 +84,4 @@ export function MiniProfile({ column, onOpen }: { column: ColumnStats; onOpen: (
       </button>
     </m.article>
   );
-}
+});

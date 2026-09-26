@@ -152,7 +152,7 @@ export function Analyse() {
                           on ? `${KIND[kind].badge} font-semibold` : "border-line text-ink-muted hover:border-line-strong"
                         }`}
                       >
-                        <Icon name={KIND[kind].icon} className="size-3" />
+                        <Icon name={KIND[kind].icon} className={`size-3 ${KIND[kind].text}`} />
                         {KIND[kind].label}
                       </m.button>
                     );

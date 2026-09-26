@@ -60,7 +60,7 @@ export function TypeBadge({ kind, short = false }: { kind: Kind; short?: boolean
     <span
       className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-[1px] text-[10px] font-semibold tracking-[0.04em] uppercase ${token.badge}`}
     >
-      <Icon name={token.icon} className="size-3" />
+      <Icon name={token.icon} className={`size-3 ${token.text}`} />
       {short ? token.short : kind}
     </span>
   );

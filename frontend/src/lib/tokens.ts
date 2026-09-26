@@ -12,6 +12,7 @@ export interface KindToken {
   color: string;
   text: string;
   bg: string;
+  /** chip styling; the label stays in ink (kind hues are not all 4.5:1 as text) */
   badge: string;
 }
 
@@ -24,7 +25,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-numeric)",
     text: "text-numeric",
     bg: "bg-numeric",
-    badge: "text-numeric border-numeric/30 bg-numeric/10",
+    badge: "text-ink border-numeric/30 bg-numeric/10",
   },
   categorical: {
     label: "Categorical",
@@ -33,7 +34,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-categorical)",
     text: "text-categorical",
     bg: "bg-categorical",
-    badge: "text-categorical border-categorical/30 bg-categorical/10",
+    badge: "text-ink border-categorical/30 bg-categorical/10",
   },
   boolean: {
     label: "Boolean",
@@ -42,7 +43,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-boolean)",
     text: "text-boolean",
     bg: "bg-boolean",
-    badge: "text-boolean border-boolean/30 bg-boolean/10",
+    badge: "text-ink border-boolean/30 bg-boolean/10",
   },
   datetime: {
     label: "Datetime",
@@ -51,7 +52,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-datetime)",
     text: "text-datetime",
     bg: "bg-datetime",
-    badge: "text-datetime border-datetime/30 bg-datetime/10",
+    badge: "text-ink border-datetime/30 bg-datetime/10",
   },
   text: {
     label: "Text",
@@ -60,7 +61,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-text)",
     text: "text-text",
     bg: "bg-text",
-    badge: "text-text border-text/30 bg-text/10",
+    badge: "text-ink border-text/30 bg-text/10",
   },
   identifier: {
     label: "Identifier",
@@ -69,7 +70,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-identifier)",
     text: "text-identifier",
     bg: "bg-identifier",
-    badge: "text-identifier border-identifier/30 bg-identifier/10",
+    badge: "text-ink border-identifier/30 bg-identifier/10",
   },
   constant: {
     label: "Constant",
@@ -78,7 +79,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-constant)",
     text: "text-constant",
     bg: "bg-constant",
-    badge: "text-constant border-constant/30 bg-constant/10",
+    badge: "text-ink border-constant/30 bg-constant/10",
   },
   empty: {
     label: "Empty",
@@ -87,7 +88,7 @@ export const KIND: Record<Kind, KindToken> = {
     color: "var(--kind-constant)",
     text: "text-constant",
     bg: "bg-constant",
-    badge: "text-constant border-constant/30 bg-constant/10",
+    badge: "text-ink border-constant/30 bg-constant/10",
   },
 };
 

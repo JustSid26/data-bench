@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef } from "react";
+import { Suspense, createContext, lazy, useContext, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { NavLink, useLocation, useNavigate, useOutlet } from "react-router-dom";
 import { AnimatePresence, m, useScroll, useSpring, useTransform } from "motion/react";
@@ -6,14 +6,25 @@ import { Icon } from "./icons";
 import { Hint, IconButton, Kbd } from "./primitives";
 import { NAV } from "./nav";
 import { Pipeline } from "./Pipeline";
-import { ColumnInspector } from "./ColumnInspector";
-import { CommandPalette } from "./CommandPalette";
-import { ShortcutsDialog, useGlobalShortcuts } from "./Shortcuts";
+import { useGlobalShortcuts } from "./useGlobalShortcuts";
 import { count } from "../lib/format";
 import { PageTransition, spring, tween } from "../lib/motion";
 import { useSession } from "../state/session";
 import { useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
+
+// overlays load on first open, keeping charts and the dialog runtime out of the first paint
+const ColumnInspector = lazy(() => import("./ColumnInspector").then((m) => ({ default: m.ColumnInspector })));
+const CommandPalette = lazy(() => import("./CommandPalette").then((m) => ({ default: m.CommandPalette })));
+const ShortcutsDialog = lazy(() => import("./Shortcuts").then((m) => ({ default: m.ShortcutsDialog })));
+
+/** Mounts `children` once `open` first turns true, then keeps them mounted so
+ *  their own exit animations can play. */
+function OnceOpened({ open, children }: { open: boolean; children: React.ReactNode }) {
+  const [opened, setOpened] = useState(open);
+  if (open && !opened) setOpened(true);
+  return opened ? <Suspense fallback={null}>{children}</Suspense> : null;
+}
 
 /** The scrolling element, for anything that reacts to scroll (reading progress). */
 const ScrollContext = createContext<RefObject<HTMLElement | null> | null>(null);
@@ -224,7 +235,7 @@ function ReadingProgress({ target }: { target: RefObject<HTMLElement | null> }) 
 export function Layout() {
   const outlet = useOutlet();
   const location = useLocation();
-  const { collapsed, mobileNav, setMobileNav, setPalette, setShortcuts } = useUi();
+  const { collapsed, mobileNav, setMobileNav, setPalette, setShortcuts, palette, shortcuts, inspected } = useUi();
   const scroller = useRef<HTMLElement>(null);
   useGlobalShortcuts();
 
@@ -290,9 +301,15 @@ export function Layout() {
           </AnimatePresence>
         </main>
       </div>
-      <ColumnInspector />
-      <CommandPalette />
-      <ShortcutsDialog />
+      <OnceOpened open={Boolean(inspected)}>
+        <ColumnInspector />
+      </OnceOpened>
+      <OnceOpened open={palette}>
+        <CommandPalette />
+      </OnceOpened>
+      <OnceOpened open={shortcuts}>
+        <ShortcutsDialog />
+      </OnceOpened>
     </ScrollContext.Provider>
   );
 }
