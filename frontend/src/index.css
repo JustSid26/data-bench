@@ -30,13 +30,20 @@
   --warn: #b45309;
   --bad: #dc2626;
 
+  /* validated categorical order (numeric, categorical, datetime, boolean): passes
+     CVD separation and the lightness band in both themes. text / identifier /
+     constant are deliberately neutral -- they carry little modelling signal */
   --kind-numeric: #2563eb;
-  --kind-categorical: #9333ea;
-  --kind-boolean: #15803d;
+  --kind-categorical: #db2777;
+  --kind-boolean: #0d9488;
   --kind-datetime: #b45309;
   --kind-text: #52525b;
   --kind-identifier: #475569;
   --kind-constant: #b45364;
+
+  /* diverging pair for correlation: cool = positive, warm = negative */
+  --diverge-pos: #2563eb;
+  --diverge-neg: #c2410c;
 
   --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --elev-md: 0 4px 14px -4px rgba(24, 24, 27, 0.12), 0 2px 4px -2px rgba(24, 24, 27, 0.06);
@@ -64,13 +71,16 @@
   --warn: #fbbf24;
   --bad: #f87171;
 
-  --kind-numeric: #60a5fa;
-  --kind-categorical: #c084fc;
-  --kind-boolean: #4ade80;
-  --kind-datetime: #fbbf24;
+  --kind-numeric: #3b82f6;
+  --kind-categorical: #db2777;
+  --kind-boolean: #0d9488;
+  --kind-datetime: #b7791f;
   --kind-text: #a1a1aa;
   --kind-identifier: #94a3b8;
   --kind-constant: #fca5a5;
+
+  --diverge-pos: #3b82f6;
+  --diverge-neg: #ea580c;
 
   --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --elev-md: 0 6px 18px -6px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.03);
