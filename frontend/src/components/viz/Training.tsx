@@ -189,7 +189,8 @@ export function ConfusionMatrix({ matrix, labels }: { matrix: number[][]; labels
 
 /** How long each model took, as a staggered bar per algorithm. */
 export function FitTimeline({ results }: { results: ModelResult[] }) {
-  const peak = Math.max(...results.map((result) => result.fit_ms), 1);
+  // failed results come back as {algorithm, ok, error} -- no fit_ms
+  const peak = Math.max(...results.map((result) => result.fit_ms ?? 0), 1);
   return (
     <m.ul className="space-y-2" initial="hidden" whileInView="show" viewport={{ once: true }} variants={{ show: { transition: { staggerChildren: 0.07 } } }}>
       {results.map((result) => (
@@ -198,7 +199,7 @@ export function FitTimeline({ results }: { results: ModelResult[] }) {
           <div className="h-2 overflow-hidden rounded-full bg-line/60">
             <m.div
               className={`h-full origin-left rounded-full ${result.ok ? "bg-ink-faint" : "bg-bad"}`}
-              variants={{ hidden: { scaleX: 0 }, show: { scaleX: Math.max(result.fit_ms / peak, 0.02) } }}
+              variants={{ hidden: { scaleX: 0 }, show: { scaleX: Math.max((result.fit_ms ?? 0) / peak, 0.02) } }}
               transition={tween.draw}
             />
           </div>

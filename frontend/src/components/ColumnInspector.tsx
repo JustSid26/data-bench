@@ -8,6 +8,7 @@ import { useApplyFix } from "./cleaning";
 import { fadeUp, spring, stagger, tween } from "../lib/motion";
 import { suggestFixes } from "../lib/insights";
 import { useProfile } from "../lib/queries";
+import { useReturnFocus } from "../lib/useReturnFocus";
 import { LEVEL_QUALITY, missingQuality } from "../lib/tokens";
 import { count, decimal, percent } from "../lib/format";
 import type { ColumnStats } from "../lib/types";
@@ -22,6 +23,7 @@ export function ColumnInspector() {
   const { inspected, inspect } = useUi();
   const { dataset } = useSession();
   const profile = useProfile(dataset?.id);
+  const returnFocus = useReturnFocus(Boolean(inspected));
   const column = profile.data?.column_stats.find((c) => c.name === inspected) ?? null;
   const schemaColumn = dataset?.schema.find((c) => c.name === inspected);
 
@@ -45,6 +47,7 @@ export function ColumnInspector() {
               asChild
               forceMount
               aria-describedby={undefined}
+              onCloseAutoFocus={returnFocus}
               onOpenAutoFocus={(event) => {
                 // focus the panel itself, not the close button (which would pop its tooltip)
                 event.preventDefault();

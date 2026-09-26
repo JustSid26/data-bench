@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
@@ -60,6 +60,17 @@ export function Upload() {
   const [profileNote, setProfileNote] = useState<string | null>(null);
 
   const recent = useQuery({ queryKey: ["datasets"], queryFn: api.list, staleTime: 0 });
+
+  // a file dropped anywhere but the zone would make the browser navigate to it
+  useEffect(() => {
+    const swallow = (event: DragEvent) => event.preventDefault();
+    window.addEventListener("dragover", swallow);
+    window.addEventListener("drop", swallow);
+    return () => {
+      window.removeEventListener("dragover", swallow);
+      window.removeEventListener("drop", swallow);
+    };
+  }, []);
   const busy = stage !== "idle" && stage !== "done";
 
   async function ingest(input: File | string) {
@@ -154,18 +165,20 @@ export function Upload() {
         <m.button
           type="button"
           variants={fadeUp}
-          disabled={busy}
+          // aria-disabled, not disabled: some browsers skip drag events on disabled
+          // controls, and an unhandled drop makes the browser open the file
+          aria-disabled={busy || undefined}
           onDragOver={(event) => {
             event.preventDefault();
             setDragging(true);
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={drop}
-          onClick={() => fileInput.current?.click()}
+          onClick={() => !busy && fileInput.current?.click()}
           animate={{ scale: dragging ? 1.015 : 1 }}
           transition={spring.snappy}
           aria-describedby="upload-help"
-          className={`relative mt-7 overflow-hidden rounded-card border-2 border-dashed px-6 py-12 text-center transition-colors disabled:cursor-progress ${
+          className={`relative mt-7 overflow-hidden rounded-card border-2 border-dashed px-6 py-12 text-center transition-colors aria-disabled:cursor-progress ${
             dragging ? "border-accent bg-accent-soft" : "border-line bg-card hover:border-line-strong"
           }`}
         >

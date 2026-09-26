@@ -115,7 +115,10 @@ export function MissingBars({
 
   return (
     <div>
+      {/* keyed by `all`: motion does not replay a fired whileInView for children
+          mounted later, so the expanded list remounts and animates as a whole */}
       <m.ul
+        key={String(all)}
         className="space-y-1"
         initial="hidden"
         whileInView="show"

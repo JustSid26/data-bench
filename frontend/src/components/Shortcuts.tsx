@@ -3,6 +3,7 @@ import { AnimatePresence, m } from "motion/react";
 import { IconButton, Kbd } from "./primitives";
 import { NAV } from "./nav";
 import { spring, tween } from "../lib/motion";
+import { useReturnFocus } from "../lib/useReturnFocus";
 import { useUi } from "../state/ui";
 
 const GROUPS: { title: string; keys: [string[], string][] }[] = [
@@ -24,6 +25,7 @@ const GROUPS: { title: string; keys: [string[], string][] }[] = [
 
 export function ShortcutsDialog() {
   const { shortcuts, setShortcuts } = useUi();
+  const returnFocus = useReturnFocus(shortcuts);
   return (
     <Dialog.Root open={shortcuts} onOpenChange={setShortcuts}>
       <AnimatePresence>
@@ -36,6 +38,7 @@ export function ShortcutsDialog() {
               asChild
               forceMount
               aria-describedby={undefined}
+              onCloseAutoFocus={returnFocus}
               onOpenAutoFocus={(event) => {
                 // focus the dialog, not its close button (which would pop the tooltip)
                 event.preventDefault();

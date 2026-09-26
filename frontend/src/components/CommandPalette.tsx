@@ -12,6 +12,7 @@ import { HYPERPARAMETERS } from "../lib/insights";
 import { algorithmName, count } from "../lib/format";
 import { KIND } from "../lib/tokens";
 import type { Loaded } from "../lib/types";
+import { useReturnFocus } from "../lib/useReturnFocus";
 import { useSession } from "../state/session";
 import { ACCENTS, useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
@@ -53,6 +54,7 @@ export function CommandPalette() {
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
   const list = useRef<HTMLUListElement>(null);
+  const returnFocus = useReturnFocus(palette);
 
   const recent = useQuery({ queryKey: ["datasets"], queryFn: api.list, enabled: palette, staleTime: 0 });
   const reopen = useMutation({
@@ -155,7 +157,7 @@ export function CommandPalette() {
             <Dialog.Overlay asChild forceMount>
               <m.div className="fixed inset-0 z-50 bg-scrim" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={tween.fast} />
             </Dialog.Overlay>
-            <Dialog.Content asChild forceMount aria-describedby={undefined}>
+            <Dialog.Content asChild forceMount aria-describedby={undefined} onCloseAutoFocus={returnFocus}>
               <m.div
                 initial={{ opacity: 0, scale: 0.96, y: -8 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -187,7 +189,7 @@ export function CommandPalette() {
                     role="combobox"
                     aria-expanded="true"
                     aria-controls="palette-list"
-                    aria-activedescendant={results[active] ? `palette-${results[active].id}` : undefined}
+                    aria-activedescendant={results[active] ? `palette-opt-${active}` : undefined}
                     spellCheck={false}
                   />
                   <Kbd>Esc</Kbd>
@@ -202,7 +204,7 @@ export function CommandPalette() {
                       <li key={item.id} role="presentation">
                         {header && <p className="px-3 pt-2 pb-1 text-[10px] font-semibold tracking-[0.06em] text-ink-faint uppercase">{item.group}</p>}
                         <div
-                          id={`palette-${item.id}`}
+                          id={`palette-opt-${index}`}
                           role="option"
                           aria-selected={selected}
                           data-index={index}

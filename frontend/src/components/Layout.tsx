@@ -1,7 +1,8 @@
 import { Suspense, createContext, lazy, useContext, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { NavLink, useLocation, useNavigate, useOutlet } from "react-router-dom";
-import { AnimatePresence, m, useScroll, useSpring, useTransform } from "motion/react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { AnimatePresence, LayoutGroup, m, useScroll, useSpring, useTransform } from "motion/react";
 import { Icon } from "./icons";
 import { Hint, IconButton, IconTile, Kbd } from "./primitives";
 import type { TileTone } from "./primitives";
@@ -122,7 +123,7 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
                   className={`relative flex items-center justify-center gap-1.5 rounded-[7px] py-1 transition-colors ${option.on ? "text-ink" : "text-ink-muted hover:text-ink"}`}
                 >
                   {option.on && (
-                    <m.span layoutId={`appearance-${onNavigate ? "drawer" : "side"}`} transition={spring.snappy} className="absolute inset-0 rounded-[7px] bg-card-raised shadow-[0_1px_3px_rgba(0,0,0,0.15)]" />
+                    <m.span layoutId="appearance" transition={spring.snappy} className="absolute inset-0 rounded-[7px] bg-card-raised shadow-[0_1px_3px_rgba(0,0,0,0.15)]" />
                   )}
                   <span className="relative">
                     <Icon name={option.icon} className="size-3.5" />
@@ -149,7 +150,7 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
                       className="relative grid size-5 place-items-center rounded-full shadow-[inset_0_-1px_1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.3)]"
                       style={{ background: option.swatch }}
                     >
-                      {on && <m.span layoutId={`accent-dot-${onNavigate ? "drawer" : "side"}`} transition={spring.snappy} className="size-1.5 rounded-full bg-white" />}
+                      {on && <m.span layoutId="accent-dot" transition={spring.snappy} className="size-1.5 rounded-full bg-white" />}
                     </m.button>
                   </Hint>
                 );
@@ -305,63 +306,77 @@ export function Layout() {
 
   return (
     <ScrollContext.Provider value={scroller}>
-      <div className="flex h-full">
-        <m.aside
-          aria-label="Sidebar"
-          animate={{ width: collapsed ? 76 : 248 }}
-          initial={false}
-          transition={spring.soft}
-          className="hidden shrink-0 overflow-hidden p-2 md:block"
-        >
-          {/* a floating vibrancy panel, inset from the window edge like the macOS sidebar */}
-          <div className="glass-chrome h-full overflow-hidden rounded-[18px] border border-line shadow-md">
-            <Sidebar compact={collapsed} />
-          </div>
-        </m.aside>
-
-        <AnimatePresence>
-          {mobileNav && (
-            <>
-              <m.div
-                key="scrim"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setMobileNav(false)}
-                className="fixed inset-0 z-40 bg-scrim md:hidden"
-              />
-              <m.aside
-                key="drawer"
-                aria-label="Sidebar"
-                initial={{ x: "-100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "-100%" }}
-                transition={spring.soft}
-                className="glass-sheet fixed inset-y-2 left-2 z-50 w-[264px] overflow-hidden rounded-[18px] border border-line md:hidden"
-              >
-                <Sidebar compact={false} onNavigate={() => setMobileNav(false)} />
-              </m.aside>
-            </>
-          )}
-        </AnimatePresence>
-
-        <main ref={scroller} className="relative flex min-w-0 flex-1 flex-col overflow-y-auto">
-          <ReadingProgress target={scroller} />
-          <div className="glass-chrome sticky top-0 z-20 flex items-center gap-2 border-b border-line px-3 py-2 md:px-6">
-            <IconButton icon="menu" label="Open navigation" className="md:hidden" onClick={() => setMobileNav(true)} />
-            <Pipeline />
-            <div className="ml-auto flex items-center gap-1">
-              <IconButton icon="search" label="Command palette" shortcut="⌘K" onClick={() => setPalette(true)} />
-              <IconButton icon="keyboard" label="Keyboard shortcuts" shortcut="?" onClick={() => setShortcuts(true)} />
+      {/* one root for the mobile nav, so its trigger and drawer share state and focus return */}
+      <Dialog.Root open={mobileNav} onOpenChange={setMobileNav}>
+        <div className="flex h-full">
+          <m.aside
+            aria-label="Sidebar"
+            animate={{ width: collapsed ? 76 : 248 }}
+            initial={false}
+            transition={spring.soft}
+            className="hidden shrink-0 overflow-hidden p-2 md:block"
+          >
+            {/* a floating vibrancy panel, inset from the window edge like the macOS sidebar */}
+            <div className="glass-chrome h-full overflow-hidden rounded-[18px] border border-line shadow-md">
+              {/* separate layout groups: both sidebars are mounted at once, and a shared
+                  "nav-active" layoutId would fly the pill between them */}
+              <LayoutGroup id="sidebar">
+                <Sidebar compact={collapsed} />
+              </LayoutGroup>
             </div>
-          </div>
-          <AnimatePresence mode="wait" initial={false}>
-            <PageTransition key={location.pathname} className="flex-1">
-              {outlet}
-            </PageTransition>
+          </m.aside>
+
+          {/* mobile nav as a real dialog: Esc closes it, focus is trapped inside
+              and returns to the menu button */}
+          <AnimatePresence>
+            {mobileNav && (
+              <Dialog.Portal forceMount>
+                <Dialog.Overlay asChild forceMount>
+                  <m.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 z-40 bg-scrim md:hidden"
+                  />
+                </Dialog.Overlay>
+                <Dialog.Content asChild forceMount aria-describedby={undefined}>
+                  <m.aside
+                    initial={{ x: "-110%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "-110%" }}
+                    transition={spring.soft}
+                    className="glass-sheet fixed inset-y-2 left-2 z-50 w-[264px] overflow-hidden rounded-[18px] border border-line outline-none md:hidden"
+                  >
+                    <Dialog.Title className="sr-only">Navigation</Dialog.Title>
+                    <LayoutGroup id="drawer">
+                      <Sidebar compact={false} onNavigate={() => setMobileNav(false)} />
+                    </LayoutGroup>
+                  </m.aside>
+                </Dialog.Content>
+              </Dialog.Portal>
+            )}
           </AnimatePresence>
-        </main>
-      </div>
+
+          <main ref={scroller} className="relative flex min-w-0 flex-1 flex-col overflow-y-auto">
+            <ReadingProgress target={scroller} />
+            <div className="glass-chrome sticky top-0 z-20 flex items-center gap-2 border-b border-line px-3 py-2 md:px-6">
+              <Dialog.Trigger asChild>
+                <IconButton icon="menu" label="Open navigation" className="md:hidden" />
+              </Dialog.Trigger>
+              <Pipeline />
+              <div className="ml-auto flex items-center gap-1">
+                <IconButton icon="search" label="Command palette" shortcut="⌘K" onClick={() => setPalette(true)} />
+                <IconButton icon="keyboard" label="Keyboard shortcuts" shortcut="?" onClick={() => setShortcuts(true)} />
+              </div>
+            </div>
+            <AnimatePresence mode="wait" initial={false}>
+              <PageTransition key={location.pathname} className="flex-1">
+                {outlet}
+              </PageTransition>
+            </AnimatePresence>
+          </main>
+        </div>
+      </Dialog.Root>
       <OnceOpened open={Boolean(inspected)}>
         <ColumnInspector />
       </OnceOpened>

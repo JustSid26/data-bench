@@ -3,7 +3,7 @@ import { m } from "motion/react";
 import { Icon } from "../icons";
 import { QualityBadge, TypeBadge } from "../primitives";
 import { HistogramSpark, TimelineDensity, TopNBars } from "./Distribution";
-import { fadeUp, lift } from "../../lib/motion";
+import { fadeUp, lift, tween } from "../../lib/motion";
 import { missingQuality } from "../../lib/tokens";
 import { compact, decimal, percent } from "../../lib/format";
 import type { ColumnStats } from "../../lib/types";
@@ -26,7 +26,7 @@ export const MiniProfile = memo(function MiniProfile({ column, onOpen }: { colum
   const numeric = column.kind === "numeric";
 
   return (
-    <m.article variants={fadeUp} exit="exit" {...lift} layout="position" className="group min-w-0">
+    <m.article variants={fadeUp} exit={{ opacity: 0, scale: 0.96, transition: tween.fast }} {...lift} layout="position" className="group min-w-0">
       <button
         type="button"
         onClick={() => onOpen(column.name)}

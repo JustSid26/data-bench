@@ -282,7 +282,7 @@ function ColumnRow({ column, index, stats, animate, onOpen }: { column: Column; 
       layout={animate ? "position" : false}
       initial={animate ? { opacity: 0 } : false}
       animate={{ opacity: column.modelable ? 1 : 0.6 }}
-      exit={{ opacity: 0, transition: tween.fast }}
+      exit={animate ? { opacity: 0, transition: tween.fast } : undefined}
       transition={spring.soft}
       onClick={onOpen}
       className="group cursor-pointer transition-colors hover:bg-hover"
