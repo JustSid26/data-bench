@@ -14,7 +14,7 @@ import { KIND } from "../lib/tokens";
 import type { Loaded } from "../lib/types";
 import { useReturnFocus } from "../lib/useReturnFocus";
 import { useSession } from "../state/session";
-import { ACCENTS, useTheme } from "../state/theme";
+import { useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
 
 interface Item {
@@ -49,7 +49,7 @@ function score(query: string, text: string) {
 export function CommandPalette() {
   const { palette, setPalette, inspect, toggleCollapsed, setShortcuts } = useUi();
   const { dataset, open, close } = useSession();
-  const { dark, toggle, accent, setAccent } = useTheme();
+  const { dark, toggle } = useTheme();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -102,20 +102,12 @@ export function CommandPalette() {
           }))
         : []),
       { id: "act-theme", group: "Actions", label: dark ? "Switch to light theme" : "Switch to dark theme", icon: dark ? "sun" : "moon", hint: "t", run: toggle },
-      ...ACCENTS.filter((option) => option.id !== accent).map((option) => ({
-        id: `accent-${option.id}`,
-        group: "Actions",
-        label: `Accent colour: ${option.label}`,
-        icon: "sparkle",
-        keywords: "theme colour color accent",
-        run: () => setAccent(option.id),
-      })),
       { id: "act-sidebar", group: "Actions", label: "Toggle sidebar", icon: "sidebar", hint: "[", run: toggleCollapsed },
       { id: "act-keys", group: "Actions", label: "Keyboard shortcuts", icon: "keyboard", hint: "?", run: () => setShortcuts(true) },
       ...(dataset ? [{ id: "act-close", group: "Actions", label: "Close dataset", icon: "trash", run: () => { close(); navigate("/"); } }] : []),
     ];
     return all;
-  }, [dataset, recent.data, dark, accent, navigate, inspect, toggle, setAccent, toggleCollapsed, setShortcuts, close, reopen]);
+  }, [dataset, recent.data, dark, navigate, inspect, toggle, toggleCollapsed, setShortcuts, close, reopen]);
 
   const results = useMemo(() => {
     const scored = items

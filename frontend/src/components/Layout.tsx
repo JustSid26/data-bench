@@ -12,7 +12,7 @@ import { useGlobalShortcuts } from "./useGlobalShortcuts";
 import { count } from "../lib/format";
 import { PageTransition, spring, tween } from "../lib/motion";
 import { useSession } from "../state/session";
-import { ACCENTS, useTheme } from "../state/theme";
+import { useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
 
 // overlays load on first open, keeping charts and the dialog runtime out of the first paint
@@ -34,7 +34,7 @@ export const useScrollContainer = () => useContext(ScrollContext);
 
 function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () => void }) {
   const { dataset, close } = useSession();
-  const { dark, toggle, accent, setAccent } = useTheme();
+  const { dark, toggle } = useTheme();
   const { toggleCollapsed, collapsed, setPalette } = useUi();
   const navigate = useNavigate();
   const locked = !dataset;
@@ -45,8 +45,8 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
     <div className="flex h-full flex-col">
       <div className={`flex items-center pt-5 pb-4 ${compact ? "justify-center px-2" : "justify-between px-5"}`}>
         <NavLink to="/" onClick={onNavigate} className="flex items-center gap-2.5" aria-label="DataBench home">
-          {/* app icon: a squircle in the accent, lit from the top like a dock icon */}
-          <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-accent bg-gradient-to-b from-white/25 to-transparent text-accent-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_10px_-2px_var(--accent-soft)]">
+          {/* app icon: a flat squircle in the accent */}
+          <span className="grid size-9 shrink-0 place-items-center rounded-[10px] bg-accent text-accent-ink shadow-sm">
             <Icon name="layers" className="size-5" />
           </span>
           {!compact && (
@@ -131,30 +131,6 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
                   <span className="relative">{option.label}</span>
                 </button>
               ))}
-            </div>
-            {/* accent swatches, as in macOS System Settings */}
-            <div role="radiogroup" aria-label="Accent colour" className="flex items-center justify-between px-1">
-              {ACCENTS.map((option) => {
-                const on = option.id === accent;
-                return (
-                  <Hint key={option.id} label={option.label}>
-                    <m.button
-                      type="button"
-                      role="radio"
-                      aria-checked={on}
-                      aria-label={`${option.label} accent`}
-                      onClick={() => setAccent(option.id)}
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.9 }}
-                      transition={spring.snappy}
-                      className="relative grid size-5 place-items-center rounded-full shadow-[inset_0_-1px_1px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.3)]"
-                      style={{ background: option.swatch }}
-                    >
-                      {on && <m.span layoutId="accent-dot" transition={spring.snappy} className="size-1.5 rounded-full bg-white" />}
-                    </m.button>
-                  </Hint>
-                );
-              })}
             </div>
           </>
         )}

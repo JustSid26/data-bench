@@ -150,24 +150,23 @@ Pure derivations live in `src/lib/insights.ts` so the charts stay dumb.
   derived data is memoised; profile cards are `memo`'d; the preview and column
   tables window rows.
 
-## macOS look and colour themes (follow-up)
+## macOS look (follow-up)
 
 - **Materials** (`index.css`): `glass` (content), `glass-chrome` (sidebar,
   toolbar) and `glass-sheet` (dialogs, drawer, toasts, palette, tooltips) —
-  translucent fills with `backdrop-filter: blur() saturate()` and a lit top
-  edge, over a fixed three-blob wallpaper. `prefers-reduced-transparency`
+  translucent fills with `backdrop-filter: blur() saturate()`, so sticky
+  chrome frosts the content scrolling beneath it. `prefers-reduced-transparency`
   swaps in solid panels.
-- **Chrome**: floating inset sidebar with a segmented Light/Dark control and
-  accent swatches; frosted sticky toolbar; Spotlight-style ⌘K palette; SF Pro
-  / SF Mono on Apple platforms (Inter / JetBrains Mono elsewhere).
-- **Accent themes**: Blue, Indigo, Purple, Pink, Teal, Graphite (sidebar,
-  palette; persisted). Each swaps the accent and the wallpaper tint, in both
-  modes. Every fill keeps white text ≥ 4.5:1. Red / green / orange are not
-  offered: they mean critical / good / warning.
-- **Colour, not monochrome**: iOS-Settings-style gradient icon tiles give
-  every screen and section its own hue (`IconTile`, tones independent of the
-  accent). Chart colours stay fixed across accents, so data never changes
-  meaning when the theme does.
+- **Plain background**: flat white in light mode, black in dark, switched by
+  a Light / Dark segmented control in the sidebar (also `t` and the palette).
+  No wallpaper, no gradients, a single blue accent. An earlier pass had
+  accent-colour themes and a gradient wallpaper; both were removed on request.
+- **Chrome**: floating inset sidebar, frosted sticky toolbar, Spotlight-style
+  ⌘K palette, SF Pro / SF Mono on Apple platforms (Inter / JetBrains Mono
+  elsewhere).
+- **Still colourful**: flat iOS-Settings-style icon tiles give every screen
+  and section its own hue (`IconTile`). Green, red and amber are kept out of
+  the tiles because they mean good / critical / warning.
 
 ## Review fixes
 

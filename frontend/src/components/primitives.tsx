@@ -320,18 +320,18 @@ export function Eyebrow({ children, className = "" }: { children: ReactNode; cla
   );
 }
 
-/** Tile colours, independent of the accent: each screen / section keeps its
- *  own hue (like the iOS Settings list), so the app is never monochrome.
- *  Green, red and amber are left out -- those mean good / critical / warning. */
+/** Flat tile colours: each screen / section keeps its own hue (like the iOS
+ *  Settings list), so the app is never monochrome. Green, red and amber are
+ *  left out -- those mean good / critical / warning. */
 const TILE = {
-  blue: "from-[#3d9bff] to-[#0064d2]",
-  indigo: "from-[#7c74ff] to-[#4338ca]",
-  purple: "from-[#b86bf0] to-[#7e30b8]",
-  pink: "from-[#ff5c9a] to-[#c71f66]",
-  teal: "from-[#22c3d6] to-[#0b7285]",
-  sky: "from-[#5ac8fa] to-[#0a6fb5]",
-  violet: "from-[#a78bfa] to-[#6d28d9]",
-  graphite: "from-[#8e8e93] to-[#48484d]",
+  blue: "bg-[#0064d2]",
+  indigo: "bg-[#4f46e5]",
+  purple: "bg-[#8e3fc7]",
+  pink: "bg-[#c71f66]",
+  teal: "bg-[#0b7285]",
+  sky: "bg-[#0a6fb5]",
+  violet: "bg-[#6d28d9]",
+  graphite: "bg-[#5a5a60]",
 } as const;
 export type TileTone = keyof typeof TILE;
 
@@ -341,7 +341,7 @@ export function IconTile({ icon, tone = "blue", size = "md" }: { icon: string; t
   return (
     <span
       aria-hidden="true"
-      className={`grid shrink-0 place-items-center bg-gradient-to-b text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_1px_2px_rgba(0,0,0,0.2)] ${TILE[tone]} ${box}`}
+      className={`grid shrink-0 place-items-center text-white ${TILE[tone]} ${box}`}
     >
       <Icon name={icon} className={glyph} />
     </span>
