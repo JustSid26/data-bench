@@ -186,6 +186,13 @@
   outline-offset: 2px;
 }
 
+/* text fields draw their own focus ring (border + glow), so skip the outline */
+input:not([type="range"]):focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
 html,
 body,
 #root {

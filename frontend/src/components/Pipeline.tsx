@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import { m } from "motion/react";
 import { Icon } from "./icons";
 import { spring } from "../lib/motion";
@@ -21,8 +21,8 @@ const STEPS = [
 export function Pipeline() {
   const { pathname } = useLocation();
   const { dataset, jobId } = useSession();
-  const profile = useQuery<Profile>({ queryKey: ["profile", dataset?.id], enabled: false });
-  const job = useQuery<Job>({ queryKey: ["job", jobId], enabled: false });
+  const profile = useQuery<Profile>({ queryKey: ["profile", dataset?.id], queryFn: skipToken });
+  const job = useQuery<Job>({ queryKey: ["job", jobId], queryFn: skipToken });
 
   const done = [
     Boolean(dataset),

@@ -5,6 +5,7 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import { App } from "./App";
 import { ToastProvider } from "./components/ui/Toaster";
 import { MotionProvider } from "./lib/motion";
+import { CleaningProvider } from "./state/cleaning";
 import { SessionProvider } from "./state/session";
 import { ThemeProvider } from "./state/theme";
 import { UiProvider } from "./state/ui";
@@ -30,9 +31,11 @@ createRoot(document.getElementById("root")!).render(
           <Tooltip.Provider delayDuration={300}>
             <ToastProvider>
               <SessionProvider>
-                <UiProvider>
-                  <App />
-                </UiProvider>
+                <CleaningProvider>
+                  <UiProvider>
+                    <App />
+                  </UiProvider>
+                </CleaningProvider>
               </SessionProvider>
             </ToastProvider>
           </Tooltip.Provider>

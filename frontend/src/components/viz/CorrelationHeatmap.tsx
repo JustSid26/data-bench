@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { m } from "motion/react";
+import { m, useInView } from "motion/react";
 import { useChartTooltip, TipBody } from "./ChartTooltip";
 import { tween } from "../../lib/motion";
 import { correlationMatrix } from "../../lib/insights";
@@ -20,6 +20,7 @@ export function CorrelationHeatmap({
 }) {
   const matrix = useMemo(() => correlationMatrix(pairs), [pairs]);
   const { frame, bind, node } = useChartTooltip();
+  const seen = useInView(frame, { once: true, amount: 0.2 });
   const [hot, setHot] = useState<[number, number] | null>(null);
   const n = matrix.columns.length;
 
@@ -32,9 +33,11 @@ export function CorrelationHeatmap({
   return (
     <div>
       <div ref={frame} className="relative overflow-x-auto">
+        {/* drawn at its natural size (never scaled up), shrinking only to fit */}
         <svg
-          viewBox={`0 0 ${label + size} ${label + size}`}
-          className="mx-auto block w-full max-w-[36rem] min-w-[18rem]"
+          viewBox={`0 0 ${label + size + 48} ${label + size}`}
+          width={label + size + 48}
+          className="mx-auto block h-auto max-w-full"
           role="img"
           aria-label={`Correlation matrix of ${n} columns; ${pairs.length} strong pairs`}
           onPointerLeave={() => setHot(null)}
@@ -97,8 +100,7 @@ export function CorrelationHeatmap({
                       fill={fillFor(r!)}
                       style={{ transformBox: "fill-box", originX: 0.5, originY: 0.5 }}
                       initial={{ scale: 0, opacity: 0 }}
-                      whileInView={{ scale: 1, opacity: 0.25 + Math.abs(r!) * 0.75 }}
-                      viewport={{ once: true }}
+                      animate={seen ? { scale: 1, opacity: 0.25 + Math.abs(r!) * 0.75 } : { scale: 0, opacity: 0 }}
                       transition={{ ...tween.slow, delay }}
                     />
                   )}
@@ -113,7 +115,7 @@ export function CorrelationHeatmap({
                       className="tnum pointer-events-none"
                       fill={Math.abs(r!) > 0.7 ? "#fff" : "var(--ink)"}
                     >
-                      {(r! > 0 ? "+" : "−") + Math.abs(r!).toFixed(1).replace(/^0/, "")}
+                      {(r! > 0 ? "+" : "−") + Math.abs(r!).toFixed(2).replace(/^0/, "")}
                     </text>
                   )}
                 </g>

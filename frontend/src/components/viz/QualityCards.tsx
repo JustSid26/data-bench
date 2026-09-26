@@ -1,5 +1,5 @@
-import { useMemo } from "react";
-import { m } from "motion/react";
+import { useMemo, useRef } from "react";
+import { m, useInView } from "motion/react";
 import { Icon } from "../icons";
 import { QualityBadge } from "../primitives";
 import { useChartTooltip, TipBody } from "./ChartTooltip";
@@ -12,6 +12,8 @@ import type { ColumnStats, Profile } from "../../lib/types";
 export function DuplicatesCard({ profile }: { profile: Profile }) {
   const share = profile.sampled_rows ? (profile.duplicate_rows / profile.sampled_rows) * 100 : 0;
   const quality = share >= 5 ? "critical" : share > 0 ? "warning" : "good";
+  const bar = useRef<HTMLDivElement>(null);
+  const seen = useInView(bar, { once: true });
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-start justify-between gap-2">
@@ -24,10 +26,10 @@ export function DuplicatesCard({ profile }: { profile: Profile }) {
         <QualityBadge quality={quality}>{percent(share, share < 1 ? 2 : 1)}</QualityBadge>
       </div>
       <div className="mt-auto pt-4">
-        <div className="flex h-2 gap-0.5 overflow-hidden rounded-full" role="img" aria-label={`${percent(100 - share, 1)} unique, ${percent(share, 1)} duplicated`}>
-          <m.span className="h-full origin-left rounded-l-full bg-accent" style={{ width: `${100 - share}%` }} initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={tween.draw} />
+        <div ref={bar} className="flex h-2 gap-0.5 overflow-hidden rounded-full" role="img" aria-label={`${percent(100 - share, 1)} unique, ${percent(share, 1)} duplicated`}>
+          <m.span className="h-full origin-left rounded-l-full bg-accent" style={{ width: `${100 - share}%` }} initial={{ scaleX: 0 }} animate={{ scaleX: seen ? 1 : 0 }} transition={tween.draw} />
           {share > 0 && (
-            <m.span className="h-full min-w-1 origin-left rounded-r-full bg-bad" style={{ width: `${share}%` }} initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ ...tween.draw, delay: 0.6 }} />
+            <m.span className="h-full min-w-1 origin-left rounded-r-full bg-bad" style={{ width: `${share}%` }} initial={{ scaleX: 0 }} animate={{ scaleX: seen ? 1 : 0 }} transition={{ ...tween.draw, delay: 0.6 }} />
           )}
         </div>
         <p className="tnum mt-1.5 text-[11px] text-ink-faint">
@@ -43,6 +45,7 @@ export function DuplicatesCard({ profile }: { profile: Profile }) {
 export function CardinalityCard({ columns, onSelect }: { columns: ColumnStats[]; onSelect?: (name: string) => void }) {
   const sorted = useMemo(() => [...columns].sort((a, b) => b.unique_pct - a.unique_pct), [columns]);
   const { frame, bind, node } = useChartTooltip();
+  const seen = useInView(frame, { once: true });
   const high = sorted.filter((column) => column.kind === "categorical" && column.unique > 50).length;
   const W = Math.max(sorted.length * 6, 60);
   const H = 44;
@@ -75,8 +78,7 @@ export function CardinalityCard({ columns, onSelect }: { columns: ColumnStats[];
                   fill={KIND[column.kind].color}
                   style={{ transformBox: "fill-box", originY: 1 }}
                   initial={{ scaleY: 0 }}
-                  whileInView={{ scaleY: 1 }}
-                  viewport={{ once: true }}
+                  animate={{ scaleY: seen ? 1 : 0 }}
                   transition={{ ...tween.draw, delay: Math.min(index * 0.02, 0.6) }}
                 />
               </g>

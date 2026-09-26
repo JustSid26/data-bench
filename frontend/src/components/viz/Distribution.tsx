@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { m } from "motion/react";
+import { m, useInView } from "motion/react";
 import { useChartTooltip, TipBody } from "./ChartTooltip";
 import { tween } from "../../lib/motion";
 import { boxStats } from "../../lib/insights";
@@ -22,6 +22,7 @@ export function HistogramSpark({
   highlight?: [number, number];
 }) {
   const { frame, bind, node } = useChartTooltip();
+  const seen = useInView(frame, { once: true });
   const peak = Math.max(...counts, 1);
   const width = counts.length * 10;
 
@@ -45,8 +46,7 @@ export function HistogramSpark({
                   opacity={inside ? 0.85 : 0.35}
                   style={{ originY: 1, transformBox: "fill-box" }}
                   initial={{ scaleY: 0 }}
-                  whileInView={{ scaleY: 1 }}
-                  viewport={{ once: true }}
+                  animate={{ scaleY: seen ? 1 : 0 }}
                   transition={grow(index, counts.length)}
                 />
               </g>
@@ -67,7 +67,6 @@ export function HistogramSpark({
 export function TopNBars({ values, limit = 5 }: { values: TopValue[]; limit?: number }) {
   const shown = values.slice(0, limit);
   const covered = shown.reduce((sum, item) => sum + item.pct, 0);
-  const peak = Math.max(...shown.map((item) => item.pct), 1);
   return (
     <m.ul className="space-y-1.5" initial="hidden" whileInView="show" viewport={{ once: true }} variants={{ show: { transition: { staggerChildren: 0.05 } } }}>
       {shown.map((item, index) => (
@@ -81,7 +80,7 @@ export function TopNBars({ values, limit = 5 }: { values: TopValue[]; limit?: nu
           <div className="mt-0.5 h-1.5 overflow-hidden rounded-full bg-line">
             <m.div
               className="h-full origin-left rounded-full bg-categorical"
-              variants={{ hidden: { scaleX: 0 }, show: { scaleX: item.pct / peak } }}
+              variants={{ hidden: { scaleX: 0 }, show: { scaleX: item.pct / 100 } }}
               transition={tween.draw}
               title={`${count(item.count)} rows`}
             />
@@ -90,7 +89,7 @@ export function TopNBars({ values, limit = 5 }: { values: TopValue[]; limit?: nu
       ))}
       {covered < 99.5 && (
         <li className="flex items-baseline gap-2 text-[12px] text-ink-faint">
-          <span>{values.length > limit ? `${values.length - limit}+ others` : "other"}</span>
+          <span>all other values</span>
           <span className="tnum ml-auto">{percent(100 - covered, 0)}</span>
         </li>
       )}
@@ -162,7 +161,6 @@ export function BoxPlot({ column }: { column: ColumnStats }) {
   const mid = 34;
   const counts = column.histogram?.counts ?? [];
   const peak = Math.max(...counts, 1);
-  const ticks = [stats.min, stats.q1, stats.median, stats.q3, stats.max];
 
   return (
     <div>
@@ -200,9 +198,14 @@ export function BoxPlot({ column }: { column: ColumnStats }) {
             {stats.max > stats.highWhisker && <circle cx={x(stats.max)} cy={mid} r={4} fill="none" stroke="var(--warn)" strokeWidth={2} {...bind(<TipBody title="High outliers">up to {decimal(stats.max, 2)}</TipBody>)} />}
           </m.g>
           <line x1={0} x2={W} y1={72} y2={72} stroke="var(--line-strong)" />
-          {ticks.map((value, index) => (
-            <text key={index} x={x(value)} y={84} textAnchor={index === 0 ? "start" : index === ticks.length - 1 ? "end" : "middle"} className="tnum" fontSize={10} fill="var(--ink-faint)">
-              {index === 0 || index === ticks.length - 1 || x(ticks[index]) - x(ticks[index - 1]) > 34 ? decimal(value, 1) : ""}
+          {/* min, median, max -- the median label only when it clears both ends */}
+          {[
+            { value: stats.min, anchor: "start" as const },
+            ...(x(stats.median) > 70 && x(stats.median) < W - 70 ? [{ value: stats.median, anchor: "middle" as const }] : []),
+            { value: stats.max, anchor: "end" as const },
+          ].map((tick) => (
+            <text key={tick.anchor} x={x(tick.value)} y={84} textAnchor={tick.anchor} className="tnum" fontSize={10} fill="var(--ink-faint)">
+              {decimal(tick.value, 1)}
             </text>
           ))}
         </svg>

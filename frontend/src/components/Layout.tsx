@@ -1,23 +1,19 @@
 import { createContext, useContext, useEffect, useRef } from "react";
 import type { RefObject } from "react";
 import { NavLink, useLocation, useNavigate, useOutlet } from "react-router-dom";
-import { AnimatePresence, m, useScroll, useSpring } from "motion/react";
+import { AnimatePresence, m, useScroll, useSpring, useTransform } from "motion/react";
 import { Icon } from "./icons";
 import { Hint, IconButton, Kbd } from "./primitives";
+import { NAV } from "./nav";
 import { Pipeline } from "./Pipeline";
+import { ColumnInspector } from "./ColumnInspector";
+import { CommandPalette } from "./CommandPalette";
+import { ShortcutsDialog, useGlobalShortcuts } from "./Shortcuts";
 import { count } from "../lib/format";
 import { PageTransition, spring, tween } from "../lib/motion";
 import { useSession } from "../state/session";
 import { useTheme } from "../state/theme";
 import { useUi } from "../state/ui";
-
-export const NAV = [
-  { to: "/overview", label: "Overview", icon: "grid", shortcut: "o" },
-  { to: "/analyse", label: "Analyse", icon: "chart", shortcut: "a" },
-  { to: "/clean", label: "Clean", icon: "wand", shortcut: "c" },
-  { to: "/model", label: "Model", icon: "model", shortcut: "m" },
-  { to: "/results", label: "Results", icon: "check", shortcut: "r" },
-];
 
 /** The scrolling element, for anything that reacts to scroll (reading progress). */
 const ScrollContext = createContext<RefObject<HTMLElement | null> | null>(null);
@@ -212,12 +208,14 @@ function FooterButton({
 
 /** Thin bar at the top of the content that fills as the page scrolls. */
 function ReadingProgress({ target }: { target: RefObject<HTMLElement | null> }) {
-  const { scrollYProgress } = useScroll({ container: target });
+  const { scrollY, scrollYProgress } = useScroll({ container: target });
   const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30, restDelta: 0.001 });
+  // a page that does not scroll reports progress 1; only show the bar once scrolled
+  const opacity = useTransform(scrollY, (y) => (y > 8 ? 1 : 0));
   return (
     <m.div
       aria-hidden="true"
-      style={{ scaleX }}
+      style={{ scaleX, opacity }}
       className="pointer-events-none sticky top-0 z-30 -mb-0.5 h-0.5 origin-left bg-accent"
     />
   );
@@ -228,6 +226,7 @@ export function Layout() {
   const location = useLocation();
   const { collapsed, mobileNav, setMobileNav, setPalette, setShortcuts } = useUi();
   const scroller = useRef<HTMLElement>(null);
+  useGlobalShortcuts();
 
   // each route starts at the top, not wherever the previous one was scrolled to
   useEffect(() => {
@@ -291,6 +290,9 @@ export function Layout() {
           </AnimatePresence>
         </main>
       </div>
+      <ColumnInspector />
+      <CommandPalette />
+      <ShortcutsDialog />
     </ScrollContext.Provider>
   );
 }

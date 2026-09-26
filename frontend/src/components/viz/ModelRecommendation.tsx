@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { AnimatePresence, m } from "motion/react";
+import { useRef, useState } from "react";
+import { AnimatePresence, m, useInView } from "motion/react";
 import { Icon } from "../icons";
 import { fadeUp, lift, spring, tween } from "../../lib/motion";
 import { HYPERPARAMETERS, modelReasons } from "../../lib/insights";
@@ -113,6 +113,8 @@ export function ModelCard({
   const params = HYPERPARAMETERS[algorithm.name] ?? {};
   const classifying = plan.task.endsWith("classification");
   const panel = `params-${algorithm.name}`;
+  const bar = useRef<HTMLDivElement>(null);
+  const seen = useInView(bar, { once: true });
 
   return (
     <m.div
@@ -164,12 +166,11 @@ export function ModelCard({
             #{rank} <span className="text-ink-faint">of {of}</span>
           </span>
         </div>
-        <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-line" role="img" aria-label={`Ranked ${rank} of ${of} by the planner`}>
+        <div ref={bar} className="mt-1 h-1.5 overflow-hidden rounded-full bg-line" role="img" aria-label={`Ranked ${rank} of ${of} by the planner`}>
           <m.div
             className={`h-full origin-left rounded-full ${algorithm.recommended ? "bg-accent" : "bg-ink-faint"}`}
             initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: (of - rank + 1) / of }}
-            viewport={{ once: true }}
+            animate={{ scaleX: seen ? (of - rank + 1) / of : 0 }}
             transition={{ ...tween.draw, delay: rank * 0.08 }}
           />
         </div>

@@ -23,7 +23,7 @@ export function MiniProfile({ column, onOpen }: { column: ColumnStats; onOpen: (
   const numeric = column.kind === "numeric";
 
   return (
-    <m.article variants={fadeUp} {...lift} layout="position" className="group min-w-0">
+    <m.article variants={fadeUp} exit="exit" {...lift} layout="position" className="group min-w-0">
       <button
         type="button"
         onClick={() => onOpen(column.name)}

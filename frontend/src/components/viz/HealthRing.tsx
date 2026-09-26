@@ -52,7 +52,7 @@ export function HealthRing({ health, size = 132, showBreakdown = false }: { heal
   );
 
   return (
-    <div className="flex items-center gap-5">
+    <div className={`flex w-full gap-5 ${showBreakdown ? "flex-col items-start min-[480px]:flex-row min-[480px]:items-center" : "items-center"}`}>
       <Tooltip.Root>
         <Tooltip.Trigger asChild>{ring}</Tooltip.Trigger>
         <Tooltip.Portal>
@@ -67,24 +67,24 @@ export function HealthRing({ health, size = 132, showBreakdown = false }: { heal
         </Tooltip.Portal>
       </Tooltip.Root>
       {showBreakdown && (
-        <div className="hidden min-w-0 flex-1 sm:block">
-          <Breakdown health={health} />
+        <div className="w-full min-w-0 flex-1">
+          <Breakdown health={health} compact />
         </div>
       )}
     </div>
   );
 }
 
-function Breakdown({ health }: { health: Health }) {
+function Breakdown({ health, compact = false }: { health: Health; compact?: boolean }) {
   return (
-    <ul className="space-y-2">
+    <ul className={compact ? "grid grid-cols-2 gap-x-5 gap-y-2.5 text-[12px]" : "space-y-2"}>
       {health.parts.map((part, index) => {
         const quality = scoreQuality(part.value);
         return (
           <li key={part.key}>
             <div className="flex items-baseline justify-between gap-2">
-              <span className="text-ink-muted">
-                {part.label} <span className="text-ink-faint">×{part.weight}</span>
+              <span className="truncate text-ink-muted">
+                {part.label} {!compact && <span className="text-ink-faint">×{part.weight}</span>}
               </span>
               <span className="tnum font-medium">{Math.round(part.value)}</span>
             </div>
@@ -94,7 +94,9 @@ function Breakdown({ health }: { health: Health }) {
               delay={0.1 + index * 0.08}
               className="mt-1"
             />
-            <p className="mt-0.5 text-[11px] text-ink-faint">{part.detail}</p>
+            <p className={`mt-0.5 text-[11px] text-ink-faint ${compact ? "truncate" : ""}`} title={part.detail}>
+              {part.detail}
+            </p>
           </li>
         );
       })}

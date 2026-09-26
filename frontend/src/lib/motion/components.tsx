@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { LazyMotion, MotionConfig, animate, m, useInView, useReducedMotion } from "motion/react";
-import { fadeUp } from "./presets";
+import { tween } from "./presets";
 
 const loadFeatures = () => import("./features").then((module) => module.default);
 
@@ -19,7 +19,14 @@ export function MotionProvider({ children }: { children: ReactNode }) {
 /** One route's content. Keyed by pathname inside an AnimatePresence. */
 export function PageTransition({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <m.div variants={fadeUp} initial="hidden" animate="show" exit="exit" className={className}>
+    // explicit targets, not variant labels: a label would cascade "exit" through
+    // every descendant and the next route would wait on all of them
+    <m.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0, transition: tween.base }}
+      exit={{ opacity: 0, transition: tween.fast }}
+      className={className}
+    >
       {children}
     </m.div>
   );

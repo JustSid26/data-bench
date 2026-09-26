@@ -1,5 +1,6 @@
+import { useRef } from "react";
 import type { ReactNode } from "react";
-import { m } from "motion/react";
+import { m, useInView } from "motion/react";
 import type { HTMLMotionProps } from "motion/react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { Icon } from "./icons";
@@ -177,8 +178,12 @@ export function Meter({
   label?: string;
 }) {
   const clamped = Math.max(0, Math.min(100, value));
+  // observe the track, not the fill: a fill at scaleX(0) has no area and never "enters" view
+  const track = useRef<HTMLDivElement>(null);
+  const seen = useInView(track, { once: true });
   return (
     <div
+      ref={track}
       className={`h-1.5 w-full overflow-hidden rounded-full bg-line ${className}`}
       {...(label
         ? { role: "meter", "aria-label": label, "aria-valuenow": Math.round(clamped), "aria-valuemin": 0, "aria-valuemax": 100 }
@@ -187,8 +192,7 @@ export function Meter({
       <m.div
         className={`h-full origin-left rounded-full ${FILL[tone]}`}
         initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: clamped / 100 }}
-        viewport={{ once: true }}
+        animate={{ scaleX: seen ? clamped / 100 : 0 }}
         transition={{ ...tween.draw, delay }}
       />
     </div>
