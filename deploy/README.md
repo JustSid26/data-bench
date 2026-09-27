@@ -4,7 +4,28 @@ One instance runs everything: uvicorn serves the api at `/api` and the built UI
 at `/`, with nginx in front for uploads, timeouts and a site password. About 20
 minutes end to end, most of it waiting on `pip`.
 
-## 1. Launch the instance (AWS console)
+## Option A: Terraform (recommended)
+
+`deploy/terraform/` creates the instance, security group, key pair and
+Elastic IP; on first boot the instance clones this repo and runs `setup.sh`.
+
+```bash
+aws configure --profile databench          # an IAM user with AmazonEC2FullAccess
+cd deploy/terraform
+cp terraform.tfvars.example terraform.tfvars   # set site_password + aws_profile
+terraform init
+terraform apply                            # 4 resources; prints url + ssh
+```
+
+The site answers about 5–8 minutes after `apply` (watch with the printed
+`watch_setup` command). SSH is only open to the IP that ran terraform. To
+redeploy new commits: push, then `ssh` in and run
+`cd ~/data-bench && git pull && sudo bash deploy/setup.sh`.
+When the presentation is over: `terraform destroy`.
+
+## Option B: by hand
+
+### 1. Launch the instance (AWS console)
 
 EC2 → **Launch instance**:
 
@@ -20,7 +41,7 @@ EC2 → **Launch instance**:
 Then **Elastic IPs → Allocate → Associate** it with the instance, so the
 address survives a stop/start before the presentation.
 
-## 2. Get the code onto it
+### 2. Get the code onto it
 
 ```bash
 chmod 400 databench.pem
@@ -43,7 +64,7 @@ rsync -az --exclude node_modules --exclude .venv --exclude frontend/dist --exclu
   -e "ssh -i databench.pem" ./ ubuntu@<ELASTIC_IP>:~/data-bench/
 ```
 
-## 3. Install and start
+### 3. Install and start
 
 ```bash
 cd ~/data-bench
