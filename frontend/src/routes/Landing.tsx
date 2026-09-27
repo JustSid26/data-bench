@@ -7,6 +7,18 @@ import { Icon } from "../components/icons";
 import { HealthRing } from "../components/viz/HealthRing";
 import { TypeDonut } from "../components/viz/TypeDonut";
 import { ScoreBars } from "../components/viz/Training";
+import { DataField, PipelineFlow, FlowArrow } from "../components/landing/Motion";
+import { HealthRecipe, ScoreChart, StatsStrip } from "../components/landing/Infographics";
+import {
+  DbscanArt,
+  DecisionTreeArt,
+  GradientBoostingArt,
+  IsolationArt,
+  KMeansArt,
+  LogisticArt,
+  RandomForestArt,
+  RidgeArt,
+} from "../components/landing/ModelArt";
 import { fadeUp, inView, lift, spring, stagger } from "../lib/motion";
 import type { Health } from "../lib/insights";
 import type { ModelResult } from "../lib/types";
@@ -41,14 +53,6 @@ const TITANIC_SCORES = (
   ] as const
 ).map(([algorithm, score]) => ({ algorithm, score, ok: true, metrics: {}, importance: [], fit_ms: 0 }) as ModelResult);
 
-const STEPS: { title: string; icon: string; tone: TileTone; text: string }[] = [
-  { title: "Ingest", icon: "upload", tone: "blue", text: "Drop a CSV, Excel, Parquet or JSON file. Separators, types and blank cells are detected for you." },
-  { title: "Profile", icon: "chart", tone: "teal", text: "Every column is typed and profiled: distributions, missing values, outliers, correlations, a health score." },
-  { title: "Clean", icon: "wand", tone: "pink", text: "Suggested fixes per column — drop, impute, encode, clip — with a projected effect on data health." },
-  { title: "Model", icon: "model", tone: "purple", text: "Pick a target; the task is inferred and suitable models are proposed, each with editable hyperparameters." },
-  { title: "Train", icon: "check", tone: "sky", text: "Models train side by side and are scored on rows they never saw. Export the winner as Python." },
-];
-
 const FEATURES: { title: string; icon: string; tone: TileTone; text: string }[] = [
   { title: "Dataset health score", icon: "ok", tone: "teal", text: "One 0–100 number from completeness, type consistency, duplicates and outliers, with the breakdown one hover away." },
   { title: "Missing-data map", icon: "droplet", tone: "pink", text: "See exactly where the gaps are, row by row, and which columns are worst." },
@@ -60,14 +64,15 @@ const FEATURES: { title: string; icon: string; tone: TileTone; text: string }[] 
   { title: "Nothing gets lost", icon: "layers", tone: "graphite", text: "Uploads and results are kept in Amazon S3, so a restart or redeploy never wipes your work." },
 ];
 
-/* Measured on DataBench with its default settings, scored on held-out rows. */
-const RESULTS: { name: string; rows: string; task: string; model: string; score: string; note: string }[] = [
-  { name: "Breast cancer (UCI)", rows: "569", task: "Binary", model: "Gradient boosting", score: "0.969", note: "balanced accuracy" },
-  { name: "Penguins", rows: "344", task: "3 classes", model: "Decision tree", score: "0.989", note: "balanced accuracy" },
-  { name: "California housing", rows: "20,640", task: "Regression", model: "Gradient boosting", score: "0.842", note: "R²" },
-  { name: "Titanic", rows: "891", task: "Binary", model: "Gradient boosting", score: "0.779", note: "balanced accuracy" },
-  { name: "Telco customer churn", rows: "7,043", task: "Binary", model: "Logistic regression", score: "0.766", note: "balanced accuracy" },
-  { name: "Pure random noise", rows: "3,000", task: "Binary", model: "any", score: "≈ 0.50", note: "chance level — as it should be" },
+const MODELS: { name: string; task: string; tone: TileTone; art: () => ReactNode; how: string; when: string }[] = [
+  { name: "Decision tree", task: "Classify · Regress", tone: "blue", art: () => <DecisionTreeArt />, how: "Asks one yes/no question about a column at a time until the rows it has left mostly agree.", when: "You need a model you can read end to end." },
+  { name: "Random forest", task: "Classify · Regress", tone: "teal", art: () => <RandomForestArt />, how: "Grows many trees on random slices of rows and columns, then lets them vote.", when: "A strong, stable default that needs no tuning." },
+  { name: "Gradient boosting", task: "Classify · Regress", tone: "purple", art: () => <GradientBoostingArt />, how: "Adds small trees one after another, each fixing the errors the others still make.", when: "Mixed column types, missing values, top accuracy." },
+  { name: "Logistic regression", task: "Classify", tone: "indigo", art: () => <LogisticArt />, how: "Weighs each column and squashes the total through an S-curve into a probability.", when: "Fast, explainable per-column effects." },
+  { name: "Ridge regression", task: "Regress", tone: "sky", art: () => <RidgeArt />, how: "Fits a straight line through the data while keeping every weight small.", when: "A baseline that says whether the signal is simple." },
+  { name: "K-means", task: "Cluster", tone: "pink", art: () => <KMeansArt />, how: "Moves k centres to the middle of their nearest points until nothing changes; k is chosen for you.", when: "Grouping rows into segments with no target." },
+  { name: "DBSCAN", task: "Cluster", tone: "violet", art: () => <DbscanArt />, how: "Grows clusters through dense neighbourhoods, so shapes can be anything; stragglers become noise.", when: "Odd-shaped groups and a built-in outlier flag." },
+  { name: "Isolation forest", task: "Anomalies", tone: "graphite", art: () => <IsolationArt />, how: "Cuts the data at random; rows that get isolated in very few cuts are the unusual ones.", when: "Finding the rows that fit no pattern." },
 ];
 
 const STACK = ["React 19", "TypeScript", "Vite", "Tailwind CSS", "Motion", "FastAPI", "pandas", "scikit-learn", "Amazon EC2", "Amazon S3", "AWS IAM", "Terraform"];
@@ -125,15 +130,6 @@ function ArchBox({ icon, tone, title, lines, className = "" }: { icon: string; t
   );
 }
 
-function Arrow({ label, vertical = false }: { label: string; vertical?: boolean }) {
-  return (
-    <m.div variants={fadeUp} className={`flex shrink-0 items-center justify-center gap-1 text-ink-faint ${vertical ? "flex-col py-1" : "flex-col px-1 lg:flex-row"}`} aria-hidden="true">
-      <Icon name={vertical ? "down" : "arrow"} className={`size-4 ${vertical ? "" : "rotate-90 lg:rotate-0"}`} />
-      <span className="text-[10px] font-medium tracking-[0.04em] uppercase">{label}</span>
-    </m.div>
-  );
-}
-
 export function Landing() {
   const navigate = useNavigate();
   const { dark, toggle } = useTheme();
@@ -152,6 +148,7 @@ export function Landing() {
           <nav aria-label="Sections" className="ml-6 hidden items-center gap-1 text-[13px] text-ink-muted md:flex">
             {[
               ["#how", "How it works"],
+              ["#models", "Models"],
               ["#features", "Features"],
               ["#results", "Results"],
               ["#architecture", "Architecture"],
@@ -173,7 +170,9 @@ export function Landing() {
 
       <main>
         {/* hero */}
-        <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-14 pb-10 md:px-6 md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-12">
+        <div className="relative">
+        <DataField />
+        <section className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pt-14 pb-16 md:px-6 md:pt-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-12">
           <m.div variants={stagger(0.08)} initial="hidden" animate="show">
             <m.p variants={fadeUp} className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1 text-[12px] font-medium text-ink-muted shadow-sm">
               <Icon name="sparkle" className="size-3.5 text-accent-fg" />
@@ -232,20 +231,43 @@ export function Landing() {
             <p className="mt-3 text-center text-[11px] text-ink-faint">Real output for the public Titanic dataset (891 rows).</p>
           </m.div>
         </section>
+        </div>
+
+        <m.div {...inView} variants={stagger(0.05)} className="mx-auto max-w-6xl px-4 md:px-6">
+          <StatsStrip />
+        </m.div>
 
         <Section id="how" eyebrow="How it works" title="Five steps from raw file to a model you can ship" lead="The same pipeline runs for every dataset, and the breadcrumb at the top of the app always shows where you are.">
-          <m.ol variants={stagger(0.07)} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map((step, index) => (
-              <m.li key={step.title} variants={fadeUp} {...lift} className="glass relative rounded-card border border-line p-4">
-                <div className="flex items-center justify-between">
-                  <IconTile icon={step.icon} tone={step.tone} />
-                  <span className="tnum text-[28px] leading-none font-bold text-ink-faint/40">{index + 1}</span>
+          <m.div variants={fadeUp}>
+            <PipelineFlow />
+          </m.div>
+        </Section>
+
+        <Section
+          id="models"
+          eyebrow="Models"
+          title="Eight algorithms, and how each one thinks"
+          lead="DataBench picks the candidates that suit your data and trains them side by side. Every one of them is tunable and exportable as Python."
+        >
+          <m.div variants={stagger(0.06)} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {MODELS.map((model) => (
+              <m.article key={model.name} variants={fadeUp} {...lift} className="glass flex flex-col overflow-hidden rounded-card border border-line">
+                <div className="aspect-[200/130] border-b border-line bg-hover/40 p-2">{model.art()}</div>
+                <div className="flex flex-1 flex-col p-4">
+                  <div className="flex items-center gap-2">
+                    <IconTile icon="model" tone={model.tone} size="sm" />
+                    <h3 className="text-[14px] font-semibold">{model.name}</h3>
+                  </div>
+                  <p className="mt-1 text-[11px] font-semibold tracking-[0.04em] text-ink-faint uppercase">{model.task}</p>
+                  <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">{model.how}</p>
+                  <p className="mt-auto pt-3 text-[12px] text-ink">
+                    <span className="font-semibold">Best for: </span>
+                    {model.when}
+                  </p>
                 </div>
-                <p className="mt-3 text-[15px] font-semibold">{step.title}</p>
-                <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">{step.text}</p>
-              </m.li>
+              </m.article>
             ))}
-          </m.ol>
+          </m.div>
         </Section>
 
         <Section id="features" eyebrow="Features" title="Everything you would do in a notebook, without the notebook">
@@ -266,32 +288,16 @@ export function Landing() {
           title="Measured, not claimed"
           lead="Public datasets run through DataBench with default settings. Every score is on rows the models never trained on — including a dataset of pure noise, which lands at chance, exactly where an honest tool should put it."
         >
-          <m.div variants={fadeUp} className="glass overflow-x-auto rounded-card border border-line">
-            <table className="w-full min-w-[40rem] border-collapse text-[13px]">
-              <thead>
-                <tr className="text-left text-[11px] font-semibold tracking-[0.04em] text-ink-muted uppercase">
-                  <th scope="col" className="border-b border-line px-4 py-3">Dataset</th>
-                  <th scope="col" className="border-b border-line px-4 py-3 text-right">Rows</th>
-                  <th scope="col" className="border-b border-line px-4 py-3">Task</th>
-                  <th scope="col" className="border-b border-line px-4 py-3">Best model</th>
-                  <th scope="col" className="border-b border-line px-4 py-3 text-right">Score</th>
-                  <th scope="col" className="border-b border-line px-4 py-3">Metric</th>
-                </tr>
-              </thead>
-              <tbody>
-                {RESULTS.map((row) => (
-                  <tr key={row.name} className="transition-colors hover:bg-hover">
-                    <td className="border-b border-line/60 px-4 py-3 font-medium">{row.name}</td>
-                    <td className="tnum border-b border-line/60 px-4 py-3 text-right text-ink-muted">{row.rows}</td>
-                    <td className="border-b border-line/60 px-4 py-3 text-ink-muted">{row.task}</td>
-                    <td className="border-b border-line/60 px-4 py-3">{row.model}</td>
-                    <td className="tnum border-b border-line/60 px-4 py-3 text-right text-[15px] font-semibold">{row.score}</td>
-                    <td className="border-b border-line/60 px-4 py-3 text-[12px] text-ink-muted">{row.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </m.div>
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+            <m.div variants={fadeUp} className="glass rounded-card border border-line p-5">
+              <p className="mb-2 text-[13px] font-semibold">Best model per dataset</p>
+              <ScoreChart />
+            </m.div>
+            <m.div variants={fadeUp} className="glass rounded-card border border-line p-5">
+              <p className="mb-4 text-[13px] font-semibold">How the health score is built</p>
+              <HealthRecipe />
+            </m.div>
+          </div>
         </Section>
 
         <Section
@@ -301,19 +307,19 @@ export function Landing() {
           lead="One EC2 instance serves the app and trains models; Amazon S3 keeps every upload and result; an IAM role lets the server use that bucket with no keys stored anywhere."
         >
           <m.div variants={stagger(0.08)} className="flex flex-col items-stretch lg:flex-row lg:items-center">
-            <ArchBox icon="search" tone="graphite" title="Browser" lines={["React + TypeScript UI", "password-protected site"]} className="lg:w-52" />
-            <Arrow label="HTTP" />
+            <ArchBox icon="search" tone="graphite" title="Browser" lines={["React + TypeScript UI", "open to anyone with the link"]} className="lg:w-52" />
+            <FlowArrow label="HTTP" />
             <m.div variants={fadeUp} className="flex-1 rounded-[20px] border-2 border-dashed border-line-strong p-3">
               <p className="mb-2 flex items-center gap-1.5 px-1 text-[11px] font-semibold tracking-[0.06em] text-ink-muted uppercase">
                 <Icon name="grid" className="size-3.5" /> Amazon EC2 · t3.medium · Ubuntu 24.04
               </p>
               <div className="flex flex-col lg:flex-row lg:items-center">
-                <ArchBox icon="filter" tone="indigo" title="nginx" lines={["password, uploads to 512 MB", "blocks server-path reads"]} className="flex-1" />
-                <Arrow label="proxy" />
+                <ArchBox icon="filter" tone="indigo" title="nginx" lines={["per-visitor rate limits", "uploads up to 512 MB"]} className="flex-1" />
+                <FlowArrow label="proxy" />
                 <ArchBox icon="model" tone="purple" title="FastAPI + scikit-learn" lines={["profile, plan, train", "export models as Python"]} className="flex-1" />
               </div>
             </m.div>
-            <Arrow label="IAM role" />
+            <FlowArrow label="IAM role" />
             <ArchBox icon="layers" tone="teal" title="Amazon S3" lines={["datasets & results", "private, encrypted"]} className="lg:w-52" />
           </m.div>
           <m.div variants={fadeUp} className="mt-4 flex flex-wrap items-center gap-2 rounded-card border border-line px-4 py-3 text-[13px] text-ink-muted">
@@ -350,7 +356,7 @@ export function Landing() {
 
       <footer className="border-t border-line">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-6 text-[12px] text-ink-faint sm:flex-row md:px-6">
-          <span>DataBench — a cloud mini-project on Amazon EC2, S3 and IAM.</span>
+          <span>DataBench — a cloud project on Amazon EC2, S3 and IAM.</span>
           <span>Built with React, FastAPI and scikit-learn.</span>
         </div>
       </footer>

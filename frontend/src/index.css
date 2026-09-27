@@ -206,6 +206,38 @@
   }
 }
 
+/* landing page: packets flowing along the architecture arrows */
+@keyframes flow-y {
+  from { transform: translateY(-6px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: translateY(36px); opacity: 0; }
+}
+@keyframes flow-x {
+  from { transform: translateX(-6px); opacity: 0; }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  to { transform: translateX(56px); opacity: 0; }
+}
+.flow-dot {
+  position: absolute;
+  left: -2px;
+  top: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: flow-y 1.2s linear infinite;
+}
+@media (min-width: 64rem) {
+  .flow-dot {
+    left: 0;
+    top: -2px;
+    animation-name: flow-x;
+  }
+}
+
 /* skeleton blocks: a moving highlight over the line colour */
 .skeleton {
   background: linear-gradient(90deg, var(--line) 0%, var(--line-strong) 50%, var(--line) 100%);
