@@ -28,6 +28,10 @@ redeploy new commits: push, then `ssh` in and run
 `cd ~/data-bench && git pull && sudo bash deploy/setup.sh`.
 When the presentation is over: `terraform destroy`.
 
+**SSH times out?** SSH is only open to the IP that last ran terraform. After
+changing networks, run `terraform apply` again -- it only updates that one
+firewall rule (the site itself stays open on port 80 throughout).
+
 ## Option B: by hand
 
 ### 1. Launch the instance (AWS console)
