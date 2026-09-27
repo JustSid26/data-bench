@@ -30,6 +30,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import FunctionTransformer, OneHotEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 
+from . import params as ps
 from . import recommend as rc
 from .ingest import jsonable
 
@@ -44,8 +45,6 @@ MIN_CATEGORY_FREQUENCY = 0.01
 # share of the training rows held back to pick the decision threshold
 VALIDATION_SIZE = 0.2
 MAX_CATEGORIES = 40
-# share of rows isolation forest is asked to flag as unusual
-OUTLIER_SHARE = 0.05
 # rows and repeats used when a model has no built-in importances
 PERMUTATION_ROWS = 1_000
 PERMUTATION_REPEATS = 2
@@ -102,32 +101,29 @@ def build_preprocessor(features, scale):
     return ColumnTransformer(blocks, remainder="drop", n_jobs=None)
 
 
-def make_model(name, task):
+def make_model(name, task, values=None):
+    """The estimator for `name`, built from resolved spec values (params.resolve)."""
     classifying = task in (rc.BINARY, rc.MULTICLASS)
-    # only the classifiers accept class_weight -- passing it to a regressor raises
-    weighted = {"class_weight": "balanced"} if classifying else {}
+    kwargs = ps.estimator_kwargs(values if values is not None else ps.resolve(name, task))
     if name == "gradient_boosting":
-        if classifying:
-            return HistGradientBoostingClassifier(
-                max_iter=200, early_stopping=True, random_state=SEED, **weighted)
-        return HistGradientBoostingRegressor(max_iter=200, early_stopping=True, random_state=SEED)
+        cls = HistGradientBoostingClassifier if classifying else HistGradientBoostingRegressor
+        return cls(random_state=SEED, **kwargs)
     if name == "random_forest":
         cls = RandomForestClassifier if classifying else RandomForestRegressor
-        return cls(n_estimators=100, n_jobs=-1, random_state=SEED, **weighted)
+        return cls(n_jobs=-1, random_state=SEED, **kwargs)
     if name == "logistic_regression":
-        return LogisticRegression(max_iter=1000, n_jobs=-1, class_weight="balanced")
+        return LogisticRegression(n_jobs=-1, **kwargs)
     if name == "ridge":
-        return Ridge(random_state=SEED)
+        return Ridge(random_state=SEED, **kwargs)
     if name == "decision_tree":
         cls = DecisionTreeClassifier if classifying else DecisionTreeRegressor
-        return cls(max_depth=6, random_state=SEED, **weighted)
+        return cls(random_state=SEED, **kwargs)
     if name == "kmeans":
-        return KMeans(n_init=10, random_state=SEED)
+        return KMeans(random_state=SEED, **kwargs)
     if name == "dbscan":
-        return DBSCAN(n_jobs=-1)
+        return DBSCAN(n_jobs=-1, **kwargs)
     if name == "isolation_forest":
-        return IsolationForest(n_estimators=150, contamination=OUTLIER_SHARE,
-                               random_state=SEED, n_jobs=-1)
+        return IsolationForest(random_state=SEED, n_jobs=-1, **kwargs)
     raise ValueError("unknown algorithm '%s'" % name)
 
 
@@ -147,7 +143,7 @@ def prepare(df, plan, max_rows=MAX_TRAIN_ROWS):
     return X, y, sampled, len(frame)
 
 
-def run(df, plan, algorithms=None, max_rows=MAX_TRAIN_ROWS):
+def run(df, plan, algorithms=None, max_rows=MAX_TRAIN_ROWS, params=None, test_size=TEST_SIZE):
     """Train every requested algorithm and return a ranked leaderboard.
 
     All parallel work runs on threads. The default for some estimators is a
@@ -158,10 +154,10 @@ def run(df, plan, algorithms=None, max_rows=MAX_TRAIN_ROWS):
     threads cost little speed here.
     """
     with parallel_backend("threading", n_jobs=-1):
-        return _run(df, plan, algorithms, max_rows)
+        return _run(df, plan, algorithms, max_rows, params or {}, test_size)
 
 
-def _run(df, plan, algorithms, max_rows):
+def _run(df, plan, algorithms, max_rows, params, test_size):
     started = time.perf_counter()
     task = plan["task"]
     wanted = algorithms or [a["name"] for a in plan["algorithms"] if a["recommended"]]
@@ -174,7 +170,7 @@ def _run(df, plan, algorithms, max_rows):
         try:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                results.append(train_one(name, task, X, y))
+                results.append(train_one(name, task, X, y, params.get(name), test_size))
         except Exception as error:
             results.append({"algorithm": name, "ok": False, "error": str(error)})
 
@@ -195,6 +191,8 @@ def _run(df, plan, algorithms, max_rows):
         "best": ordered[0]["algorithm"] if good else None,
         "results": ordered,
         "train_ms": round((time.perf_counter() - started) * 1000, 1),
+        "test_size": test_size,
+        "max_rows": max_rows,
     }
 
 
@@ -206,18 +204,21 @@ def score_name(task):
     return "silhouette"
 
 
-def train_one(name, task, X, y):
+def train_one(name, task, X, y, overrides=None, test_size=TEST_SIZE):
     started = time.perf_counter()
+    values = ps.resolve(name, task, overrides)
     scale = name in SCALE_NEEDED
-    pre = build_preprocessor(split_features(X), scale)
+    columns = split_features(X)
+    pre = build_preprocessor(columns, scale)
 
     if task == rc.CLUSTERING:
-        result = fit_clustering(name, pre, X)
+        result = fit_clustering(name, pre, X, values)
     else:
-        result = fit_supervised(name, task, pre, X, y)
+        result = fit_supervised(name, task, pre, X, y, values, test_size)
 
-    result.update({"algorithm": name, "ok": True,
-                   "fit_ms": round((time.perf_counter() - started) * 1000, 1)})
+    # what was actually used -- the ui shows it and the code export replays it
+    result.update({"algorithm": name, "ok": True, "params": values, "columns": columns,
+                   "scaled": scale, "fit_ms": round((time.perf_counter() - started) * 1000, 1)})
     return result
 
 
@@ -234,7 +235,7 @@ def split_features(X):
     return {"numeric": numeric, "categorical": categorical, "temporal": temporal}
 
 
-def fit_supervised(name, task, pre, X, y):
+def fit_supervised(name, task, pre, X, y, values, test_size=TEST_SIZE):
     classifying = task in (rc.BINARY, rc.MULTICLASS)
     if classifying:
         y = y.astype(object).astype(str)
@@ -245,9 +246,9 @@ def fit_supervised(name, task, pre, X, y):
 
     stratify = y if classifying and y.value_counts().min() >= 2 else None
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=SEED, stratify=stratify)
+        X, y, test_size=test_size, random_state=SEED, stratify=stratify)
 
-    pipe = Pipeline([("prepare", pre), ("model", make_model(name, task))])
+    pipe = Pipeline([("prepare", pre), ("model", make_model(name, task, values))])
     pipe.fit(X_train, y_train)
 
     if classifying:
@@ -342,14 +343,18 @@ def regression_metrics(y_test, predicted):
     }
 
 
-def fit_clustering(name, pre, X):
+def fit_clustering(name, pre, X, values):
     encoded = pre.fit_transform(X)
     if name == "kmeans":
-        model, k = choose_k(encoded)
+        if values.get("n_clusters"):
+            k = values["n_clusters"]
+            model = KMeans(n_clusters=k, random_state=SEED, **ps.estimator_kwargs(values)).fit(encoded)
+        else:
+            model, k = choose_k(encoded, final=ps.estimator_kwargs(values))
         labels = model.labels_
         extra = {"clusters": int(k)}
     elif name == "isolation_forest":
-        model = make_model(name, rc.CLUSTERING).fit(encoded)
+        model = make_model(name, rc.CLUSTERING, values).fit(encoded)
         labels = model.predict(encoded)
         outliers = int((labels == -1).sum())
         return {
@@ -362,7 +367,7 @@ def fit_clustering(name, pre, X):
             "examples": strangest_rows(model, encoded, X),
         }
     else:
-        labels = make_model(name, rc.CLUSTERING).fit_predict(encoded)
+        labels = make_model(name, rc.CLUSTERING, values).fit_predict(encoded)
         extra = {"clusters": int(len(set(labels) - {-1})),
                  "outliers": int((labels == -1).sum())}
 
@@ -395,7 +400,7 @@ def strangest_rows(model, encoded, X, count=10):
     return out
 
 
-def choose_k(encoded, candidates=(2, 3, 4, 5, 6, 7, 8)):
+def choose_k(encoded, candidates=(2, 3, 4, 5, 6, 7, 8), final=None):
     """Pick the cluster count with the best silhouette, scored on a sample."""
     sample = encoded if len(encoded) <= SILHOUETTE_ROWS else \
         encoded[np.random.default_rng(SEED).choice(len(encoded), SILHOUETTE_ROWS, replace=False)]
@@ -408,7 +413,8 @@ def choose_k(encoded, candidates=(2, 3, 4, 5, 6, 7, 8)):
             continue
         if score > best_score:
             best, best_score = k, score
-    return KMeans(n_clusters=best, n_init=10, random_state=SEED).fit(encoded), best
+    final = final or {"n_init": 10}
+    return KMeans(n_clusters=best, random_state=SEED, **final).fit(encoded), best
 
 
 def silhouette_of(encoded, labels):

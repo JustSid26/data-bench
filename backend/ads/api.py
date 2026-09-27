@@ -19,10 +19,12 @@ from fastapi import Body, FastAPI, HTTPException, Query, UploadFile
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from . import export as ex
+from . import params as ps
 from . import profile as pf
 from . import recommend as rc
 from . import train as tr
@@ -161,12 +163,20 @@ async def profile_dataset(dataset_id: str):
         store.cached, dataset_id, "profile", lambda df: pf.profile(df, schema))
 
 
+def with_settings(plan):
+    """Attach the editable hyperparameters for each candidate (additive fields)."""
+    for algorithm in plan["algorithms"]:
+        algorithm["params"] = ps.specs_for(algorithm["name"], plan["task"])
+    plan["test_size"] = ps.TEST_SIZE if plan["task"] != rc.CLUSTERING else None
+    return plan
+
+
 @service.get("/datasets/{dataset_id}/plan")
 async def plan_models(dataset_id: str, target: str = Query(None)):
     entry = await loaded_or_404(dataset_id)
     schema = await run_in_threadpool(store.cached, dataset_id, "schema", infer_schema)
     try:
-        return await run_in_threadpool(rc.plan, entry["df"], schema, target)
+        return with_settings(await run_in_threadpool(rc.plan, entry["df"], schema, target))
     except ValueError as error:
         raise HTTPException(400, str(error))
 
@@ -183,12 +193,19 @@ async def start_training(dataset_id: str, body: dict = Body(default={})):
 
     algorithms = body.get("algorithms") or None
     max_rows = int(body.get("max_rows") or tr.MAX_TRAIN_ROWS)
+    try:
+        params, test_size = ps.validate_request(plan["task"], algorithms, body.get("params"), body.get("test_size"))
+    except ValueError as error:
+        raise HTTPException(400, str(error))
+    plan = with_settings(plan)
     job_id = uuid.uuid4().hex[:12]
+    source = {k: entry["meta"].get(k) for k in ("name", "format", "separator")}
     with jobs_lock:
         jobs[job_id] = {"id": job_id, "dataset": dataset_id, "state": "running",
-                        "plan": plan, "started": time.time(), "result": None, "error": None}
+                        "plan": plan, "started": time.time(), "result": None, "error": None,
+                        "source": source, "settings": {"params": params, "test_size": test_size}}
 
-    trainers.submit(run_job, job_id, entry["df"], plan, algorithms, max_rows)
+    trainers.submit(run_job, job_id, entry["df"], plan, algorithms, max_rows, params, test_size)
     return {"job": job_id, "state": "running", "plan": plan}
 
 
@@ -197,9 +214,9 @@ async def start_training(dataset_id: str, body: dict = Body(default={})):
 JOB_TIMEOUT_S = 20 * 60
 
 
-def run_job(job_id, df, plan, algorithms, max_rows):
+def run_job(job_id, df, plan, algorithms, max_rows, params=None, test_size=tr.TEST_SIZE):
     try:
-        finish(job_id, "done", result=tr.run(df, plan, algorithms, max_rows))
+        finish(job_id, "done", result=tr.run(df, plan, algorithms, max_rows, params, test_size))
     except BaseException as error:  # noqa: B036 -- a job must always end in a state
         finish(job_id, "failed", error=str(error) or type(error).__name__)
 
@@ -227,6 +244,22 @@ def job_status(job_id: str):
     if job["state"] == "running" and time.time() - job["started"] > JOB_TIMEOUT_S:
         finish(job_id, "failed", error="training did not finish within %d minutes" % (JOB_TIMEOUT_S // 60))
     return job
+
+
+@service.get("/jobs/{job_id}/code")
+def job_code(job_id: str, algorithm: str = Query(...)):
+    """A standalone python script that retrains one model from this job."""
+    job = job_status(job_id)
+    if job["state"] != "done":
+        raise HTTPException(409, "job '%s' has not finished" % job_id)
+    result = next((r for r in job["result"]["results"] if r["algorithm"] == algorithm), None)
+    if result is None or not result.get("ok"):
+        raise HTTPException(404, "no trained '%s' in job '%s'" % (algorithm, job_id))
+    if "columns" not in result:
+        raise HTTPException(409, "this job predates code export, train it again")
+    script, filename = ex.script(job, result)
+    return PlainTextResponse(script, media_type="text/x-python",
+                             headers={"Content-Disposition": 'attachment; filename="%s"' % filename})
 
 
 @service.delete("/datasets/{dataset_id}")

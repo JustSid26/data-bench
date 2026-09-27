@@ -62,6 +62,9 @@ def read_any(source, name=None, nrows=None, sheet=None):
         "truncated": bool(nrows is not None and len(df) >= nrows),
         "read_ms": round((time.perf_counter() - started) * 1000, 1),
     }
+    if kind in CSV_SUFFIX:
+        # remembered so an exported script reads the file the same way
+        meta["separator"] = sniff_separator(source, kind)
     return df, meta
 
 
