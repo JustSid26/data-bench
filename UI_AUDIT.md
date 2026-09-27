@@ -168,6 +168,21 @@ Pure derivations live in `src/lib/insights.ts` so the charts stay dumb.
   and section its own hue (`IconTile`). Green, red and amber are kept out of
   the tiles because they mean good / critical / warning.
 
+## Hyperparameters and code export (follow-up)
+
+- **Editable per model.** The plan now returns each candidate's settings
+  (`backend/ads/params.py`): real scikit-learn argument names, defaults that
+  match what the backend always used, and bounds. The Model screen renders
+  them as sliders / number boxes / segmented choices / switches with inline
+  validation and per-field reset; `/train` validates again server-side (400
+  with a readable message). The held-out share is a real setting now.
+- **Settings used** appear on every result, custom values highlighted, and in
+  the downloadable report.
+- **Export code.** `GET /api/jobs/{id}/code?algorithm=` returns a standalone
+  Python script built from what the job actually used (column blocks,
+  resolved parameters, split, row cap, tuned threshold). Tests run every
+  exported script and check it reproduces DataBench's score.
+
 ## Review fixes
 
 An independent review of the diff found eight defects, all fixed in
@@ -187,7 +202,6 @@ zone navigating the browser to the file.
 | **Health score** weights | a UI heuristic, not a backend metric | `healthScore()` |
 | **Training progress ring** | api has no progress; ring eases toward an estimate, labelled "est." — elapsed time is real | `ProgressRing`, `Running` in `routes/Results.tsx` |
 | **"Why this model" extra reasons** | rules over the profile, beneath the planner's own reason; no score is invented — the bar is the planner's rank | `modelReasons()` |
-| **Hyperparameters** | read-only copy of `backend/ads/train.py` defaults; the api takes no overrides | `HYPERPARAMETERS` |
 | **Missing matrix** | first 50 preview rows only — the only per-row data the api returns | `missingMatrix()` |
 | **Correlation matrix** | only pairs with \|r\| ≥ 0.5 (top 25); the rest shows as "weak", not zero | `correlationMatrix()` |
 
