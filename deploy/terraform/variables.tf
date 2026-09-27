@@ -47,19 +47,20 @@ variable "repo_ref" {
 }
 
 variable "site_user" {
-  description = "Username for the site's password prompt."
+  description = "Username for the site's password prompt (only used when site_password is set)."
   type        = string
   default     = "demo"
 }
 
 variable "site_password" {
-  description = "Password for the site. Set it in terraform.tfvars (git-ignored), never in code."
+  description = "Optional password for the whole site. Empty = public: anyone with the link can use it."
   type        = string
   sensitive   = true
+  default     = ""
 
   validation {
     # it is written into a single-quoted shell string in user_data
-    condition     = length(var.site_password) >= 8 && !strcontains(var.site_password, "'")
-    error_message = "site_password must be at least 8 characters and contain no single quote."
+    condition     = var.site_password == "" || (length(var.site_password) >= 8 && !strcontains(var.site_password, "'"))
+    error_message = "site_password must be empty (public site) or at least 8 characters with no single quote."
   }
 }

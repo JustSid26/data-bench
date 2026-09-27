@@ -84,7 +84,13 @@ resource "aws_instance" "databench" {
     site_user     = var.site_user
     site_password = var.site_password
   })
-  user_data_replace_on_change = true
+  # the script only runs on first boot; later changes are rolled out with
+  # setup.sh over ssh, so an edit here must never replace a running server
+  user_data_replace_on_change = false
+
+  lifecycle {
+    ignore_changes = [user_data]
+  }
 
   tags = {
     Name = "databench"
