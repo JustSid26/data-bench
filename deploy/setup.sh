@@ -51,6 +51,14 @@ if [ -n "${DATABENCH_BUCKET:-}" ]; then
 fi
 [ -f /etc/databench.env ] && cat /etc/databench.env || echo "no bucket configured -- datasets stay in memory only"
 
+echo "==> keep the app's shared memory"
+# logind deletes a regular user's IPC objects when its last ssh session ends,
+# which pulls locks out from under running training jobs (the app trains on
+# threads now, this is belt and braces)
+mkdir -p /etc/systemd/logind.conf.d
+printf '[Login]\nRemoveIPC=no\n' > /etc/systemd/logind.conf.d/databench.conf
+systemctl restart systemd-logind
+
 echo "==> services"
 cp "$APP/deploy/databench.service" /etc/systemd/system/databench.service
 cp "$APP/deploy/nginx.conf" /etc/nginx/sites-available/databench
