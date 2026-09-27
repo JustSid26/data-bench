@@ -10,6 +10,7 @@ import { Upload } from "./routes/Upload";
 const named = <K extends string>(load: () => Promise<Record<K, React.ComponentType>>, name: K) =>
   lazy(() => load().then((module) => ({ default: module[name] })));
 
+const Landing = named(() => import("./routes/Landing"), "Landing");
 const Overview = named(() => import("./routes/Overview"), "Overview");
 const Analyse = named(() => import("./routes/Analyse"), "Analyse");
 const Clean = named(() => import("./routes/Clean"), "Clean");
@@ -37,8 +38,10 @@ export function App() {
       <Routes>
         {/* one layout for every screen, so the sidebar survives navigation and
             the route content can animate in and out underneath it */}
+        {/* the landing page stands alone -- no sidebar, no app chrome */}
+        <Route path="/" element={page(<Landing />)} />
         <Route element={<Layout />}>
-          <Route path="/" element={<Upload />} />
+          <Route path="/upload" element={<Upload />} />
           <Route path="/overview" element={page(<Overview />)} />
           <Route path="/analyse" element={page(<Analyse />)} />
           <Route path="/clean" element={page(<Clean />)} />

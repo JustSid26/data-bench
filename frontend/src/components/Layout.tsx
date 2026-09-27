@@ -97,7 +97,7 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
 
       <nav aria-label="Workspace" className="flex-1 space-y-0.5 overflow-y-auto px-3">
         {!compact && <p className="px-2 pt-1 pb-1.5 text-[11px] font-semibold text-ink-faint">Workspace</p>}
-        <NavItem to="/" label="Upload" icon="upload" tone="blue" compact={compact} end onNavigate={onNavigate} className={row} />
+        <NavItem to="/upload" label="Upload" icon="upload" tone="blue" compact={compact} end onNavigate={onNavigate} className={row} />
         {NAV.map((item) => (
           <NavItem key={item.to} to={item.to} label={item.label} icon={item.icon} tone={item.tone} compact={compact} locked={locked} onNavigate={onNavigate} className={row} />
         ))}
@@ -142,7 +142,7 @@ function Sidebar({ compact, onNavigate }: { compact: boolean; onNavigate?: () =>
             onClick={() => {
               close();
               onNavigate?.();
-              navigate("/");
+              navigate("/upload");
             }}
           />
         )}

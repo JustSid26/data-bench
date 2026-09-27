@@ -30,7 +30,7 @@ export function useGlobalShortcuts() {
       if (pendingG.current && Date.now() - pendingG.current < 1200) {
         pendingG.current = 0;
         const key = event.key.toLowerCase();
-        if (key === "u") return navigate("/");
+        if (key === "u") return navigate("/upload");
         const target = NAV.find((item) => item.shortcut === key);
         if (target && dataset) navigate(target.to);
         return;

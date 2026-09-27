@@ -409,7 +409,7 @@ export function NoDataset() {
         title="No dataset loaded"
         hint="Every screen here works on one dataset at a time. Load a file to get started."
         action={
-          <Button variant="primary" onClick={() => navigate("/")}>
+          <Button variant="primary" onClick={() => navigate("/upload")}>
             <Icon name="upload" className="size-4" />
             Go to upload
           </Button>

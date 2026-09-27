@@ -8,7 +8,7 @@ import type { Job, Profile } from "../lib/types";
 import { useSession } from "../state/session";
 
 const STEPS = [
-  { label: "Ingest", to: "/", routes: ["/"] },
+  { label: "Ingest", to: "/upload", routes: ["/upload"] },
   { label: "Profile", to: "/analyse", routes: ["/overview", "/analyse"] },
   { label: "Clean", to: "/clean", routes: ["/clean"] },
   { label: "Model", to: "/model", routes: ["/model"] },

@@ -70,7 +70,8 @@ export function CommandPalette() {
   const items = useMemo<Item[]>(() => {
     const go = (to: string) => () => navigate(to);
     const all: Item[] = [
-      { id: "nav-upload", group: "Go to", label: "Upload", icon: "upload", hint: "g u", run: go("/") },
+      { id: "nav-upload", group: "Go to", label: "Upload", icon: "upload", hint: "g u", run: go("/upload") },
+      { id: "nav-home", group: "Go to", label: "Home (landing page)", icon: "layers", run: go("/") },
       ...(dataset ? NAV.map((item) => ({ id: `nav-${item.to}`, group: "Go to", label: item.label, icon: item.icon, hint: `g ${item.shortcut}`, run: go(item.to) })) : []),
       ...(dataset?.schema ?? []).map((column) => ({
         id: `col-${column.name}`,
@@ -103,7 +104,7 @@ export function CommandPalette() {
       { id: "act-theme", group: "Actions", label: dark ? "Switch to light theme" : "Switch to dark theme", icon: dark ? "sun" : "moon", hint: "t", run: toggle },
       { id: "act-sidebar", group: "Actions", label: "Toggle sidebar", icon: "sidebar", hint: "[", run: toggleCollapsed },
       { id: "act-keys", group: "Actions", label: "Keyboard shortcuts", icon: "keyboard", hint: "?", run: () => setShortcuts(true) },
-      ...(dataset ? [{ id: "act-close", group: "Actions", label: "Close dataset", icon: "trash", run: () => { close(); navigate("/"); } }] : []),
+      ...(dataset ? [{ id: "act-close", group: "Actions", label: "Close dataset", icon: "trash", run: () => { close(); navigate("/upload"); } }] : []),
     ];
     return all;
   }, [dataset, recent.data, dark, navigate, inspect, toggle, toggleCollapsed, setShortcuts, close, reopen]);
