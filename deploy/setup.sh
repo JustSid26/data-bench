@@ -5,6 +5,7 @@
 # Unattended: DATABENCH_BUCKET=... bash deploy/setup.sh   (public site)
 #             SITE_PASSWORD=... bash deploy/setup.sh       (password protected)
 #             SITE_PUBLIC=1 bash deploy/setup.sh           (remove a password)
+#             SITE_DOMAIN=example.com bash deploy/setup.sh (https, lets encrypt)
 set -euo pipefail
 
 APP=/opt/databench
@@ -74,16 +75,42 @@ systemctl restart systemd-logind
 
 echo "==> services"
 cp "$APP/deploy/databench.service" /etc/systemd/system/databench.service
-mkdir -p /etc/nginx/snippets
+mkdir -p /etc/nginx/snippets /var/www/certbot
 cp "$APP/deploy/nginx-proxy.conf" /etc/nginx/snippets/databench-proxy.conf
-cp "$APP/deploy/nginx.conf" /etc/nginx/sites-available/databench
-ln -sf /etc/nginx/sites-available/databench /etc/nginx/sites-enabled/databench
+cp "$APP/deploy/nginx-site.conf" /etc/nginx/snippets/databench-site.conf
 rm -f /etc/nginx/sites-enabled/default
-nginx -t
 systemctl daemon-reload
 systemctl enable --now databench
-systemctl restart databench nginx
+systemctl restart databench
+
+# SITE_DOMAIN turns on https (remembered for later runs). the domain's A
+# record must already point at this server for the certificate to be issued
+DOMAIN_FILE=/etc/databench-domain
+if [ -n "${SITE_DOMAIN:-}" ]; then echo "$SITE_DOMAIN" > "$DOMAIN_FILE"; fi
+DOMAIN=$(cat "$DOMAIN_FILE" 2>/dev/null || true)
+CERT="/etc/letsencrypt/live/$DOMAIN/fullchain.pem"
+
+# start on plain http: it serves the site and answers the certificate challenge
+cp "$APP/deploy/nginx.conf" /etc/nginx/sites-available/databench
+ln -sf /etc/nginx/sites-available/databench /etc/nginx/sites-enabled/databench
+nginx -t && systemctl reload-or-restart nginx
+
+if [ -n "$DOMAIN" ]; then
+  echo "==> https for $DOMAIN"
+  command -v certbot >/dev/null || apt-get install -y certbot
+  if [ ! -f "$CERT" ]; then
+    # no email is registered; renewal runs from certbot's own systemd timer
+    certbot certonly --webroot -w /var/www/certbot -d "$DOMAIN" \
+      --non-interactive --agree-tos --register-unsafely-without-email \
+      --deploy-hook "systemctl reload nginx" || echo "certificate not issued -- staying on http"
+  fi
+  if [ -f "$CERT" ]; then
+    sed "s/DOMAIN/$DOMAIN/g" "$APP/deploy/nginx-https.conf" > /etc/nginx/sites-available/databench
+    nginx -t && systemctl reload nginx
+    echo "serving https://$DOMAIN/"
+  fi
+fi
 
 sleep 2
 curl -fsS http://127.0.0.1:8000/api/health && echo
-echo "==> done. open http://<this instance's public ip>/"
+echo "==> done. open ${DOMAIN:+https://$DOMAIN/ or }http://<this instance's public ip>/"

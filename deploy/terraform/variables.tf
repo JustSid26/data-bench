@@ -46,6 +46,12 @@ variable "repo_ref" {
   default     = "main"
 }
 
+variable "domain" {
+  description = "Optional domain whose A record points at the Elastic IP; turns on https (let's encrypt)."
+  type        = string
+  default     = ""
+}
+
 variable "site_user" {
   description = "Username for the site's password prompt (only used when site_password is set)."
   type        = string

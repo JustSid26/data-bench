@@ -40,6 +40,14 @@ resource "aws_security_group" "databench" {
   }
 
   ingress {
+    description = "https"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.http_cidr]
+  }
+
+  ingress {
     description = "ssh"
     from_port   = 22
     to_port     = 22
@@ -78,6 +86,7 @@ resource "aws_instance" "databench" {
 
   user_data = templatefile("${path.module}/user_data.sh.tftpl", {
     bucket        = aws_s3_bucket.databench.bucket
+    domain        = var.domain
     region        = var.region
     repo_url      = var.repo_url
     repo_ref      = var.repo_ref

@@ -1,6 +1,6 @@
 output "url" {
   description = "Open this once setup finishes (about 5-8 minutes after apply)."
-  value       = "http://${aws_eip.databench.public_ip}/"
+  value       = var.domain != "" ? "https://${var.domain}/" : "http://${aws_eip.databench.public_ip}/"
 }
 
 output "ssh" {
