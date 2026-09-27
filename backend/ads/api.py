@@ -26,6 +26,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from . import profile as pf
 from . import recommend as rc
 from . import train as tr
+from .blobs import durable
 from .ingest import IngestError, preview, read_any
 from .schema import infer_schema
 from .store import store
@@ -57,12 +58,18 @@ trainers = ThreadPoolExecutor(max_workers=2, thread_name_prefix="databench-train
 
 @service.get("/health")
 def health():
-    return {"ok": True, "datasets": len(store.list())}
+    return {"ok": True, "datasets": len(store.list()), "storage": durable.kind}
 
 
 @service.get("/datasets")
 def list_datasets():
-    return {"datasets": store.list()}
+    """Loaded datasets, plus ones kept in durable storage that a restart or
+    eviction dropped from memory -- opening one reloads it."""
+    loaded = store.list()
+    seen = {item["id"] for item in loaded}
+    saved = [dict(r["meta"], id=r["id"], created=r["created"])
+             for r in durable.list_datasets() if r["id"] not in seen]
+    return {"datasets": sorted(loaded + saved, key=lambda d: -d["created"])}
 
 
 @service.post("/datasets")
@@ -94,6 +101,7 @@ async def load_bytes(raw, name):
         raise HTTPException(400, "%s has no rows" % name)
 
     key = store.add(df, meta)
+    await run_in_threadpool(durable.save_dataset, key, raw, name, meta, store.get(key)["created"])
     schema = await run_in_threadpool(store.cached, key, "schema", infer_schema)
     return {
         "id": key,
@@ -113,15 +121,27 @@ def suggest_targets(schema):
 
 
 def entry_or_404(dataset_id):
+    """The loaded dataset, reloading it from durable storage when memory lost it."""
     try:
         return store.get(dataset_id)
     except KeyError as error:
-        raise HTTPException(404, str(error))
+        saved = durable.load_dataset(dataset_id)
+        if saved is None:
+            raise HTTPException(404, str(error))
+        raw, record = saved
+        df, _ = read_any(raw, record["name"])
+        store.add(df, record["meta"], key=dataset_id, created=record["created"])
+        return store.get(dataset_id)
+
+
+async def loaded_or_404(dataset_id):
+    # a restore parses a whole file, so keep it off the event loop
+    return await run_in_threadpool(entry_or_404, dataset_id)
 
 
 @service.get("/datasets/{dataset_id}")
 async def describe(dataset_id: str):
-    entry = entry_or_404(dataset_id)
+    entry = await loaded_or_404(dataset_id)
     schema = await run_in_threadpool(store.cached, dataset_id, "schema", infer_schema)
     return {"id": dataset_id, "meta": entry["meta"], "schema": schema,
             "suggested_targets": suggest_targets(schema)}
@@ -135,7 +155,7 @@ def preview_rows(dataset_id: str, rows: int = Query(PREVIEW_ROWS, ge=1, le=1000)
 
 @service.get("/datasets/{dataset_id}/profile")
 async def profile_dataset(dataset_id: str):
-    entry_or_404(dataset_id)
+    await loaded_or_404(dataset_id)
     schema = await run_in_threadpool(store.cached, dataset_id, "schema", infer_schema)
     return await run_in_threadpool(
         store.cached, dataset_id, "profile", lambda df: pf.profile(df, schema))
@@ -143,7 +163,7 @@ async def profile_dataset(dataset_id: str):
 
 @service.get("/datasets/{dataset_id}/plan")
 async def plan_models(dataset_id: str, target: str = Query(None)):
-    entry = entry_or_404(dataset_id)
+    entry = await loaded_or_404(dataset_id)
     schema = await run_in_threadpool(store.cached, dataset_id, "schema", infer_schema)
     try:
         return await run_in_threadpool(rc.plan, entry["df"], schema, target)
@@ -153,7 +173,7 @@ async def plan_models(dataset_id: str, target: str = Query(None)):
 
 @service.post("/datasets/{dataset_id}/train")
 async def start_training(dataset_id: str, body: dict = Body(default={})):
-    entry = entry_or_404(dataset_id)
+    entry = await loaded_or_404(dataset_id)
     schema = await run_in_threadpool(store.cached, dataset_id, "schema", infer_schema)
     target = body.get("target")
     try:
@@ -186,6 +206,9 @@ def finish(job_id, state, result=None, error=None):
             return
         job.update(state=state, result=result, error=error,
                    elapsed_ms=round((time.time() - job["started"]) * 1000, 1))
+        record = dict(job)
+    # finished jobs outlive the process: results stay readable after a restart
+    durable.save_job(record)
 
 
 @service.get("/jobs/{job_id}")
@@ -193,14 +216,22 @@ def job_status(job_id: str):
     with jobs_lock:
         job = jobs.get(job_id)
     if job is None:
+        job = durable.load_job(job_id)
+    if job is None:
         raise HTTPException(404, "no job '%s'" % job_id)
     return job
 
 
 @service.delete("/datasets/{dataset_id}")
 def forget(dataset_id: str):
-    entry_or_404(dataset_id)
+    try:
+        store.get(dataset_id)
+    except KeyError:
+        # not in memory -- still forgettable if it only lives in the bucket
+        if not durable.has_dataset(dataset_id):
+            raise HTTPException(404, "dataset '%s' is not loaded, upload it again" % dataset_id)
     store.drop(dataset_id)
+    durable.forget_dataset(dataset_id)
     return {"removed": dataset_id}
 
 

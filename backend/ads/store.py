@@ -20,12 +20,14 @@ class Store:
         self._items = {}
         self._lock = threading.Lock()
 
-    def add(self, df, meta):
-        key = uuid.uuid4().hex[:12]
+    def add(self, df, meta, key=None, created=None):
+        """Keep a parsed frame. `key` and `created` are passed when a dataset
+        is restored from durable storage, so it keeps its id and age."""
+        key = key or uuid.uuid4().hex[:12]
         with self._lock:
             self._items[key] = {
                 "id": key, "df": df, "meta": meta,
-                "cache": {}, "created": time.time(), "touched": time.time(),
+                "cache": {}, "created": created or time.time(), "touched": time.time(),
             }
             self._evict()
         return key

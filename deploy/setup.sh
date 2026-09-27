@@ -43,6 +43,14 @@ elif [ ! -f /etc/nginx/databench.htpasswd ]; then
   htpasswd -c /etc/nginx/databench.htpasswd "$SITE_USER"
 fi
 
+echo "==> storage"
+# with a bucket, uploads and results are kept in S3 (credentials come from the
+# instance's IAM role). re-runs without the variables keep the existing file
+if [ -n "${DATABENCH_BUCKET:-}" ]; then
+  printf 'DATABENCH_BUCKET=%s\nAWS_DEFAULT_REGION=%s\n' "$DATABENCH_BUCKET" "${AWS_REGION:-ap-south-1}" > /etc/databench.env
+fi
+[ -f /etc/databench.env ] && cat /etc/databench.env || echo "no bucket configured -- datasets stay in memory only"
+
 echo "==> services"
 cp "$APP/deploy/databench.service" /etc/systemd/system/databench.service
 cp "$APP/deploy/nginx.conf" /etc/nginx/sites-available/databench

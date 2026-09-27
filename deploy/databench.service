@@ -5,6 +5,8 @@ After=network.target
 [Service]
 User=ubuntu
 WorkingDirectory=/opt/databench/backend
+# DATABENCH_BUCKET / AWS_DEFAULT_REGION, written by setup.sh; optional
+EnvironmentFile=-/etc/databench.env
 # exactly one worker: datasets and training jobs live in this process's memory,
 # so a second worker would not see uploads made through the first
 ExecStart=/opt/databench/.venv/bin/uvicorn ads.api:app --host 127.0.0.1 --port 8000 --workers 1 --proxy-headers

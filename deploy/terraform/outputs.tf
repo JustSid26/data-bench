@@ -10,3 +10,8 @@ output "ssh" {
 output "watch_setup" {
   value = "ssh ubuntu@${aws_eip.databench.public_ip} 'tail -f /var/log/cloud-init-output.log'"
 }
+
+output "bucket" {
+  description = "Where uploads and training results are kept."
+  value       = aws_s3_bucket.databench.bucket
+}

@@ -5,4 +5,5 @@ apt-get update -y
 apt-get install -y git
 sudo -u ubuntu git clone --branch '${repo_ref}' '${repo_url}' /home/ubuntu/data-bench
 cd /home/ubuntu/data-bench
-SITE_USER='${site_user}' SITE_PASSWORD='${site_password}' bash deploy/setup.sh
+SITE_USER='${site_user}' SITE_PASSWORD='${site_password}' \
+  DATABENCH_BUCKET='${bucket}' AWS_REGION='${region}' bash deploy/setup.sh

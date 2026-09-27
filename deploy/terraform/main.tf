@@ -74,7 +74,11 @@ resource "aws_instance" "databench" {
 
   # first boot: clone, then run the same setup script as a manual deploy.
   # progress: ssh in and `tail -f /var/log/cloud-init-output.log`
+  iam_instance_profile = aws_iam_instance_profile.databench.name
+
   user_data = templatefile("${path.module}/user_data.sh.tftpl", {
+    bucket        = aws_s3_bucket.databench.bucket
+    region        = var.region
     repo_url      = var.repo_url
     repo_ref      = var.repo_ref
     site_user     = var.site_user
