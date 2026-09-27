@@ -12,15 +12,71 @@ import { CountUp, fadeUp, scaleIn, stagger, tween } from "../lib/motion";
 import { api } from "../lib/api";
 import { trainingReport } from "../lib/insights";
 import { algorithmName, count, decimal, duration, percent } from "../lib/format";
-import type { Job, ModelResult, Training } from "../lib/types";
+import { formatParam } from "../lib/params";
+import type { Job, ModelResult, ParamSpec, Training } from "../lib/types";
 import { useSession } from "../state/session";
 
-function SupervisedDetail({ result, training }: { result: ModelResult; training: Training }) {
+/** The hyperparameters a model actually ran with, plus a script export. */
+function ModelSettings({ result, specs, jobId }: { result: ModelResult; specs: ParamSpec[]; jobId: string }) {
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
+  const values = result.params ?? {};
+  const byName = new Map(specs.map((spec) => [spec.name, spec]));
+  const entries = Object.entries(values);
+
+  const exportCode = async () => {
+    setBusy(true);
+    try {
+      const file = await api.code(jobId, result.algorithm);
+      download(file.text, file.name, "text/x-python");
+      toast({ tone: "good", title: "Code exported", detail: `${file.name} — runs standalone and reproduces this score.` });
+    } catch (error) {
+      toast({ tone: "bad", title: "Could not export code", detail: (error as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <m.div variants={fadeUp} className="glass flex flex-col gap-3 rounded-card border border-line px-4 py-3 sm:flex-row sm:items-center">
+      <div className="min-w-0 flex-1">
+        <p className="text-[12px] font-medium text-ink">{algorithmName(result.algorithm)} settings</p>
+        {entries.length ? (
+          <ul className="mt-1.5 flex flex-wrap gap-1.5" aria-label="Hyperparameters used">
+            {entries.map(([name, value]) => {
+              const spec = byName.get(name);
+              const custom = spec !== undefined && spec.default !== value;
+              return (
+                <li
+                  key={name}
+                  className={`rounded-full border px-2 py-0.5 font-mono text-[11px] ${custom ? "border-accent/50 bg-accent-soft text-ink" : "border-line text-ink-muted"}`}
+                  title={custom ? `changed from ${formatParam(spec, spec!.default)}` : "default"}
+                >
+                  {name}=<span className="font-semibold">{formatParam(spec, value)}</span>
+                  {custom && <span className="sr-only"> (custom)</span>}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="text-[12px] text-ink-muted">Trained before settings were recorded.</p>
+        )}
+      </div>
+      <Button onClick={exportCode} disabled={busy || !result.params} className="shrink-0">
+        <Icon name="download" className="size-4" />
+        {busy ? "Exporting…" : "Export code (.py)"}
+      </Button>
+    </m.div>
+  );
+}
+
+function SupervisedDetail({ result, training, specs, jobId }: { result: ModelResult; training: Training; specs: ParamSpec[]; jobId: string }) {
   const classifying = training.task.endsWith("classification");
   const metrics = result.metrics;
 
   return (
     <m.div key={result.algorithm} variants={stagger(0.06)} initial="hidden" animate="show" className="space-y-4">
+      <ModelSettings result={result} specs={specs} jobId={jobId} />
       <m.div variants={stagger(0.06)} className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         {classifying ? (
           <>
@@ -99,7 +155,7 @@ function ClusterSizes({ sizes }: { sizes: { cluster: number; count: number }[] }
   );
 }
 
-function ClusteringDetail({ training }: { training: Training }) {
+function ClusteringDetail({ training, job }: { training: Training; job: Job }) {
   const kmeans = training.results.find((item) => item.algorithm === "kmeans" && item.ok);
   const forest = training.results.find((item) => item.algorithm === "isolation_forest" && item.ok);
   const dbscan = training.results.find((item) => item.algorithm === "dbscan" && item.ok);
@@ -158,6 +214,12 @@ function ClusteringDetail({ training }: { training: Training }) {
           </div>
         </Card>
       </div>
+
+      {training.results
+        .filter((item) => item.ok)
+        .map((item) => (
+          <ModelSettings key={item.algorithm} result={item} specs={specsFor(job, item.algorithm)} jobId={job.id} />
+        ))}
 
       {examples.length > 0 && (
         <Card
@@ -396,7 +458,7 @@ export function Results() {
           )}
 
           {training.task === "clustering" ? (
-            <ClusteringDetail training={training} />
+            <ClusteringDetail training={training} job={job.data!} />
           ) : (
             <>
               <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
@@ -407,7 +469,7 @@ export function Results() {
                   <FitTimeline results={training.results} />
                 </Card>
               </div>
-              <AnimatePresence mode="wait">{detail?.ok && <SupervisedDetail key={detail.algorithm} result={detail} training={training} />}</AnimatePresence>
+              <AnimatePresence mode="wait">{detail?.ok && <SupervisedDetail key={detail.algorithm} result={detail} training={training} specs={specsFor(job.data!, detail.algorithm)} jobId={job.data!.id} />}</AnimatePresence>
             </>
           )}
         </m.div>
@@ -415,6 +477,8 @@ export function Results() {
     </Shell>
   );
 }
+
+const specsFor = (job: Job, algorithm: string) => job.plan.algorithms.find((a) => a.name === algorithm)?.params ?? [];
 
 /** Whole numbers should read as whole numbers -- 3, not 3.00. */
 function formatCell(value: string | number | boolean | null) {

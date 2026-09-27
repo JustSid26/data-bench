@@ -96,6 +96,24 @@ export type Task =
   | "regression"
   | "clustering";
 
+/** One editable hyperparameter, as the api describes it (backend/ads/params.py). */
+export interface ParamSpec {
+  name: string;
+  label: string;
+  type: "int" | "float" | "choice" | "bool";
+  default: ParamValue;
+  min?: number;
+  max?: number;
+  log?: boolean;
+  nullable?: boolean;
+  none_label?: string;
+  choices?: string[];
+  help?: string;
+}
+
+export type ParamValue = number | string | boolean | null;
+export type ParamValues = Record<string, ParamValue>;
+
 export interface Plan {
   target: string | null;
   task: Task;
@@ -117,8 +135,10 @@ export interface Plan {
     imbalanced?: boolean;
     distribution?: { value: string; count: number }[];
   };
-  algorithms: { name: string; recommended: boolean; why: string }[];
+  algorithms: { name: string; recommended: boolean; why: string; params?: ParamSpec[] }[];
   notes: string[];
+  /** the held-out share setting; null for clustering (no split) */
+  test_size?: ParamSpec | null;
 }
 
 export interface Metrics {
@@ -150,6 +170,8 @@ export interface ModelResult {
   metrics: Metrics;
   importance: { column: string; weight: number }[];
   fit_ms: number;
+  /** the hyperparameters actually used */
+  params?: ParamValues;
   labels_preview?: number[];
   examples?: Record<string, string | number | boolean | null>[];
 }
@@ -163,6 +185,7 @@ export interface Training {
   best: string | null;
   results: ModelResult[];
   train_ms: number;
+  test_size?: number;
 }
 
 export interface Job {

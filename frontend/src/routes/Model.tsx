@@ -11,13 +11,13 @@ import { api } from "../lib/api";
 import { usePlan, useProfile } from "../lib/queries";
 import { KIND } from "../lib/tokens";
 import { compact, count, decimal, percent } from "../lib/format";
-import type { Plan } from "../lib/types";
+import { hasErrors } from "../lib/params";
+import type { ParamValue, ParamValues, Plan } from "../lib/types";
 import { useSession } from "../state/session";
 import { NoDataset } from "./Overview";
 
-// mirrors backend/ads/train.py: MAX_TRAIN_ROWS and TEST_SIZE
+// mirrors backend/ads/train.py MAX_TRAIN_ROWS
 const DEFAULT_ROWS = 100_000;
-const TEST_SHARE = 0.2;
 const TONES = ["bg-accent", "bg-datetime", "bg-categorical", "bg-numeric", "bg-boolean"];
 
 function TargetDistribution({ plan }: { plan: Plan }) {
@@ -65,10 +65,24 @@ function TargetDistribution({ plan }: { plan: Plan }) {
 
 /** Training-rows slider bound to the api's `max_rows`, with the 80/20
  *  train/test split drawn live underneath. */
-function RowBudget({ rows, value, onChange, supervised }: { rows: number; value: number; onChange: (value: number) => void; supervised: boolean }) {
+function RowBudget({
+  rows,
+  value,
+  onChange,
+  supervised,
+  testShare,
+  onTestShare,
+}: {
+  rows: number;
+  value: number;
+  onChange: (value: number) => void;
+  supervised: boolean;
+  testShare: number;
+  onTestShare: (share: number) => void;
+}) {
   const min = Math.min(rows, 500);
   const used = Math.min(value, rows);
-  const test = supervised ? Math.round(used * TEST_SHARE) : 0;
+  const test = supervised ? Math.round(used * testShare) : 0;
   return (
     <div>
       <div className="flex items-baseline justify-between gap-3">
@@ -105,9 +119,30 @@ function RowBudget({ rows, value, onChange, supervised }: { rows: number; value:
           </m.div>
         )}
       </div>
-      <p className="mt-1.5 text-[11px] text-ink-faint">
-        {supervised ? "20% of the rows are held back to score each model (fixed by the backend)." : "Clustering uses every sampled row; there is no holdout."} Fewer rows train faster.
-      </p>
+      {supervised ? (
+        <div className="mt-4">
+          <div className="flex items-baseline justify-between gap-3">
+            <label htmlFor="test-share" className="text-[13px] font-medium">
+              Held out for scoring
+            </label>
+            <span className="tnum text-[13px] font-semibold">{Math.round(testShare * 100)}%</span>
+          </div>
+          <input
+            id="test-share"
+            type="range"
+            min={0.1}
+            max={0.5}
+            step={0.05}
+            value={testShare}
+            onChange={(event) => onTestShare(Number(event.target.value))}
+            className="mt-2 w-full accent-[var(--accent)]"
+            aria-valuetext={`${Math.round(testShare * 100)} percent held out`}
+          />
+          <p className="mt-1 text-[11px] text-ink-faint">Rows the models never train on; every score is measured on them. More held out = a steadier score but less to learn from.</p>
+        </div>
+      ) : (
+        <p className="mt-1.5 text-[11px] text-ink-faint">Clustering uses every sampled row; there is no holdout. Fewer rows train faster.</p>
+      )}
     </div>
   );
 }
@@ -117,17 +152,53 @@ export function Model() {
   const navigate = useNavigate();
   const [chosen, setChosen] = useState<string[] | null>(null);
   const [budget, setBudget] = useState(() => Math.min(dataset?.meta.rows ?? DEFAULT_ROWS, DEFAULT_ROWS));
+  // per-algorithm hyperparameter overrides; only changed values are kept
+  const [overrides, setOverrides] = useState<Record<string, ParamValues>>({});
+  const [testShare, setTestShare] = useState(0.2);
 
   const plan = usePlan(dataset?.id, target);
   const profile = useProfile(dataset?.id);
 
   // whenever the plan changes, fall back to whatever it recommends
   useEffect(() => {
-    if (plan.data) setChosen(plan.data.algorithms.filter((a) => a.recommended).map((a) => a.name));
+    if (plan.data) {
+      setChosen(plan.data.algorithms.filter((a) => a.recommended).map((a) => a.name));
+      setTestShare((plan.data.test_size?.default as number | undefined) ?? 0.2);
+      // settings for a model survive a target change only if they still apply to its task
+      setOverrides((current) => {
+        const next: Record<string, ParamValues> = {};
+        for (const algorithm of plan.data!.algorithms) {
+          const names = new Set((algorithm.params ?? []).map((p) => p.name));
+          const kept = Object.fromEntries(Object.entries(current[algorithm.name] ?? {}).filter(([k]) => names.has(k)));
+          if (Object.keys(kept).length) next[algorithm.name] = kept;
+        }
+        return next;
+      });
+    }
   }, [plan.data]);
 
+  const setParam = (algorithm: string, name: string, value: ParamValue | undefined) =>
+    setOverrides((current) => {
+      const mine = { ...(current[algorithm] ?? {}) };
+      if (value === undefined) delete mine[name];
+      else mine[name] = value;
+      const next = { ...current, [algorithm]: mine };
+      if (!Object.keys(mine).length) delete next[algorithm];
+      return next;
+    });
+
   const start = useMutation({
-    mutationFn: () => api.train(dataset!.id, { target, algorithms: chosen ?? undefined, max_rows: budget }),
+    mutationFn: () => {
+      // send settings only for the models being trained
+      const params = Object.fromEntries(Object.entries(overrides).filter(([name]) => chosen?.includes(name)));
+      return api.train(dataset!.id, {
+        target,
+        algorithms: chosen ?? undefined,
+        max_rows: budget,
+        params: Object.keys(params).length ? params : undefined,
+        test_size: plan.data?.task === "clustering" ? undefined : testShare,
+      });
+    },
     onSuccess: (started) => {
       // the job record does not echo back what was asked for; keep it for the progress screen
       try {
@@ -140,6 +211,8 @@ export function Model() {
     },
   });
 
+  const invalid = (plan.data?.algorithms ?? []).some((a) => chosen?.includes(a.name) && hasErrors(a.params, overrides[a.name]));
+  const customised = Object.keys(overrides).filter((name) => chosen?.includes(name)).length;
   const features = plan.data?.features;
   const used = useMemo(() => (features ? [...features.numeric, ...features.categorical, ...features.temporal] : []), [features]);
 
@@ -225,7 +298,7 @@ export function Model() {
               </Card>
 
               <Card title="Training data" icon="sort" tone="teal" className="lg:col-span-2 2xl:col-span-1">
-                <RowBudget rows={dataset.meta.rows} value={budget} onChange={setBudget} supervised={supervised} />
+                <RowBudget rows={dataset.meta.rows} value={budget} onChange={setBudget} supervised={supervised} testShare={testShare} onTestShare={setTestShare} />
               </Card>
             </m.div>
 
@@ -248,6 +321,15 @@ export function Model() {
                       plan={plan.data}
                       profile={profile.data}
                       selected={on}
+                      overrides={overrides[algorithm.name]}
+                      onParam={(name, value) => setParam(algorithm.name, name, value)}
+                      onReset={() =>
+                        setOverrides((current) => {
+                          const next = { ...current };
+                          delete next[algorithm.name];
+                          return next;
+                        })
+                      }
                       onToggle={() =>
                         setChosen((current) => {
                           const list = current ?? [];
@@ -264,7 +346,7 @@ export function Model() {
               <Button
                 variant="primary"
                 className="px-8 py-2.5 text-[15px]"
-                disabled={!chosen?.length || start.isPending || used.length === 0}
+                disabled={!chosen?.length || start.isPending || used.length === 0 || invalid}
                 onClick={() => start.mutate()}
               >
                 <Icon name="play" className="size-4" />
@@ -272,7 +354,9 @@ export function Model() {
               </Button>
               <p className="tnum text-[12px] text-ink-faint">
                 on {count(Math.min(budget, dataset.meta.rows))} rows · {used.length} features
+                {customised > 0 && ` · ${customised} with custom settings`}
               </p>
+              {invalid && <p className="text-[12px] text-bad">Fix the highlighted hyperparameters to train.</p>}
               {start.error && <Notice>{(start.error as Error).message}</Notice>}
             </m.div>
           </>

@@ -268,19 +268,6 @@ export function modelReasons(algorithm: string, plan: Plan, profile?: Profile): 
   return reasons;
 }
 
-/** Defaults the backend fits each algorithm with (backend/ads/train.py). The
- *  api does not accept overrides, so the ui shows these read-only. */
-export const HYPERPARAMETERS: Record<string, Record<string, string>> = {
-  gradient_boosting: { max_iter: "200", early_stopping: "true", class_weight: "balanced*" },
-  random_forest: { n_estimators: "100", n_jobs: "all cores", class_weight: "balanced*" },
-  logistic_regression: { max_iter: "1000", class_weight: "balanced", scaling: "standard" },
-  ridge: { alpha: "1.0", scaling: "standard" },
-  decision_tree: { max_depth: "6", class_weight: "balanced*" },
-  kmeans: { k: "auto, 2–8", n_init: "10", scaling: "standard" },
-  dbscan: { eps: "0.5", min_samples: "5", scaling: "standard" },
-  isolation_forest: { n_estimators: "150", contamination: "5%" },
-};
-
 /* ---------------------------------------------------------------- report */
 
 /** A markdown summary of a finished run, built client side for download. */
@@ -304,6 +291,13 @@ export function trainingReport(name: string, plan: Plan, training: Training) {
         : `| — | ${algorithmName(result.algorithm)} | failed: ${result.error} | |`,
     ),
   ];
+  const tuned = training.results.filter((result) => result.ok && result.params && Object.keys(result.params).length);
+  if (tuned.length) {
+    lines.push("", "## Settings used", "");
+    for (const result of tuned)
+      lines.push(`- **${algorithmName(result.algorithm)}:** ${Object.entries(result.params!).map(([k, v]) => `\`${k}=${v === null ? "none" : v}\``).join(", ")}`);
+    if (training.test_size) lines.push(`- **Held out for scoring:** ${Math.round(training.test_size * 100)}%`);
+  }
   const best = training.results.find((result) => result.ok);
   if (best?.importance.length) {
     lines.push("", `## What drove ${algorithmName(best.algorithm)}`, "");

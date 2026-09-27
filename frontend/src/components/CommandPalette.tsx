@@ -8,8 +8,7 @@ import { Kbd } from "./primitives";
 import { NAV } from "./nav";
 import { spring, tween } from "../lib/motion";
 import { api } from "../lib/api";
-import { HYPERPARAMETERS } from "../lib/insights";
-import { algorithmName, count } from "../lib/format";
+import { ALGORITHMS, algorithmName, count } from "../lib/format";
 import { KIND } from "../lib/tokens";
 import type { Loaded } from "../lib/types";
 import { useReturnFocus } from "../lib/useReturnFocus";
@@ -92,7 +91,7 @@ export function CommandPalette() {
           run: () => reopen.mutate(item.id),
         })),
       ...(dataset
-        ? Object.keys(HYPERPARAMETERS).map((name) => ({
+        ? ALGORITHMS.map((name) => ({
             id: `model-${name}`,
             group: "Models",
             label: algorithmName(name),

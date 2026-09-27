@@ -2,10 +2,12 @@ import { useRef, useState } from "react";
 import { AnimatePresence, m, useInView } from "motion/react";
 import { Icon } from "../icons";
 import { fadeUp, lift, spring, tween } from "../../lib/motion";
-import { HYPERPARAMETERS, modelReasons } from "../../lib/insights";
+import { modelReasons } from "../../lib/insights";
+import { hasErrors } from "../../lib/params";
+import { ParamEditor } from "../ParamEditor";
 import { algorithmName, taskName } from "../../lib/format";
 import { KIND } from "../../lib/tokens";
-import type { Kind, Plan, Profile } from "../../lib/types";
+import type { Kind, ParamValue, ParamValues, Plan, Profile } from "../../lib/types";
 
 const TASK_ICON: Record<string, string> = {
   binary_classification: "kind-boolean",
@@ -99,6 +101,9 @@ export function ModelCard({
   profile,
   selected,
   onToggle,
+  overrides,
+  onParam,
+  onReset,
 }: {
   algorithm: Plan["algorithms"][number];
   rank: number;
@@ -107,11 +112,15 @@ export function ModelCard({
   profile?: Profile;
   selected: boolean;
   onToggle: () => void;
+  overrides?: ParamValues;
+  onParam: (name: string, value: ParamValue | undefined) => void;
+  onReset: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const reasons = modelReasons(algorithm.name, plan, profile);
-  const params = HYPERPARAMETERS[algorithm.name] ?? {};
-  const classifying = plan.task.endsWith("classification");
+  const specs = algorithm.params ?? [];
+  const custom = Object.keys(overrides ?? {}).length;
+  const invalid = hasErrors(specs, overrides);
   const panel = `params-${algorithm.name}`;
   const bar = useRef<HTMLDivElement>(null);
   const seen = useInView(bar, { once: true });
@@ -200,6 +209,11 @@ export function ModelCard({
         className="relative mt-3 flex items-center gap-1 self-start text-[12px] font-medium text-accent-fg hover:underline"
       >
         Hyperparameters
+        {custom > 0 && (
+          <span className={`rounded-full px-1.5 text-[9px] font-semibold tracking-[0.04em] uppercase ${invalid ? "bg-bad/15 text-bad" : "bg-accent/15 text-accent-fg"}`}>
+            {invalid ? "fix" : `${custom} custom`}
+          </span>
+        )}
         <m.span animate={{ rotate: open ? 180 : 0 }} transition={spring.snappy}>
           <Icon name="down" className="size-3.5" />
         </m.span>
@@ -214,15 +228,18 @@ export function ModelCard({
             transition={tween.base}
             className="relative overflow-hidden"
           >
-            <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 rounded-xl border border-line bg-hover p-2.5 font-mono text-[11px]">
-              {Object.entries(params).map(([key, value]) => (
-                <div key={key} className="contents">
-                  <dt className="text-ink-faint">{key}</dt>
-                  <dd className="text-right text-ink">{classifying || !value.endsWith("*") ? value.replace("*", "") : "—"}</dd>
-                </div>
-              ))}
-            </dl>
-            <p className="mt-1.5 text-[11px] text-ink-faint">Fixed by the backend — the api does not take overrides yet.</p>
+            <div className="mt-2 rounded-xl border border-line bg-hover p-3">
+              {specs.length ? (
+                <ParamEditor specs={specs} overrides={overrides} onChange={onParam} idPrefix={`p-${algorithm.name}`} />
+              ) : (
+                <p className="text-[12px] text-ink-muted">This model has no settings to tune.</p>
+              )}
+            </div>
+            {custom > 0 && (
+              <button type="button" onClick={onReset} className="mt-1.5 text-[11px] font-medium text-accent-fg hover:underline">
+                Reset all to defaults
+              </button>
+            )}
           </m.div>
         )}
       </AnimatePresence>

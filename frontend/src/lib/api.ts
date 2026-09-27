@@ -1,4 +1,4 @@
-import type { Job, Loaded, Meta, Plan, Preview, Profile } from "./types";
+import type { Job, Loaded, Meta, ParamValues, Plan, Preview, Profile } from "./types";
 
 const BASE = "/api";
 
@@ -49,8 +49,33 @@ export const api = {
   plan: (id: string, target: string | null) =>
     request<Plan>(`/datasets/${id}/plan${target ? `?target=${encodeURIComponent(target)}` : ""}`),
 
-  train: (id: string, body: { target: string | null; algorithms?: string[]; max_rows?: number }) =>
-    request<{ job: string; state: string; plan: Plan }>(`/datasets/${id}/train`, json(body)),
+  train: (
+    id: string,
+    body: {
+      target: string | null;
+      algorithms?: string[];
+      max_rows?: number;
+      params?: Record<string, ParamValues>;
+      test_size?: number;
+    },
+  ) => request<{ job: string; state: string; plan: Plan }>(`/datasets/${id}/train`, json(body)),
+
+  /** a standalone python script that retrains one model from a finished job */
+  code: async (jobId: string, algorithm: string) => {
+    const response = await fetch(`${BASE}/jobs/${jobId}/code?algorithm=${encodeURIComponent(algorithm)}`);
+    if (!response.ok) {
+      let message = response.statusText;
+      try {
+        message = (await response.json()).detail ?? message;
+      } catch {
+        /* not json */
+      }
+      throw new ApiError(message);
+    }
+    const disposition = response.headers.get("content-disposition") ?? "";
+    const name = /filename="([^"]+)"/.exec(disposition)?.[1] ?? `databench_${algorithm}.py`;
+    return { name, text: await response.text() };
+  },
 
   job: (jobId: string) => request<Job>(`/jobs/${jobId}`),
 

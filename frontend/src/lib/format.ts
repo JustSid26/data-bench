@@ -29,6 +29,9 @@ const ALGORITHM_NAME: Record<string, string> = {
   isolation_forest: "Isolation forest",
 };
 
+/** Every algorithm the backend knows, in display order. */
+export const ALGORITHMS = Object.keys(ALGORITHM_NAME);
+
 /** Human label for an algorithm id coming back from the api. */
 export function algorithmName(id: string) {
   return ALGORITHM_NAME[id] ?? id.replace(/_/g, " ");
