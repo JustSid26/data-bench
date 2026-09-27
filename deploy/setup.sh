@@ -2,6 +2,7 @@
 # One-shot setup for a fresh Ubuntu 24.04 EC2 instance. Run from the repo root
 # on the instance:   sudo bash deploy/setup.sh
 # Re-running it is safe: it rebuilds and restarts with the current checkout.
+# Unattended: SITE_USER=demo SITE_PASSWORD=... bash deploy/setup.sh
 set -euo pipefail
 
 APP=/opt/databench
@@ -33,7 +34,11 @@ sudo -u ubuntu npm ci --no-audit --no-fund
 sudo -u ubuntu npm run build
 
 echo "==> password for the site"
-if [ ! -f /etc/nginx/databench.htpasswd ]; then
+# non-interactive when SITE_USER / SITE_PASSWORD are set (terraform user_data);
+# otherwise ask once, and keep the existing file on re-runs
+if [ -n "${SITE_USER:-}" ] && [ -n "${SITE_PASSWORD:-}" ]; then
+  htpasswd -bc /etc/nginx/databench.htpasswd "$SITE_USER" "$SITE_PASSWORD"
+elif [ ! -f /etc/nginx/databench.htpasswd ]; then
   read -rp "username for the site: " SITE_USER
   htpasswd -c /etc/nginx/databench.htpasswd "$SITE_USER"
 fi

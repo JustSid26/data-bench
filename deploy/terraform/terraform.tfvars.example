@@ -1,0 +1,5 @@
+# copy to terraform.tfvars (git-ignored) and fill in
+site_password = "change-me"
+# region        = "ap-south-1"
+# aws_profile   = "databench"
+# site_user     = "demo"
