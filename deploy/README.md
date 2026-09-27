@@ -6,8 +6,13 @@ minutes end to end, most of it waiting on `pip`.
 
 ## Option A: Terraform (recommended)
 
-`deploy/terraform/` creates the instance, security group, key pair and
-Elastic IP; on first boot the instance clones this repo and runs `setup.sh`.
+`deploy/terraform/` creates the instance, security group, key pair, Elastic
+IP, an S3 bucket for datasets and training results, and an IAM role that lets
+the instance use that bucket (no keys on the server). On first boot the
+instance clones this repo and runs `setup.sh`.
+
+The deploying IAM user needs `AmazonEC2FullAccess` plus the scoped inline
+policy in `deploy/terraform/deployer-policy.json`.
 
 ```bash
 aws configure --profile databench          # an IAM user with AmazonEC2FullAccess
@@ -97,9 +102,10 @@ sudo systemctl restart databench     # clears every loaded dataset
 - **Load files with the drop zone, not "load from a path".** The path endpoint
   reads files from the server's own disk, so nginx blocks it (403) on the
   public box.
-- **Datasets live in memory.** A restart or a deploy clears them; the server
-  keeps at most 12 for 4 hours. Upload your demo file once beforehand to
-  warm it, and have the file on your laptop as a backup.
+- **Datasets are kept in S3** (Terraform setup). Memory holds at most 12 for
+  4 hours for speed; anything restarted or evicted reloads from the bucket on
+  first use, and finished training results survive restarts too. The manual
+  setup has no bucket, so there a restart clears everything.
 - **One worker on purpose.** Don't raise `--workers`: uploads and training
   jobs would land in different processes and seem to vanish.
 - **Plain HTTP.** Fine for a demo behind a password. For HTTPS you need a
