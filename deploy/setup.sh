@@ -106,8 +106,15 @@ if [ -n "$DOMAIN" ]; then
   fi
   if [ -f "$CERT" ]; then
     sed "s/DOMAIN/$DOMAIN/g" "$APP/deploy/nginx-https.conf" > /etc/nginx/sites-available/databench
-    nginx -t && systemctl reload nginx
-    echo "serving https://$DOMAIN/"
+    if nginx -t; then
+      systemctl reload nginx
+      echo "serving https://$DOMAIN/"
+    else
+      # never leave a config on disk that the next restart would choke on
+      cp "$APP/deploy/nginx.conf" /etc/nginx/sites-available/databench
+      nginx -t && systemctl reload nginx
+      echo "https config rejected -- staying on http"
+    fi
   fi
 fi
 
