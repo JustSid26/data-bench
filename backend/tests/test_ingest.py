@@ -48,3 +48,21 @@ def test_preview_is_json_safe(frame):
 def test_shrink_folds_repeated_strings_into_categories(frame):
     shrunk = ingest.shrink(frame.copy())
     assert isinstance(shrunk["city"].dtype, pd.CategoricalDtype)
+
+
+def test_semicolon_file_with_a_quoted_header_splits_into_columns():
+    # the UCI wine files: a one-line sniff of this header used to fall back to
+    # a comma and read the whole file as a single column
+    raw = b'"fixed acidity";"volatile acidity";"quality"\n7.4;0.7;5\n7.8;0.88;5\n11.2;0.28;6\n'
+    df, meta = ingest.read_any(raw, "wine.csv")
+    assert list(df.columns) == ["fixed acidity", "volatile acidity", "quality"]
+    assert meta["rows"] == 3
+
+
+def test_numbers_with_blank_cells_stay_numeric():
+    # Telco churn's TotalCharges: a space where a number is missing
+    raw = b"id,total\na,29.85\nb, \nc,1889.5\nd,108.15\n"
+    df, _ = ingest.read_any(raw, "telco.csv")
+    assert pd.api.types.is_float_dtype(df["total"])
+    assert df["total"].isna().sum() == 1
+

@@ -10,6 +10,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
+from joblib import parallel_backend
 from sklearn.base import clone
 from sklearn.cluster import DBSCAN, KMeans
 from sklearn.compose import ColumnTransformer
@@ -147,7 +148,20 @@ def prepare(df, plan, max_rows=MAX_TRAIN_ROWS):
 
 
 def run(df, plan, algorithms=None, max_rows=MAX_TRAIN_ROWS):
-    """Train every requested algorithm and return a ranked leaderboard."""
+    """Train every requested algorithm and return a ranked leaderboard.
+
+    All parallel work runs on threads. The default for some estimators is a
+    pool of worker processes, and inside a long-lived web server those break:
+    their shared-memory locks can be removed underneath them (systemd deletes
+    a user's IPC objects when its last login session ends), after which a job
+    hangs until the pool times out. sklearn's heavy loops release the GIL, so
+    threads cost little speed here.
+    """
+    with parallel_backend("threading", n_jobs=-1):
+        return _run(df, plan, algorithms, max_rows)
+
+
+def _run(df, plan, algorithms, max_rows):
     started = time.perf_counter()
     task = plan["task"]
     wanted = algorithms or [a["name"] for a in plan["algorithms"] if a["recommended"]]

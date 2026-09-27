@@ -192,11 +192,16 @@ async def start_training(dataset_id: str, body: dict = Body(default={})):
     return {"job": job_id, "state": "running", "plan": plan}
 
 
+# a job still "running" after this long is reported as failed, so the ui can
+# never spin forever on a job whose worker died
+JOB_TIMEOUT_S = 20 * 60
+
+
 def run_job(job_id, df, plan, algorithms, max_rows):
     try:
         finish(job_id, "done", result=tr.run(df, plan, algorithms, max_rows))
-    except Exception as error:
-        finish(job_id, "failed", error=str(error))
+    except BaseException as error:  # noqa: B036 -- a job must always end in a state
+        finish(job_id, "failed", error=str(error) or type(error).__name__)
 
 
 def finish(job_id, state, result=None, error=None):
@@ -219,6 +224,8 @@ def job_status(job_id: str):
         job = durable.load_job(job_id)
     if job is None:
         raise HTTPException(404, "no job '%s'" % job_id)
+    if job["state"] == "running" and time.time() - job["started"] > JOB_TIMEOUT_S:
+        finish(job_id, "failed", error="training did not finish within %d minutes" % (JOB_TIMEOUT_S // 60))
     return job
 
 

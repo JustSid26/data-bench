@@ -88,3 +88,28 @@ def test_delete_forgets_the_dataset(client, csv_path):
     body = client.post("/api/datasets/from-path", json={"path": csv_path}).json()
     assert client.delete("/api/datasets/%s" % body["id"]).status_code == 200
     assert client.get("/api/datasets/%s" % body["id"]).status_code == 404
+
+
+def test_a_job_stuck_running_is_reported_as_failed(client, dataset, monkeypatch):
+    from ads import api
+    with api.jobs_lock:
+        api.jobs["stuck"] = {"id": "stuck", "dataset": dataset["id"], "state": "running",
+                             "plan": {}, "started": time.time() - api.JOB_TIMEOUT_S - 1,
+                             "result": None, "error": None}
+    body = client.get("/api/jobs/stuck").json()
+    assert body["state"] == "failed"
+    assert "did not finish" in body["error"]
+
+
+def test_training_never_starts_worker_processes(client, dataset, monkeypatch):
+    # process pools break inside the server (see train.run); everything must use threads
+    import joblib.externals.loky as loky
+    def refuse(*args, **kwargs):
+        raise AssertionError("a process pool was started")
+    monkeypatch.setattr(loky, "get_reusable_executor", refuse)
+    from ads import train as tr, recommend as rc
+    from ads.store import store as st
+    entry = st.get(dataset["id"])
+    plan = rc.plan(entry["df"], st.cached(dataset["id"], "schema", __import__("ads.schema", fromlist=["x"]).infer_schema), "converted")
+    result = tr.run(entry["df"], plan, ["logistic_regression", "random_forest"])
+    assert all(r["ok"] for r in result["results"]), result["results"]

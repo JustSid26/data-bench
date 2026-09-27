@@ -5,6 +5,7 @@ Reading is the first thing a user waits on, so every path here picks the
 fastest reader available (pyarrow for csv/parquet, read_only for excel) and
 then shrinks the frame in memory so every stage after this is cheaper.
 '''
+import csv
 import io
 import os
 import time
@@ -50,6 +51,7 @@ def read_any(source, name=None, nrows=None, sheet=None):
         raise IngestError("cannot read '%s', supported types are %s" % (name, ", ".join(SUPPORTED)))
 
     df = tidy(df)
+    df = numbers_stored_as_text(df)
     df = shrink(df)
     meta = {
         "name": os.path.basename(str(name)),
@@ -67,18 +69,40 @@ def _buffer(source):
     return io.BytesIO(source) if isinstance(source, (bytes, bytearray)) else source
 
 
+SEPARATORS = ",;\t|"
+
+
 def sniff_separator(source, kind):
-    """Guess the delimiter from the header line so we never need the slow python engine."""
+    """Guess the delimiter so we never need the slow python engine.
+
+    Looks at several lines, not just the header: a quoted header such as
+    "fixed acidity";"volatile acidity" (the UCI wine files, most European
+    exports) defeats a one-line sniff, which then fell back to a comma and
+    read the whole file as a single column.
+    """
     if kind == ".tsv":
         return "\t"
     try:
         if isinstance(source, (bytes, bytearray)):
-            head = bytes(source[:8192])
+            head = bytes(source[:65536])
         else:
             with open(source, "rb") as handle:
-                head = handle.read(8192)
-        line = head.decode("utf-8", errors="ignore").splitlines()[0]
-        return csv.Sniffer().sniff(line, delimiters=",;\t|").delimiter
+                head = handle.read(65536)
+        lines = [l for l in head.decode("utf-8", errors="ignore").splitlines()[:20] if l.strip()]
+        if len(lines) > 1:
+            lines = lines[:-1]  # the last line in the buffer may be cut short
+        try:
+            return csv.Sniffer().sniff("\n".join(lines), delimiters=SEPARATORS).delimiter
+        except csv.Error:
+            pass
+        # fallback: the candidate that appears the same, non-zero number of
+        # times on every line, preferring the one that splits into most fields
+        best, best_count = ",", 0
+        for sep in SEPARATORS:
+            counts = {len(next(csv.reader([l], delimiter=sep))) for l in lines}
+            if len(counts) == 1 and (n := counts.pop()) > max(1, best_count):
+                best, best_count = sep, n
+        return best
     except Exception:
         return ","
 
@@ -125,6 +149,32 @@ def tidy(df):
             seen[c] = seen.get(c, 0) + 1
             names.append(c if seen[c] == 1 else "%s_%d" % (c, seen[c]))
         df.columns = names
+    return df
+
+
+def numbers_stored_as_text(df):
+    """Turn text columns that are really numbers back into numbers.
+
+    Exports often write a blank or a space for a missing number (the Telco
+    churn data's TotalCharges is the textbook case), which makes the reader
+    keep the whole column as text -- and then it looks like an id. Blank
+    cells become NaN; a column converts when nearly every non-blank value
+    parses as a number. Codes with leading zeros ("00123") stay text.
+    """
+    for name in df.columns:
+        col = df[name]
+        if not (col.dtype == object or pd.api.types.is_string_dtype(col)):
+            continue
+        text = col.astype("string").str.strip()
+        filled = text[text.notna() & (text != "")]
+        if filled.empty:
+            continue
+        if filled.str.match(r"^-?0\d").mean() > 0.01:
+            continue
+        numbers = pd.to_numeric(filled, errors="coerce")
+        if numbers.notna().mean() >= 0.98:
+            # plain float64, not a nullable dtype: sklearn chokes on pd.NA
+            df[name] = pd.to_numeric(text.replace("", pd.NA), errors="coerce").astype("float64")
     return df
 
 
