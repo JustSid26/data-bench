@@ -128,6 +128,8 @@
   /* SF Pro on Apple platforms, Inter everywhere else */
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", SFMono-Regular, monospace;
+  /* landing-page headlines only */
+  --font-display: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
 
   /* type scale -- the screens only ever use these sizes */
   --text-2xs: 10px;
@@ -204,6 +206,22 @@
     --chrome: #19191e;
     --sheet: #26262b;
   }
+}
+
+/* landing page: a quiet dot grid (an svg pattern, not a gradient) */
+.dot-grid {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='1' cy='1' r='1' fill='%2371717a' fill-opacity='0.22'/%3E%3C/svg%3E");
+}
+
+/* landing page: the technology marquee */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 /* landing page: packets flowing along the architecture arrows */
