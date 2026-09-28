@@ -50,7 +50,7 @@ export function Pipeline() {
                 />
               )}
               <span
-                className={`relative grid size-4 place-items-center rounded-full border text-[9px] font-bold ${
+                className={`relative grid size-[18px] shrink-0 place-items-center rounded-full border text-[10px] leading-none font-bold tabular-nums [text-box:trim-both_cap_alphabetic] ${
                   state === "done"
                     ? "border-good bg-good text-surface"
                     : state === "current"
