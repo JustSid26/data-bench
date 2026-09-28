@@ -66,3 +66,10 @@ def test_numbers_with_blank_cells_stay_numeric():
     assert pd.api.types.is_float_dtype(df["total"])
     assert df["total"].isna().sum() == 1
 
+
+def test_iso_dates_read_as_datetimes_not_categories():
+    # pyarrow hands back datetime.date objects; they must not fold into a category
+    rows = "".join("2025-01-%02d,%d\n" % (day % 28 + 1, day) for day in range(60))
+    df, _ = ingest.read_any(("when,n\n" + rows).encode(), "visits.csv")
+    assert pd.api.types.is_datetime64_any_dtype(df["when"])
+

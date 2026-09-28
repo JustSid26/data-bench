@@ -6,6 +6,7 @@ fastest reader available (pyarrow for csv/parquet, read_only for excel) and
 then shrinks the frame in memory so every stage after this is cheaper.
 '''
 import csv
+import datetime
 import io
 import os
 import time
@@ -52,6 +53,7 @@ def read_any(source, name=None, nrows=None, sheet=None):
 
     df = tidy(df)
     df = numbers_stored_as_text(df)
+    df = dates_as_datetimes(df)
     df = shrink(df)
     meta = {
         "name": os.path.basename(str(name)),
@@ -178,6 +180,23 @@ def numbers_stored_as_text(df):
         if numbers.notna().mean() >= 0.98:
             # plain float64, not a nullable dtype: sklearn chokes on pd.NA
             df[name] = pd.to_numeric(text.replace("", pd.NA), errors="coerce").astype("float64")
+    return df
+
+
+def dates_as_datetimes(df):
+    """Turn columns of python date objects into real datetimes.
+
+    pyarrow reads "2025-01-01" as datetime.date objects in an object column,
+    which shrink() would then fold into a category -- so a date column showed
+    up as hundreds of categories instead of a date.
+    """
+    for name in df.columns:
+        col = df[name]
+        if col.dtype != object:
+            continue
+        filled = col.dropna()
+        if not filled.empty and filled.map(lambda v: isinstance(v, (datetime.date, datetime.datetime))).all():
+            df[name] = pd.to_datetime(col, errors="coerce")
     return df
 
 
