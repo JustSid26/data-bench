@@ -1,0 +1,421 @@
+roll_no,study_hours_week,attendance_pct,previous_score,sleep_hours,parental_education,internet_at_home,remarks,passed
+S2025000,3.9,72.3,43.0,7.6,Graduate,Yes,,Fail
+S2025001,4.7,97.1,64.0,9.7,Postgraduate,Yes,,Pass
+S2025002,4.1,81.0,47.0,7.2,No formal education,Yes,,Fail
+S2025003,3.8,79.2,69.0,6.2,Postgraduate,No,,Fail
+S2025004,11.9,78.0,59.0,6.4,Graduate,Yes,,Pass
+S2025005,1.2,83.0,54.0,7.8,High school,Yes,,Fail
+S2025006,1.5,73.2,71.0,9.1,High school,Yes,,Fail
+S2025007,5.8,90.9,68.0,7.6,High school,Yes,,Pass
+S2025008,3.1,1000.0,64.0,7.6,Graduate,No,,Fail
+S2025009,8.7,90.2,57.0,7.3,,No,,Pass
+S2025010,3.9,73.8,62.0,6.5,Postgraduate,Yes,,Fail
+S2025011,10.4,72.4,36.0,7.1,Graduate,Yes,,Fail
+S2025012,4.6,73.3,35.0,5.7,,Yes,,Fail
+S2025013,9.9,84.6,53.0,7.8,Graduate,Yes,,Pass
+S2025014,10.9,69.4,64.0,7.5,Graduate,Yes,,Pass
+S2025015,,90.7,87.0,7.2,High school,No,,Pass
+S2025016,7.6,79.1,68.0,6.1,No formal education,Yes,,Fail
+S2025017,7.6,91.2,49.0,6.7,,Yes,,Fail
+S2025018,,78.6,55.0,6.4,High school,Yes,,Fail
+S2025019,17.2,90.3,45.0,7.3,High school,Yes,,Pass
+S2025020,6.8,72.2,62.0,6.7,High school,Yes,,Fail
+S2025021,2.5,71.5,61.0,7.4,,Yes,,Pass
+S2025022,5.3,88.2,62.0,8.0,Graduate,Yes,,Pass
+S2025023,1.8,76.9,66.0,8.4,High school,Yes,,Fail
+S2025024,6.3,92.8,77.0,5.9,Graduate,Yes,,Pass
+S2025025,2.2,75.5,72.0,6.6,High school,Yes,,Fail
+S2025026,9.1,87.4,46.0,5.8,No formal education,Yes,,Fail
+S2025027,8.2,74.3,74.0,8.3,No formal education,Yes,,Pass
+S2025028,7.1,65.2,48.0,6.1,,Yes,,Fail
+S2025029,4.0,96.4,67.0,8.4,Graduate,Yes,,Pass
+S2025030,2.0,1000.0,64.0,6.5,Graduate,Yes,,Fail
+S2025031,5.8,91.9,85.0,8.1,High school,No,,Pass
+S2025032,10.1,84.1,61.0,6.4,High school,No,,Pass
+S2025033,8.0,65.4,61.0,6.8,No formal education,No,,Pass
+S2025034,,1000.0,58.0,7.1,High school,Yes,,Fail
+S2025035,1.3,93.0,74.0,7.1,,Yes,,Pass
+S2025036,,95.0,67.0,6.8,Graduate,Yes,,Pass
+S2025037,9.3,98.4,59.0,7.7,Graduate,Yes,,Pass
+S2025038,2.9,1000.0,74.0,8.3,Graduate,Yes,,Fail
+S2025039,,81.3,91.0,7.9,Postgraduate,Yes,,Pass
+S2025040,21.2,83.0,85.0,6.5,High school,No,,Pass
+S2025041,2.8,70.8,,5.0,High school,Yes,,Fail
+S2025042,3.0,89.5,55.0,7.1,High school,Yes,,Fail
+S2025043,,89.4,61.0,3.9,Graduate,Yes,,Pass
+S2025044,6.2,85.7,65.0,7.7,High school,Yes,,Pass
+S2025045,9.1,74.6,39.0,7.7,No formal education,Yes,,Fail
+S2025046,3.8,88.6,,5.7,Graduate,Yes,,Pass
+S2025047,4.7,76.8,42.0,7.6,High school,Yes,,Fail
+S2025048,6.9,94.6,68.0,6.3,No formal education,Yes,,Pass
+S2025049,6.3,76.3,45.0,8.4,Postgraduate,Yes,,Fail
+S2025050,,77.1,64.0,6.2,High school,Yes,,Pass
+S2025051,3.3,79.1,74.0,6.1,,Yes,,Fail
+S2025052,13.6,72.1,,6.3,Graduate,Yes,,Pass
+S2025053,,73.4,50.0,7.3,High school,Yes,,Fail
+S2025054,5.7,79.4,53.0,5.9,Postgraduate,Yes,,Fail
+S2025055,1.4,58.0,75.0,9.4,High school,Yes,,Fail
+S2025056,2.8,100.0,61.0,6.6,High school,No,,Fail
+S2025057,6.7,85.9,64.0,8.9,Graduate,Yes,,Pass
+S2025058,2.4,85.1,75.0,6.7,High school,Yes,,Fail
+S2025059,8.5,73.5,28.0,6.7,High school,Yes,,Fail
+S2025060,10.5,84.1,66.0,6.2,High school,Yes,,Pass
+S2025061,,82.1,,6.2,Graduate,Yes,,Pass
+S2025062,4.0,83.2,87.0,7.5,High school,Yes,,Pass
+S2025063,7.2,67.6,72.0,8.3,Postgraduate,Yes,,Pass
+S2025064,,81.0,52.0,7.1,No formal education,No,,Fail
+S2025065,5.2,63.5,76.0,6.0,Graduate,No,,Fail
+S2025066,,80.2,88.0,7.2,High school,Yes,,Pass
+S2025067,11.4,73.4,54.0,6.1,High school,Yes,,Pass
+S2025068,2.6,76.2,52.0,4.1,No formal education,Yes,,Fail
+S2025069,3.8,79.0,60.0,7.1,High school,Yes,,Fail
+S2025070,6.0,90.5,57.0,5.1,Graduate,Yes,,Fail
+S2025071,10.4,94.2,34.0,6.3,High school,Yes,,Pass
+S2025072,7.5,82.4,,7.1,No formal education,Yes,,Fail
+S2025073,5.1,71.5,44.0,6.6,Graduate,Yes,,Fail
+S2025074,,96.8,54.0,6.7,Graduate,Yes,,Pass
+S2025075,12.0,68.3,68.0,8.7,Graduate,Yes,,Pass
+S2025076,7.6,76.7,55.0,8.0,High school,Yes,,Fail
+S2025077,14.3,80.0,65.0,8.6,High school,Yes,,Pass
+S2025078,3.8,74.8,81.0,7.2,Postgraduate,Yes,,Pass
+S2025079,8.6,95.3,100.0,7.2,Graduate,Yes,,Pass
+S2025080,12.8,86.1,74.0,8.9,Graduate,No,,Pass
+S2025081,4.4,92.8,49.0,6.3,High school,Yes,,Pass
+S2025082,18.3,79.2,76.0,7.4,No formal education,No,,Pass
+S2025083,5.5,90.7,62.0,7.1,Graduate,Yes,,Fail
+S2025084,3.3,80.6,67.0,7.3,Graduate,Yes,,Pass
+S2025085,5.5,80.7,76.0,7.6,High school,Yes,,Fail
+S2025086,9.8,85.1,73.0,7.1,Graduate,Yes,,Pass
+S2025087,5.0,86.0,44.0,7.9,No formal education,Yes,,Fail
+S2025088,4.9,87.8,47.0,6.1,Postgraduate,Yes,,Fail
+S2025089,5.9,80.0,66.0,7.5,High school,Yes,,Fail
+S2025090,6.2,67.2,72.0,5.9,Graduate,Yes,,Pass
+S2025091,5.1,78.9,91.0,8.2,Postgraduate,Yes,,Fail
+S2025092,7.8,55.5,71.0,8.0,High school,Yes,,Fail
+S2025093,2.4,79.2,57.0,6.8,Postgraduate,Yes,,Fail
+S2025094,4.9,74.0,56.0,6.4,No formal education,Yes,,Fail
+S2025095,19.7,90.2,53.0,7.0,,Yes,,Pass
+S2025096,7.4,55.2,44.0,7.6,,Yes,,Fail
+S2025097,13.0,100.0,44.0,5.4,High school,Yes,,Pass
+S2025098,4.2,78.6,55.0,5.9,,Yes,,Fail
+S2025099,6.9,66.2,64.0,8.0,Graduate,Yes,,Pass
+S2025100,7.5,86.2,52.0,6.8,High school,Yes,,Fail
+S2025101,9.0,86.9,,5.6,Graduate,Yes,,Pass
+S2025102,0.9,86.2,58.0,4.6,Postgraduate,No,,Fail
+S2025103,6.5,100.0,59.0,6.5,Graduate,No,,Pass
+S2025104,9.9,73.8,56.0,5.1,High school,Yes,,Fail
+S2025105,7.8,84.9,66.0,7.1,High school,No,,Pass
+S2025106,2.0,83.5,62.0,6.9,High school,Yes,,Fail
+S2025107,,75.3,26.0,9.0,Postgraduate,Yes,,Fail
+S2025108,6.9,84.9,66.0,5.6,Graduate,Yes,,Pass
+S2025109,9.5,94.5,64.0,7.7,High school,Yes,,Pass
+S2025110,5.9,73.6,54.0,5.7,High school,Yes,,Fail
+S2025111,3.9,86.5,65.0,5.9,High school,Yes,,Pass
+S2025112,2.6,92.0,53.0,6.8,Graduate,No,,Fail
+S2025113,6.3,88.5,64.0,6.1,Graduate,Yes,,Fail
+S2025114,10.0,66.2,50.0,8.9,High school,Yes,,Pass
+S2025115,10.4,84.8,72.0,6.9,Graduate,No,,Pass
+S2025116,15.4,78.2,67.0,6.2,High school,Yes,,Pass
+S2025117,4.5,94.2,42.0,9.4,High school,Yes,,Fail
+S2025118,2.4,80.8,53.0,6.1,High school,Yes,,Fail
+S2025119,2.8,100.0,72.0,6.6,Graduate,No,,Pass
+S2025120,3.8,69.8,68.0,6.7,High school,Yes,,Fail
+S2025121,0.6,87.0,64.0,6.1,No formal education,No,,Fail
+S2025122,,73.3,47.0,7.6,Graduate,No,,Fail
+S2025123,3.8,99.6,53.0,8.2,High school,No,,Fail
+S2025124,4.5,97.6,64.0,5.6,Graduate,Yes,,Fail
+S2025125,4.9,72.9,66.0,6.4,High school,Yes,,Fail
+S2025126,6.1,89.5,62.0,6.6,High school,No,,Pass
+S2025127,,81.6,51.0,5.5,High school,No,,Fail
+S2025128,2.1,65.9,59.0,5.5,High school,Yes,,Fail
+S2025129,,71.7,55.0,6.6,High school,Yes,,Fail
+S2025130,8.4,83.0,46.0,6.0,No formal education,Yes,,Fail
+S2025131,,87.1,47.0,7.3,High school,No,,Pass
+S2025132,,78.3,51.0,7.8,Graduate,Yes,,Fail
+S2025133,2.7,84.9,42.0,7.1,Graduate,Yes,,Fail
+S2025134,4.7,85.1,69.0,7.3,High school,Yes,,Pass
+S2025135,6.8,84.9,73.0,6.0,High school,Yes,,Fail
+S2025136,,70.3,74.0,6.3,Graduate,Yes,,Fail
+S2025137,15.1,83.4,51.0,7.4,,No,,Pass
+S2025138,10.9,87.3,52.0,7.6,Graduate,No,,Fail
+S2025139,,67.2,66.0,6.9,Graduate,Yes,,Fail
+S2025140,,97.3,56.0,7.5,Graduate,Yes,,Pass
+S2025141,4.7,96.5,58.0,6.7,High school,Yes,,Pass
+S2025142,2.6,83.6,58.0,5.7,High school,Yes,,Fail
+S2025143,2.6,100.0,40.0,7.3,Graduate,No,,Fail
+S2025144,9.7,74.1,79.0,6.5,Graduate,Yes,,Pass
+S2025145,,72.6,42.0,5.1,Graduate,Yes,,Pass
+S2025146,3.8,75.8,41.0,7.8,Graduate,Yes,,Fail
+S2025147,5.5,74.9,73.0,7.4,No formal education,Yes,,Fail
+S2025148,3.3,1000.0,47.0,7.7,Postgraduate,Yes,,Pass
+S2025149,0.8,82.5,77.0,6.4,Graduate,No,,Fail
+S2025150,1.2,81.5,67.0,8.5,High school,Yes,,Fail
+S2025151,1.8,85.6,,7.5,High school,Yes,,Fail
+S2025152,2.6,97.8,57.0,8.0,Graduate,Yes,,Fail
+S2025153,4.4,83.7,43.0,6.2,Postgraduate,Yes,,Fail
+S2025154,,78.3,46.0,6.6,Graduate,Yes,,Pass
+S2025155,,84.7,63.0,8.3,Postgraduate,Yes,,Pass
+S2025156,3.7,94.5,61.0,6.9,High school,Yes,,Fail
+S2025157,9.2,80.0,46.0,7.0,High school,Yes,,Pass
+S2025158,5.6,96.0,46.0,8.5,Graduate,No,,Fail
+S2025159,1.8,85.1,50.0,8.2,Postgraduate,No,,Fail
+S2025160,3.6,80.3,61.0,7.2,High school,Yes,,Fail
+S2025161,10.2,86.9,68.0,9.0,No formal education,Yes,,Pass
+S2025162,1.1,100.0,74.0,5.4,,No,,Pass
+S2025163,12.1,79.6,57.0,6.9,High school,No,,Pass
+S2025164,12.5,95.7,82.0,6.4,,Yes,,Pass
+S2025165,5.4,87.6,72.0,8.5,No formal education,No,,Pass
+S2025166,1.7,83.6,82.0,8.6,No formal education,Yes,,Pass
+S2025167,,82.6,,6.4,No formal education,Yes,,Fail
+S2025168,4.1,90.2,70.0,7.1,Graduate,Yes,,Fail
+S2025169,,88.1,77.0,7.9,Postgraduate,No,,Pass
+S2025170,6.9,85.7,38.0,7.5,High school,No,,Fail
+S2025171,3.7,88.6,75.0,7.2,Postgraduate,Yes,,Pass
+S2025172,5.5,73.5,68.0,8.0,Graduate,No,,Pass
+S2025173,9.8,75.6,,9.0,,Yes,,Pass
+S2025174,4.8,72.2,,7.1,High school,Yes,,Fail
+S2025175,6.4,78.6,78.0,5.8,High school,Yes,,Pass
+S2025176,12.4,80.0,56.0,6.8,Graduate,Yes,,Pass
+S2025177,,78.4,55.0,6.9,High school,Yes,,Pass
+S2025178,7.0,87.3,72.0,6.6,Graduate,Yes,,Pass
+S2025179,13.7,72.7,72.0,7.7,High school,Yes,,Pass
+S2025180,7.4,79.7,44.0,7.7,High school,Yes,,Pass
+S2025181,5.4,90.6,78.0,7.9,High school,Yes,,Pass
+S2025182,2.0,98.7,78.0,7.5,High school,No,,Pass
+S2025183,10.8,82.6,76.0,7.2,Graduate,Yes,,Pass
+S2025184,13.8,93.9,52.0,5.9,,Yes,,Pass
+S2025185,3.8,95.6,79.0,6.6,High school,No,,Fail
+S2025186,10.1,72.0,69.0,6.1,High school,No,,Pass
+S2025187,,84.4,75.0,7.3,High school,Yes,,Fail
+S2025188,3.5,71.7,61.0,6.8,,Yes,,Fail
+S2025189,3.4,78.2,56.0,6.9,Graduate,Yes,,Fail
+S2025190,9.1,86.1,52.0,7.5,Postgraduate,Yes,,Fail
+S2025191,4.4,69.6,54.0,6.7,High school,Yes,,Fail
+S2025192,,87.3,74.0,8.1,,Yes,,Pass
+S2025193,2.7,80.7,52.0,8.1,Graduate,No,,Fail
+S2025194,6.1,79.7,54.0,6.0,High school,Yes,,Fail
+S2025195,7.8,87.3,66.0,8.3,No formal education,Yes,,Pass
+S2025196,6.7,73.9,58.0,6.6,High school,No,,Fail
+S2025197,1.5,65.3,34.0,6.2,High school,Yes,,Fail
+S2025198,5.9,82.3,53.0,6.6,High school,Yes,,Fail
+S2025199,10.6,74.9,57.0,5.6,,Yes,,Pass
+S2025200,5.9,80.1,,7.3,Graduate,Yes,,Pass
+S2025201,,71.2,71.0,8.2,Graduate,No,,Fail
+S2025202,,72.8,48.0,5.4,Graduate,Yes,,Fail
+S2025203,4.0,71.9,47.0,7.4,High school,Yes,,Fail
+S2025204,1.8,69.4,56.0,7.6,Postgraduate,No,,Fail
+S2025205,6.5,74.0,65.0,7.7,High school,Yes,,Pass
+S2025206,3.3,74.3,51.0,7.6,Graduate,Yes,,Fail
+S2025207,11.6,82.3,68.0,7.4,Graduate,Yes,,Pass
+S2025208,9.6,100.0,43.0,6.5,High school,No,,Pass
+S2025209,3.6,75.9,66.0,7.9,High school,Yes,,Pass
+S2025210,10.1,66.3,78.0,7.3,Graduate,Yes,,Pass
+S2025211,1.6,87.7,26.0,7.8,,Yes,,Fail
+S2025212,11.6,69.8,62.0,7.3,,No,,Fail
+S2025213,6.7,73.2,65.0,6.7,No formal education,Yes,,Pass
+S2025214,5.6,78.6,68.0,6.9,,Yes,,Fail
+S2025215,2.1,82.4,63.0,7.6,High school,Yes,,Fail
+S2025216,5.3,82.6,61.0,8.0,High school,Yes,,Fail
+S2025217,1.8,84.3,66.0,5.0,High school,Yes,,Fail
+S2025218,2.5,80.8,63.0,5.6,No formal education,Yes,,Fail
+S2025219,6.8,92.8,63.0,5.3,High school,Yes,,Fail
+S2025220,12.1,90.2,83.0,6.4,Graduate,Yes,,Pass
+S2025221,4.9,76.6,76.0,6.3,Graduate,No,,Fail
+S2025222,3.9,79.8,75.0,7.2,No formal education,Yes,,Pass
+S2025223,6.7,68.6,53.0,6.6,No formal education,Yes,,Pass
+S2025224,9.4,88.4,55.0,8.4,High school,Yes,,Pass
+S2025225,10.8,79.9,,6.3,Graduate,Yes,,Pass
+S2025226,12.8,100.0,48.0,6.2,High school,No,,Pass
+S2025227,2.6,75.2,76.0,6.1,Graduate,Yes,,Fail
+S2025228,8.6,96.8,44.0,6.6,High school,Yes,,Pass
+S2025229,3.5,72.9,91.0,7.1,High school,Yes,,Pass
+S2025230,8.9,65.4,79.0,6.4,Postgraduate,No,,Pass
+S2025231,,73.5,55.0,6.0,No formal education,Yes,,Fail
+S2025232,12.8,85.2,56.0,5.5,Graduate,Yes,,Pass
+S2025233,3.6,91.8,34.0,7.1,Postgraduate,Yes,,Fail
+S2025234,6.9,73.3,61.0,6.4,No formal education,No,,Pass
+S2025235,,91.3,78.0,5.9,High school,Yes,,Pass
+S2025236,3.1,76.7,70.0,6.7,Postgraduate,Yes,,Fail
+S2025237,5.3,76.8,58.0,7.3,Graduate,Yes,,Pass
+S2025238,2.6,78.9,90.0,9.1,Graduate,Yes,,Fail
+S2025239,3.8,98.0,,8.7,High school,No,,Pass
+S2025240,11.4,83.6,68.0,6.0,High school,Yes,,Pass
+S2025241,6.3,84.8,58.0,6.5,,Yes,,Fail
+S2025242,2.0,67.1,70.0,4.9,Graduate,Yes,,Fail
+S2025243,5.1,83.5,97.0,4.9,High school,Yes,,Pass
+S2025244,6.6,84.6,68.0,5.0,No formal education,No,,Pass
+S2025245,4.6,97.8,39.0,7.9,Postgraduate,No,,Fail
+S2025246,8.5,73.3,65.0,6.8,High school,No,,Pass
+S2025247,4.9,74.9,88.0,5.4,High school,Yes,,Fail
+S2025248,1.2,72.8,78.0,6.2,High school,Yes,,Fail
+S2025249,7.6,75.5,55.0,6.4,High school,Yes,,Fail
+S2025250,5.2,88.4,67.0,6.3,Postgraduate,Yes,,Pass
+S2025251,8.0,74.0,42.0,8.5,High school,Yes,,Pass
+S2025252,2.9,94.3,71.0,4.9,,Yes,,Fail
+S2025253,,82.1,50.0,6.5,Graduate,Yes,,Pass
+S2025254,5.2,72.9,,7.2,No formal education,No,,Fail
+S2025255,5.4,75.4,54.0,7.4,Graduate,Yes,,Pass
+S2025256,5.9,68.4,52.0,4.7,High school,Yes,,Fail
+S2025257,7.3,67.6,85.0,7.1,,Yes,,Pass
+S2025258,,93.1,82.0,5.6,High school,Yes,,Pass
+S2025259,,1000.0,58.0,6.3,High school,Yes,,Pass
+S2025260,3.3,72.2,,5.3,Postgraduate,Yes,,Fail
+S2025261,6.9,77.4,85.0,7.8,High school,No,,Pass
+S2025262,6.5,97.5,58.0,10.2,High school,Yes,,Pass
+S2025263,1.0,74.7,,8.0,Postgraduate,Yes,,Fail
+S2025264,3.5,83.9,51.0,6.6,Postgraduate,Yes,,Fail
+S2025265,5.0,86.7,83.0,5.1,High school,Yes,,Pass
+S2025266,6.6,79.8,64.0,7.9,Postgraduate,Yes,,Fail
+S2025267,13.7,79.9,62.0,8.2,,No,,Pass
+S2025268,4.4,78.4,56.0,5.8,Graduate,Yes,,Fail
+S2025269,,82.9,50.0,7.9,,Yes,,Fail
+S2025270,9.3,66.4,75.0,5.1,High school,Yes,,Pass
+S2025271,5.4,82.2,52.0,5.6,No formal education,Yes,,Fail
+S2025272,6.2,83.5,55.0,7.1,High school,Yes,,Fail
+S2025273,2.8,68.7,39.0,5.5,High school,Yes,,Fail
+S2025274,1.1,86.1,,7.7,Graduate,Yes,,Fail
+S2025275,7.3,72.6,55.0,8.4,High school,Yes,,Pass
+S2025276,5.0,56.0,55.0,7.0,Postgraduate,No,,Fail
+S2025277,6.2,62.7,41.0,7.5,Postgraduate,Yes,,Fail
+S2025278,5.3,82.6,54.0,8.6,High school,Yes,,Pass
+S2025279,5.6,87.2,60.0,7.5,High school,Yes,,Fail
+S2025280,3.2,77.5,26.0,8.3,Graduate,No,,Fail
+S2025281,13.4,67.4,70.0,8.5,High school,Yes,,Pass
+S2025282,18.3,80.1,58.0,5.9,No formal education,Yes,,Pass
+S2025283,5.1,90.6,44.0,9.3,High school,Yes,,Fail
+S2025284,6.7,81.2,58.0,8.2,,Yes,,Pass
+S2025285,5.5,67.2,68.0,7.1,No formal education,Yes,,Pass
+S2025286,8.9,86.2,62.0,7.8,No formal education,Yes,,Pass
+S2025287,,79.7,62.0,7.3,High school,Yes,,Pass
+S2025288,8.1,79.9,62.0,7.2,Graduate,Yes,,Pass
+S2025289,2.8,82.2,71.0,5.9,Graduate,Yes,,Fail
+S2025290,8.3,87.1,43.0,6.6,Postgraduate,Yes,,Fail
+S2025291,9.3,80.6,54.0,6.6,Postgraduate,Yes,,Fail
+S2025292,9.0,72.2,67.0,8.1,Postgraduate,Yes,,Pass
+S2025293,2.2,80.5,62.0,7.5,Graduate,Yes,,Fail
+S2025294,,82.9,47.0,7.4,Postgraduate,Yes,,Fail
+S2025295,7.8,93.2,58.0,6.9,Postgraduate,Yes,,Pass
+S2025296,15.1,69.6,52.0,8.3,High school,Yes,,Pass
+S2025297,5.8,80.2,62.0,4.4,No formal education,No,,Pass
+S2025298,3.1,73.0,39.0,6.0,High school,Yes,,Fail
+S2025299,8.2,84.2,,8.0,High school,Yes,,Pass
+S2025300,4.4,76.3,42.0,6.6,High school,No,,Fail
+S2025301,4.7,51.5,60.0,7.7,Graduate,No,,Fail
+S2025302,3.9,90.9,95.0,8.6,High school,Yes,,Pass
+S2025303,9.8,75.1,,7.8,Graduate,Yes,,Pass
+S2025304,8.3,70.9,78.0,5.4,Postgraduate,Yes,,Pass
+S2025305,5.9,66.8,62.0,6.8,High school,Yes,,Pass
+S2025306,2.3,71.1,83.0,5.8,High school,Yes,,Pass
+S2025307,2.4,68.9,67.0,7.5,Graduate,Yes,,Fail
+S2025308,3.3,80.2,63.0,8.1,High school,Yes,,Pass
+S2025309,,1000.0,76.0,6.7,No formal education,No,,Fail
+S2025310,,80.8,45.0,7.5,Postgraduate,Yes,,Fail
+S2025311,8.8,85.1,32.0,6.8,High school,Yes,,Fail
+S2025312,9.2,73.4,,9.0,,No,,Fail
+S2025313,4.1,87.5,81.0,7.1,Graduate,Yes,,Fail
+S2025314,,80.5,74.0,7.2,No formal education,Yes,,Pass
+S2025315,,85.9,64.0,7.6,No formal education,No,,Pass
+S2025316,6.7,87.6,59.0,8.1,Graduate,Yes,,Pass
+S2025317,7.6,78.0,,7.7,Graduate,No,,Pass
+S2025318,6.5,93.7,67.0,7.0,High school,Yes,,Fail
+S2025319,,89.4,50.0,7.1,No formal education,Yes,,Fail
+S2025320,3.9,77.6,,7.5,High school,No,,Pass
+S2025321,3.6,98.8,49.0,7.6,High school,Yes,,Fail
+S2025322,8.1,97.9,80.0,6.6,Postgraduate,No,,Pass
+S2025323,9.7,66.6,57.0,6.4,Postgraduate,No,,Pass
+S2025324,10.3,59.6,49.0,6.8,Graduate,Yes,,Fail
+S2025325,2.3,75.5,58.0,7.5,Graduate,Yes,,Fail
+S2025326,12.5,86.2,49.0,6.5,,Yes,,Pass
+S2025327,3.3,90.8,60.0,5.9,Graduate,Yes,,Fail
+S2025328,4.3,88.1,37.0,6.6,High school,Yes,,Fail
+S2025329,,81.5,55.0,6.5,No formal education,Yes,,Pass
+S2025330,12.2,91.1,63.0,7.6,No formal education,Yes,,Pass
+S2025331,4.2,88.6,67.0,6.5,No formal education,Yes,,Pass
+S2025332,5.2,77.4,56.0,6.6,High school,Yes,,Fail
+S2025333,4.3,83.4,78.0,9.0,High school,Yes,,Pass
+S2025334,,92.0,39.0,7.5,High school,Yes,,Fail
+S2025335,6.1,75.4,,6.0,Graduate,Yes,,Fail
+S2025336,7.5,75.5,55.0,8.3,No formal education,Yes,,Fail
+S2025337,3.8,73.5,62.0,6.6,Graduate,No,,Fail
+S2025338,2.6,95.9,58.0,6.2,High school,No,,Fail
+S2025339,6.8,88.2,80.0,7.7,High school,No,,Pass
+S2025340,13.7,1000.0,62.0,5.5,Postgraduate,Yes,,Pass
+S2025341,4.4,78.1,49.0,6.9,High school,No,,Fail
+S2025342,12.7,81.4,95.0,7.6,,Yes,,Pass
+S2025343,6.7,93.6,62.0,7.8,Graduate,Yes,,Fail
+S2025344,10.2,79.0,59.0,6.5,High school,Yes,,Pass
+S2025345,6.3,93.3,74.0,6.5,Graduate,Yes,,Pass
+S2025346,22.2,81.5,54.0,6.9,Postgraduate,Yes,,Pass
+S2025347,4.9,81.5,59.0,8.3,No formal education,Yes,,Fail
+S2025348,2.1,87.1,73.0,5.1,High school,No,,Fail
+S2025349,6.0,90.1,46.0,7.9,Postgraduate,Yes,,Fail
+S2025350,7.9,98.8,55.0,7.3,Graduate,Yes,,Pass
+S2025351,7.8,78.4,,8.4,High school,Yes,,Pass
+S2025352,8.7,98.2,86.0,5.8,High school,Yes,,Pass
+S2025353,13.0,74.3,61.0,8.2,High school,Yes,,Pass
+S2025354,,73.4,60.0,6.1,No formal education,No,,Pass
+S2025355,5.8,60.0,76.0,7.3,Graduate,Yes,,Fail
+S2025356,7.5,90.0,42.0,6.6,,Yes,,Pass
+S2025357,4.1,96.2,52.0,4.4,Graduate,Yes,,Fail
+S2025358,,70.1,51.0,6.9,Graduate,Yes,,Pass
+S2025359,5.4,78.6,34.0,7.4,High school,Yes,,Fail
+S2025360,,79.3,,7.9,Graduate,No,,Pass
+S2025361,4.3,66.6,56.0,6.3,High school,Yes,,Fail
+S2025362,8.4,82.5,74.0,5.8,Graduate,Yes,,Pass
+S2025363,10.0,84.7,71.0,7.7,High school,Yes,,Pass
+S2025364,,76.9,79.0,6.6,Graduate,Yes,,Pass
+S2025365,3.1,71.8,,8.1,High school,Yes,,Fail
+S2025366,,83.1,60.0,8.5,,Yes,,Pass
+S2025367,8.7,87.6,80.0,6.8,High school,Yes,,Pass
+S2025368,3.8,68.0,,6.8,Graduate,Yes,,Fail
+S2025369,1.5,80.8,44.0,6.3,High school,Yes,,Fail
+S2025370,2.0,87.3,66.0,4.9,High school,Yes,,Fail
+S2025371,5.1,54.5,62.0,7.0,Postgraduate,Yes,,Fail
+S2025372,3.4,84.9,70.0,7.8,High school,Yes,,Pass
+S2025373,4.1,98.6,62.0,8.1,High school,Yes,,Pass
+S2025374,6.2,69.3,79.0,7.0,Graduate,Yes,,Fail
+S2025375,11.3,94.6,71.0,8.9,Graduate,Yes,,Pass
+S2025376,5.2,78.9,65.0,6.5,High school,Yes,,Fail
+S2025377,4.0,87.7,57.0,7.0,Graduate,Yes,,Pass
+S2025378,,80.3,71.0,6.4,No formal education,Yes,,Pass
+S2025379,11.3,70.7,53.0,6.6,,Yes,,Pass
+S2025380,4.5,65.1,75.0,6.7,High school,Yes,,Pass
+S2025381,6.4,100.0,77.0,6.3,High school,Yes,,Fail
+S2025382,9.5,68.8,75.0,6.6,Graduate,Yes,,Pass
+S2025383,2.5,79.2,44.0,7.3,High school,No,,Fail
+S2025384,3.7,95.7,68.0,7.1,,Yes,,Fail
+S2025385,4.9,84.8,67.0,5.9,High school,Yes,,Fail
+S2025386,6.3,83.5,74.0,7.5,Postgraduate,Yes,,Pass
+S2025387,14.5,62.2,40.0,6.2,High school,No,,Fail
+S2025388,9.8,75.8,54.0,7.5,High school,Yes,,Fail
+S2025389,13.9,68.8,61.0,7.1,Graduate,Yes,,Pass
+S2025390,11.2,64.3,81.0,5.0,High school,Yes,,Pass
+S2025391,4.7,85.4,54.0,5.9,Graduate,Yes,,Fail
+S2025392,2.3,90.0,74.0,8.0,High school,Yes,,Pass
+S2025393,,74.3,64.0,6.3,High school,Yes,,Pass
+S2025394,1.5,75.5,88.0,6.3,No formal education,Yes,,Fail
+S2025395,4.8,86.1,66.0,6.6,High school,Yes,,Fail
+S2025396,,90.4,,7.1,High school,Yes,,Fail
+S2025397,13.4,71.5,58.0,7.6,High school,Yes,,Pass
+S2025398,2.0,93.3,65.0,6.7,Graduate,No,,Fail
+S2025399,7.4,91.0,79.0,8.8,High school,Yes,,Pass
+S2025400,13.6,81.9,71.0,6.4,High school,Yes,,Pass
+S2025401,4.8,71.0,58.0,6.5,High school,Yes,,Fail
+S2025402,,87.4,44.0,6.8,Graduate,No,,Fail
+S2025403,6.2,88.6,62.0,7.2,No formal education,No,,Pass
+S2025404,8.8,99.0,60.0,8.5,Graduate,Yes,,Pass
+S2025405,,76.0,80.0,9.5,High school,No,,Pass
+S2025406,5.7,97.4,74.0,6.7,High school,Yes,,Pass
+S2025407,10.2,78.4,43.0,6.8,Graduate,Yes,,Pass
+S2025408,8.8,87.0,30.0,7.7,Postgraduate,Yes,,Pass
+S2025409,,80.8,56.0,6.9,No formal education,Yes,,Fail
+S2025410,5.2,82.7,65.0,7.9,High school,Yes,,Fail
+S2025411,2.0,96.2,48.0,5.9,Postgraduate,Yes,,Fail
+S2025412,12.7,75.2,,7.9,,Yes,,Pass
+S2025413,,90.0,78.0,4.7,,Yes,,Pass
+S2025414,13.5,79.2,72.0,7.6,Graduate,Yes,,Pass
+S2025415,7.9,81.5,38.0,7.7,Graduate,Yes,,Fail
+S2025416,6.3,74.9,,9.6,High school,Yes,,Pass
+S2025417,4.0,83.8,64.0,6.1,High school,Yes,,Pass
+S2025418,9.7,62.3,59.0,7.7,,Yes,,Fail
+S2025419,6.5,1000.0,70.0,7.7,High school,Yes,,Fail
